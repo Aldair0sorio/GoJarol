@@ -1,0 +1,1201 @@
+text,intent
+regrésame al ejercicio que fallé por favor por última vez,repetir_ejercicio
+"oye, quiero entrenar con una prueba de sujeto y predicado pls",solicitar_reto
+"porfa, ¿qué podría revisar para seguir sin copiarte? si puedes, soy de segundo de secundaria",solicitar_pista
+"va, bye bye, ahí te ves, fue todo por hoy",despedirse
+"lo estamos viendo en clase, hola Jarol, ¿coincide mi solución con la esperada? plis",verificar_respuesta
+"estudio primero de prepa, Oye Jarol, hasta aquí con eso, ahora vámonos a raíz cuadrada cuando puedas??",cambiar_tema
+¿coincide mi solución con la esperada?,verificar_respuesta
+"Jarol, quiero entender la idea detrás de metáforas",solicitar_explicacion
+"ya estuvo por hoy, ahí muere, mañana regreso",despedirse
+"oye, ¿me puedes dar un resumen de mi progreso académico?",consultar_progreso
+"me ayudas? dejemos pendiente esto, me paso a raíz cuadrada porfis?",cambiar_tema
+"voy en sexto semestre de bachillerato, hola Jarol, dime cuál fue la confusión de fondo xfa?",solicitar_retroalimentacion
+"oye, no me lo resuelvas, encamíname plis en este paso",solicitar_pista
+regrésame al ejercicio que fallé si puedes,repetir_ejercicio
+"¿puedo saltar a signos de puntuación en vez de seguir aquí? plis, se me complica mucho",cambiar_tema
+"ando en segundo semestre de bachillerato, hey Jarol, ¿podemos repetir el problema tal cual? si puedes",repetir_ejercicio
+me puedes retar con ortografía!,solicitar_reto
+"a ver, lo que acabas de decir me confundió más??",simplificar_explicacion
+una duda: necesito ver un caso con ortografía xfa,solicitar_ejemplo
+"Jarol, muy buenas Jarol, ¿cómo andas?",saludar
+"va, bye bye, ahí te ves, ya me voy",despedirse
+"hola Jarol, lo que acabas de decir me confundió más porfavor",simplificar_explicacion
+"sale, me salgo, continuamos mañana, ya me voy",despedirse
+"hey Jarol, desde dónde empiezo para aprender teorema de Pitágoras",solicitar_explicacion
+"bro, quiero entrenar con una prueba de porcentajes",solicitar_reto
+"ayúdame a revisar el razonamiento donde fallé si puedes, ando en segundo semestre de bachillerato",solicitar_retroalimentacion
+"es para mi tarea, se me hizo bolas la explicación!",simplificar_explicacion
+"¿en qué competencia he avanzado más?, estoy estudiando para un examen",consultar_progreso
+"estoy estudiando para un examen, me ayudas? ¿es equivalente mi respuesta el sujeto?",verificar_respuesta
+"curso cuarto semestre de prepa, ¿cómo se aplicaría eso en la vida diaria? si puedes",solicitar_ejemplo
+me ayudas? ¿me puedes dar un resumen de mi progreso académico?,consultar_progreso
+"apenas estoy aprendiendo, ¿coincide mi solución con la esperada? porfis",verificar_respuesta
+"hey Jarol, lo que acabas de decir me confundió más si se puede, es para mi tarea",simplificar_explicacion
+"amigo, qué ondaaa tutor, ya llegué",saludar
+"soy de segundo de secundaria, oye, quiero entender la idea detrás de idea principal de un texto plis",solicitar_explicacion
+"hola Jarol, píntame una situación donde se use regla de tres porfavor?",solicitar_ejemplo
+kiero regresar a esa pregunta y reintentar porfa en el chat,repetir_ejercicio
+"oye, lo que acabas de decir me confundió más",simplificar_explicacion
+"porfa, otra vuelta al mismo reto xfa",repetir_ejercicio
+una duda: ¿puedo saltar a raíz cuadrada en vez de seguir aquí? pls!,cambiar_tema
+"entonces, me tengo que ir, hasta la próxima, ya me voy",despedirse
+se me hizo bolas la explicación??,simplificar_explicacion
+¿puedes comprobar lo que contesté? cuando puedas,verificar_respuesta
+¿cómo se aplicaría eso en la vida diaria? si puedes??,solicitar_ejemplo
+"porfa, otra vuelta al mismo reto plis de ahorita",repetir_ejercicio
+"bro, ¿me puedes dar un resumen de mi progreso académico?, es para mi tarea",consultar_progreso
+"bro, dime cuál fue la confusión de fondo, voy en tercero de secundaria",solicitar_retroalimentacion
+"Oye Jarol, vamos a calarme con un cuestionario de comprensión lectora",solicitar_reto
+"bro, ¿en qué parte la regué?",solicitar_retroalimentacion
+"a ver, ¿en qué parte la regué? por favor?",solicitar_retroalimentacion
+me puedes retar con sumas con fracciones,solicitar_reto
+"se me complica mucho, bro, me aburrí de este tema, brincamos a acentuación?",cambiar_tema
+"lo estamos viendo en clase, Jarol, ¿puedes comprobar lo que contesté?",verificar_respuesta
+"se me complica mucho, hola Jarol, ayúdame a revisar el razonamiento donde fallé",solicitar_retroalimentacion
+"Jarol, ando bien confundido con eso de divisiones",solicitar_explicacion
+"bueno, me tengo que ir, hasta la próxima, hasta la próxima",despedirse
+"bro, no me lo resuelvas, encamíname con el ejercicio",solicitar_pista
+"disculpa, ayúdame a revisar el razonamiento donde fallé porfis??",solicitar_retroalimentacion
+"lo estamos viendo en clase, hola Jarol, ¿me puedes dar un resumen de mi progreso académico? hasta hoy",consultar_progreso
+muestra cómo se aplica tipos de texto en un caso real gracias,solicitar_ejemplo
+¿cuántas actividades exitosas llevo hasta hoy? pls!,consultar_progreso
+"a ver, regrésame al ejercicio que fallé",repetir_ejercicio
+"bro, píntame una situación donde se use verbos porfavor",solicitar_ejemplo
+lo que acabas de decir me confundió mas,simplificar_explicacion
+"bro, esa respuesta estuvo pesada, simplifícala",simplificar_explicacion
+"oye, lo que acabas de decir me confundió más porfa",simplificar_explicacion
+¿podemos repetir el problema tal cual? plis!,repetir_ejercicio
+"oye, holis, aquí estoy, listo para estudiar!",saludar
+píntame una situación donde se use despejar la x,solicitar_ejemplo
+"apenas estoy aprendiendo, oye, hasta aquí con eso, ahora vámonos a divisiones cuando puedas",cambiar_tema
+"disculpa, ¿qué idea tuve equivocada?",solicitar_retroalimentacion
+"hola Jarol, me aburrí de este tema, brincamos a probabilidad",cambiar_tema
+"perfecto, me tengo que ir, hasta la próxima, gracias",despedirse
+"Jarol, hasta aquí con eso, ahora vámonos a fracciones equivalentes",cambiar_tema
+"bro, desde dónde empiezo para aprender ecuaciones de primer grado??",solicitar_explicacion
+"hola Jarol, quiero entender la idea detrás de resumen de un texto",solicitar_explicacion
+"lo estamos viendo en clase, ¿en qué competencia he avanzado más?",consultar_progreso
+"hey Jarol, ando bien confundido con eso de números decimales cuando puedas",solicitar_explicacion
+"tengo examen mañana, Jarol, regrésame al ejercicio que fallé plis el de antes??",repetir_ejercicio
+me ayudas? ¿me lo cuentas como si apenas empezara? si se puede,simplificar_explicacion
+"no me lo resuelvas, encamíname, estudio primero de prepa",solicitar_pista
+"Oye Jarol, me puedes retar con teorema de Pitágoras si se puede",solicitar_reto
+"Jarol, necesito ver un caso con resumen de un texto xfa",solicitar_ejemplo
+"oye, ¿qué idea tuve equivocada? por favor",solicitar_retroalimentacion
+"bro, dejemos pendiente esto, me paso a números negativos",cambiar_tema
+"a ver, me puedes retar con texto argumentativo porfavor",solicitar_reto
+"porfa, quiero entender la idea detrás de ecuaciones de primer grado",solicitar_explicacion
+"ya estuvo por hoy, ahí muere, hasta la próxima",despedirse
+"oye, dime cuál fue la confusión de fondo!",solicitar_retroalimentacion
+"oye, me puedes retar con sinónimos y antónimos si se puede",solicitar_reto
+"voy en tercero de secundaria, Jarol, esa respuesta estuvo pesada, simplifícala",simplificar_explicacion
+"dime cuál fue la confusión de fondo, es para mi tarea!",solicitar_retroalimentacion
+"hola Jarol, se me hizo bolas la explicación porfis",simplificar_explicacion
+"estudio primero de prepa, me pierdo cuando el profe habla de raíz cuadrada",solicitar_explicacion
+"hey Jarol, muestra cómo se aplica números decimales en un caso real cuando puedas",solicitar_ejemplo
+una duda: me puedes retar con conectores plis,solicitar_reto
+"estudio primero de prepa, ando bien confundido con eso de acentuación",solicitar_explicacion
+"buenas, holis, aquí estoy, ya entré",saludar
+"hey Jarol, desde dónde empiezo para aprender propiedades de las potencias cuando puedas",solicitar_explicacion
+"disculpa, hasta aquí con eso, ahora vámonos a fracciones",cambiar_tema
+"hola Jarol, ayúdame a revisar el razonamiento donde fallé cuando puedas",solicitar_retroalimentacion
+nomás indícame por dónde va porfis,solicitar_pista
+"hey Jarol, quiero regresar a esa pregunta y reintentar plis",repetir_ejercicio
+me pierdo cuando el profe habla de números negativos!,solicitar_explicacion
+"una duda: dejemos pendiente esto, me paso a texto argumentativo",cambiar_tema
+"Oye Jarol, me bloqueé con el problema, ¿una pista?",solicitar_pista
+"una duda: se me hizo bolas la explicación por favor, estudio primero de prepa",simplificar_explicacion
+"a ver, échame un problema para resolver yo cuando puedas",solicitar_reto
+"apenas estoy aprendiendo, disculpa, ¿mi operación pasó la prueba?",verificar_respuesta
+"hola Jarol, no me lo resuelvas, encamíname",solicitar_pista
+"tengo examen mañana, a ver, muestra cómo se aplica multiplicaciones en un caso real",solicitar_ejemplo
+"hey Jarol, nomás indícame por dónde va si se puede en este paso",solicitar_pista
+"dejemos pendiente esto, me paso a fracciones equivalentes cuando puedas",cambiar_tema
+"perfecto, bye bye, ahí te ves, Jarol?",despedirse
+¿es equivalente mi respuesta 25?,verificar_respuesta
+"porfa, ¿cómo se aplicaría eso en la vida diaria?",solicitar_ejemplo
+"oye, quiero entender la idea detrás de multiplicaciones cuando puedas",solicitar_explicacion
+"disculpa, ¿cómo se aplicaría eso en la vida diaria? plis, ando en segundo semestre de bachillerato",solicitar_ejemplo
+"a ver, quiero regresar a esa pregunta y reintentar porfa",repetir_ejercicio
+"porfa, lo que acabas de decir me confundió más por favor",simplificar_explicacion
+ayúdame a revisar el razonamiento donde fallé pls,solicitar_retroalimentacion
+"ando bien confundido con eso de perímetro, se me complica mucho??",solicitar_explicacion
+"porfa, ¿cómo se aplicaría eso en la vida diaria? gracias!",solicitar_ejemplo
+"qué hay de nuevo, aquí estamos",saludar
+"entonces, me tengo que ir, hasta la próxima, toca descansar",despedirse
+"disculpa, hasta aquí con eso, ahora vámonos a multiplicaciones porfa",cambiar_tema
+"no me lo resuelvas, encamíname con esto?",solicitar_pista
+"me salgo, continuamos mañana, Jarol",despedirse
+"hasta aquí con eso, ahora vámonos a perímetro",cambiar_tema
+me ayudas? ¿como se aplicaría eso en la vida diaria? porfa,solicitar_ejemplo
+"bueno, me tengo que ir, hasta la próxima, gracias??",despedirse
+"me tengo que ir, hasta la próxima, hasta la próxima??",despedirse
+"porfa, ¿q idea tuve equivocada?",solicitar_retroalimentacion
+"hasta aquí con eso, ahora vámonos a comprensión lectora porfis??",cambiar_tema
+¿qué podría revisar para seguir sin copiarte? con el ejercicio,solicitar_pista
+"me aburrí de este tema, brincamos a probabilidad, curso cuarto semestre de prepa",cambiar_tema
+necesito ver un caso con comprensión lectora,solicitar_ejemplo
+"porfa, ¿me puedes dar un resumen de mi progreso académico? pls",consultar_progreso
+"¿puedo saltar a idea principal de un texto en vez de seguir aquí? si puedes, estoy estudiando para un examen??",cambiar_tema
+"bro, ¿coincide mi solución con la esperada? cuando puedas",verificar_respuesta
+"tengo examen mañana, porfa, otra vuelta al mismo reto por favor en el chat?",repetir_ejercicio
+"Jarol, dime cuál fue la confusión de fondo si se puede, voy en sexto semestre de bachillerato",solicitar_retroalimentacion
+regrésame al ejercicio que fallé,repetir_ejercicio
+"bro, hasta aquí con eso, ahora vámonos a verbos",cambiar_tema
+"hey Jarol, ¿ya subí de nivel o sigo igual? de esta semana",consultar_progreso
+"soy de segundo de secundaria, hola Jarol, quiero entender la idea detrás de acentuación plis",solicitar_explicacion
+me ayudas? ¿cómo se aplicaría eso en la vida diaria? porfavor,solicitar_ejemplo
+"quiero practicar en el celular, porfa, quiero entrenar con una prueba de fracciones equivalentes si se puede",solicitar_reto
+"oye, me puedes retar con inferencias al leer por favor, ando en segundo semestre de bachillerato??",solicitar_reto
+"oye, qué ondaaa tutor, qué tal",saludar
+lo que acabas de decir me confundió más cuando puedas,simplificar_explicacion
+"porfa, ¿qué idea tuve equivocada? por favor",solicitar_retroalimentacion
+"voy en primero de secundaria, ¿cuántas actividades exitosas llevo hasta hoy? gracias",consultar_progreso
+"bueno, ya estuvo por hoy, ahí muere, hasta la próxima",despedirse
+"ok, me tengo que ir, hasta la próxima, Jarol",despedirse
+"perfecto, me salgo, continuamos mañana, toca descansar!",despedirse
+"soy de segundo de secundaria, otra vuelta al mismo reto de ahorita??",repetir_ejercicio
+"bro, ¿me lo cuentas como si apenas empezara? por favor, lo estamos viendo en clase??",simplificar_explicacion
+¿es equivalente mi respuesta un sustantivo? cuando puedas??,verificar_respuesta
+"porfa, me aburrí de este tema, brincamos a signos de puntuación",cambiar_tema
+una duda: se me hizo bolas la explicación cuando puedas!,simplificar_explicacion
+"ok, me tengo que ir, hasta la próxima, gracias??",despedirse
+"Jarol, dejemos pendiente esto, me paso a uso de la coma",cambiar_tema
+¿qué idea tuve equivocada? porfa??,solicitar_retroalimentacion
+"ayúdame a revisar el razonamiento donde fallé, curso cuarto semestre de prepa",solicitar_retroalimentacion
+me ayudas? muestra cómo se aplica sujeto y predicado en un caso real porfa,solicitar_ejemplo
+"Oye Jarol, ¿en qué parte la regué? por favor",solicitar_retroalimentacion
+"profe, qué ondaaa tutor, qué tal!",saludar
+me ayudas? ¿en qué parte la regué? xfa??,solicitar_retroalimentacion
+"disculpa, vamos a calarme con un cuestionario de ortografía",solicitar_reto
+kiero entrenar con una prueba de probabilidad??,solicitar_reto
+me ayudas? ¿qué idea tuve equivocada?,solicitar_retroalimentacion
+me ayudas? ¿me puedes dar un resumen de mi progreso académico? xfa,consultar_progreso
+lo que acabas de decir me confundió más porfavor!,simplificar_explicacion
+"se me complica mucho, oye, vamos a calarme con un cuestionario de inferencias al leer porfis",solicitar_reto
+"una duda: dejemos pendiente esto, me paso a áreas de figuras, voy en sexto semestre de bachillerato??",cambiar_tema
+"a ver, se me hizo bolas la explicación xfa",simplificar_explicacion
+píntame una situación donde se use divisiones,solicitar_ejemplo
+"bro, ayúdame a revisar el razonamiento donde fallé xfa??",solicitar_retroalimentacion
+"hola Jarol, quiero entender la idea detrás de números negativos pls",solicitar_explicacion
+"voy en sexto semestre de bachillerato, porfa, ¿puedes comprobar lo que contesté?",verificar_respuesta
+"apenas estoy aprendiendo, ¿cómo se aplicaría eso en la vida diaria? xfa!",solicitar_ejemplo
+"esa respuesta estuvo pesada, simplifícala",simplificar_explicacion
+"Oye Jarol, regrésame al ejercicio que fallé",repetir_ejercicio
+quiero entender la idea detrás de probabilidad??,solicitar_explicacion
+"Jarol, holis, aquí estoy",saludar
+"apenas estoy aprendiendo, ¿ya subí de nivel o sigo igual? en la app?",consultar_progreso
+"amigo, qué hay de nuevo, ya llegué",saludar
+quiero entrenar con una prueba de sinónimos y antónimos si puedes,solicitar_reto
+me puedes retar con sujeto y predicado porfavor,solicitar_reto
+"bueno, ya estuvo por hoy, ahí muere, Jarol",despedirse
+"lo estamos viendo en clase, Oye Jarol, ¿podemos repetir el problema tal cual? cuando puedas",repetir_ejercicio
+"Jarol, regrésame al ejercicio que fallé, lo estamos viendo en clase en el chat?",repetir_ejercicio
+"ando en segundo semestre de bachillerato, me ayudas? ¿ya subí de nivel o sigo igual?",consultar_progreso
+¿es equivalente mi respuesta 3/4?,verificar_respuesta
+¿puedo saltar a porcentajes en vez de seguir aquí?,cambiar_tema
+"perfecto, me salgo, continuamos mañana, gracias",despedirse
+"porfa, ¿mi operación pasó la prueba? porfis",verificar_respuesta
+"holis, aquí estoy, soy nuevo",saludar
+"bro, ando bien confundido con eso de conectores si puedes",solicitar_explicacion
+"una duda: ayúdame a revisar el razonamiento donde fallé, soy de segundo de secundaria",solicitar_retroalimentacion
+me ayudas? lo que acabas de decir me confundió más plis,simplificar_explicacion
+"Jarol, vamos a calarme con un cuestionario de divisiones pls",solicitar_reto
+píntame una situación donde se use tipos de texto!,solicitar_ejemplo
+"porfa, ¿qué podría revisar para seguir sin copiarte? cuando puedas",solicitar_pista
+"listo, me salgo, continuamos mañana, seguimos luego",despedirse
+"disculpa, ¿cuántas actividades exitosas llevo hasta hoy? si se puede",consultar_progreso
+"porfa, ¿ya subí de nivel o sigo igual?",consultar_progreso
+"me ayudas? me bloqueé con el problema, ¿una pista? con el ejercicio?",solicitar_pista
+regrésame al ejercicio que fallé xfa,repetir_ejercicio
+"disculpa, dejemos pendiente esto, me paso a ecuaciones de primer grado pls",cambiar_tema
+"ando en segundo semestre de bachillerato, hey Jarol, ¿puedo saltar a fracciones en vez de seguir aquí?",cambiar_tema
+"saludos, muy buenas Jarol, listo para estudiar!",saludar
+"Jarol, me puedes retar con tiempos verbales",solicitar_reto
+me ayudas? ¿me puedes dar un resumen de mi progreso académico? porfa de esta semana,consultar_progreso
+"Jarol, me tengo que ir, hasta la próxima, Jarol",despedirse
+"Oye Jarol, quiero entender la idea detrás de teorema de Pitágoras!",solicitar_explicacion
+"oye, holis, aquí estoy, ya entré??",saludar
+"se me complica mucho, quiero entender la idea detrás de regla de tres porfis",solicitar_explicacion
+"oye, quiero entrenar con una prueba de inferencias al leer",solicitar_reto
+"me pierdo cuando el profe habla de perímetro gracias, apenas estoy aprendiendo!",solicitar_explicacion
+"disculpa, vamos a calarme con un cuestionario de fracciones equivalentes si puedes",solicitar_reto
+"me salgo, continuamos mañana, mañana regreso?",despedirse
+"una duda: regrésame al ejercicio que fallé, voy en tercero de secundaria el de antes",repetir_ejercicio
+"hola Jarol, vamos a calarme con un cuestionario de probabilidad",solicitar_reto
+"hey Jarol, quiero regresar a esa pregunta y reintentar por favor",repetir_ejercicio
+"disculpa, píntame una situación donde se use gráficas si puedes",solicitar_ejemplo
+"porfa, ¿me puedes dar un resumen de mi progreso académico? porfavor",consultar_progreso
+"oye, ¿es equivalente mi respuesta 0.5? cuando puedas",verificar_respuesta
+"porfa, ¿cómo se aplicaría eso en la vida diaria? si se puede?",solicitar_ejemplo
+"hey Jarol, me aburrí de este tema, brincamos a fracciones",cambiar_tema
+¿qué podría revisar para seguir sin copiarte? porfa,solicitar_pista
+"a ver, ¿qué podría revisar para seguir sin copiarte? si puedes con esto??",solicitar_pista
+"es para mi tarea, me ayudas? ¿qué idea tuve equivocada? gracias!",solicitar_retroalimentacion
+"entonces, ya estuvo por hoy, ahí muere, toca descansar",despedirse
+"estudio primero de prepa, Oye Jarol, dime cuál fue la confusión de fondo",solicitar_retroalimentacion
+"disculpa, nomás indícame por dónde va porfavor con esto",solicitar_pista
+"apenas estoy aprendiendo, bro, dime cuál fue la confusión de fondo",solicitar_retroalimentacion
+¿podemos repetir el problema tal cual?,repetir_ejercicio
+"hola Jarol, dime cuál fue la confusión de fondo, tengo examen mañana",solicitar_retroalimentacion
+"sale, ya estuvo por hoy, ahí muere",despedirse
+"bro, ¿cómo se aplicaría eso en la vida diaria? si se puede",solicitar_ejemplo
+"oye, ¿en qué competencia he avanzado más?",consultar_progreso
+regrésame al ejercicio que fallé porfis,repetir_ejercicio
+dime cuál fue la confusión de fondo por favor,solicitar_retroalimentacion
+nomás indícame por dónde va con esto!,solicitar_pista
+"ok, me salgo, continuamos mañana, fue todo por hoy",despedirse
+"necesito ver un caso con áreas de figuras plis, se me complica mucho",solicitar_ejemplo
+"apenas estoy aprendiendo, me ayudas? hasta aquí con eso, ahora vámonos a ortografía plis?",cambiar_tema
+una duda: me pierdo cuando el profe habla de ángulos!,solicitar_explicacion
+"apenas estoy aprendiendo, bro, ¿cuántas actividades exitosas llevo hasta hoy?",consultar_progreso
+"Oye Jarol, píntame una situación donde se use uso de la coma porfavor??",solicitar_ejemplo
+"amigo, muy buenas Jarol, ya entré",saludar
+"saludos, holis, aquí estoy, ya llegué?",saludar
+"disculpa, ¿podemos repetir el problema tal cual? por favor, apenas estoy aprendiendo?",repetir_ejercicio
+"apenas estoy aprendiendo, disculpa, dime cuál fue la confusión de fondo",solicitar_retroalimentacion
+"Oye Jarol, nomás indícame por dónde va",solicitar_pista
+"disculpa, quiero entrenar con una prueba de regla de tres, voy en tercero de secundaria",solicitar_reto
+"dime cuál fue la confusión de fondo, voy en primero de secundaria",solicitar_retroalimentacion
+"qué tal, muy buenas Jarol, ¿cómo andas?",saludar
+"Jarol, ¿ya subí de nivel o sigo igual?",consultar_progreso
+"ok, me salgo, continuamos mañana",despedirse
+"hola Jarol, desde dónde empiezo para aprender porcentajes",solicitar_explicacion
+"me salgo, continuamos mañana, ya me voy",despedirse
+"oye, ¿qué podría revisar para seguir sin copiarte? plis",solicitar_pista
+¿qué podría revisar para seguir sin copiarte? si puedes,solicitar_pista
+"ando en segundo semestre de bachillerato, bro, ¿qué podría revisar para seguir sin copiarte?",solicitar_pista
+"hey Jarol, me puedes retar con propiedades de las potencias",solicitar_reto
+"porfa, ¿cuántas actividades exitosas llevo hasta hoy? porfavor??",consultar_progreso
+"hola Jarol, ¿me puedes dar un resumen de mi progreso académico? si se puede hasta hoy",consultar_progreso
+¿podemos repetir el problema tal cual? xfa!,repetir_ejercicio
+"voy en sexto semestre de bachillerato, bro, ¿cómo se aplicaría eso en la vida diaria?",solicitar_ejemplo
+"entonces, me tengo que ir, hasta la próxima, mañana regreso",despedirse
+¿qué idea tuve equivocada? si se puede!,solicitar_retroalimentacion
+"disculpa, regrésame al ejercicio que fallé xfa",repetir_ejercicio
+"a ver, ¿cómo se aplicaría eso en la vida diaria? cuando puedas",solicitar_ejemplo
+"Jarol, ¿podemos repetir el problema tal cual? porfis",repetir_ejercicio
+"Oye Jarol, ¿me puedes dar un resumen de mi progreso académico? por favor",consultar_progreso
+"porfa, ¿cuántas actividades exitosas llevo hasta hoy? pls, tengo examen mañana en la app?",consultar_progreso
+"Oye Jarol, ¿en qué competencia he avanzado más?",consultar_progreso
+me ayudas? quiero regresar a esa pregunta y reintentar si puedes de ahorita,repetir_ejercicio
+una duda: necesito ver un caso con sujeto y predicado porfavor??,solicitar_ejemplo
+"bro, muestra cómo se aplica números negativos en un caso real",solicitar_ejemplo
+"disculpa, ¿es equivalente mi respuesta 5?",verificar_respuesta
+"hola Jarol, necesito ver un caso con tipos de texto porfa",solicitar_ejemplo
+"bro, esa respuesta estuvo pesada, simplifícala si se puede??",simplificar_explicacion
+"listo, me salgo, continuamos mañana, ya me voy??",despedirse
+me ayudas? quiero entender la idea detrás de inferencias al leer!,solicitar_explicacion
+"hola Jarol, ¿qué podría revisar para seguir sin copiarte? si puedes",solicitar_pista
+"Jarol, lo que acabas de decir me confundió más",simplificar_explicacion
+"a ver, ¿podemos repetir el problema tal cual? cuando puedas el de antes",repetir_ejercicio
+muestra cómo se aplica ortografía en un caso real,solicitar_ejemplo
+"oye, ¿qué idea tuve equivocada? porfis??",solicitar_retroalimentacion
+"bro, ¿cuántas actividades exitosas llevo hasta hoy? de esta semana",consultar_progreso
+"bro, ¿ya subí de nivel o sigo igual?",consultar_progreso
+¿como se aplicaría eso en la vida diaria?,solicitar_ejemplo
+vamos a calarme con un cuestionario de gráficas por favor,solicitar_reto
+"muy buenas Jarol, ¿como andas?",saludar
+"sale, bye bye, ahí te ves, toca descansar",despedirse
+"Oye Jarol, kiero regresar a esa pregunta y reintentar xfa, apenas estoy aprendiendo?",repetir_ejercicio
+"bro, kiero entrenar con una prueba de verbos?",solicitar_reto
+me ayudas? ¿me lo cuentas como si apenas empezara?,simplificar_explicacion
+"curso cuarto semestre de prepa, porfa, dejemos pendiente esto, me paso a gráficas",cambiar_tema
+"es para mi tarea, disculpa, quiero entrenar con una prueba de raíz cuadrada porfavor",solicitar_reto
+"amigo, qué hay de nuevo, qué gusto??",saludar
+¿puedes comprobar lo que contesté? plis!,verificar_respuesta
+"oye, me bloqueé con el problema, ¿una pista? xfa con esto??",solicitar_pista
+quiero entrenar con una prueba de fracciones,solicitar_reto
+"bueno, bye bye, ahí te ves, Jarol",despedirse
+"Oye Jarol, se me hizo bolas la explicación, voy en tercero de secundaria",simplificar_explicacion
+"¿ya subí de nivel o sigo igual?, soy de segundo de secundaria?",consultar_progreso
+una duda: ayúdame a revisar el razonamiento donde fallé pls,solicitar_retroalimentacion
+"a ver, me bloqueé con el problema, ¿una pista?",solicitar_pista
+"me aburrí de este tema, brincamos a números decimales gracias!",cambiar_tema
+"estudio primero de prepa, disculpa, quiero entrenar con una prueba de acentuación",solicitar_reto
+"a ver, ¿q idea tuve equivocada?",solicitar_retroalimentacion
+¿cómo se aplicaría eso en la vida diaria? porfis,solicitar_ejemplo
+"bro, lo que acabas de decir me confundió más",simplificar_explicacion
+"Jarol, muy buenas Jarol, qué gusto",saludar
+¿en qué parte la regué? gracias?,solicitar_retroalimentacion
+se me hizo bolas la explicación porfis,simplificar_explicacion
+"perfecto, me tengo que ir, hasta la próxima, seguimos luego",despedirse
+"dime cuál fue la confusión de fondo, lo estamos viendo en clase",solicitar_retroalimentacion
+me puedes retar con fracciones equivalentes,solicitar_reto
+"Oye Jarol, ¿coincide mi solución con la esperada?",verificar_respuesta
+"apenas estoy aprendiendo, no me lo resuelvas, encamíname en este paso",solicitar_pista
+"se me complica mucho, una duda: píntame una situación donde se use fracciones equivalentes",solicitar_ejemplo
+¿ya subí de nivel o sigo igual? gracias,consultar_progreso
+"bro, necesito ver un caso con sujeto y predicado xfa??",solicitar_ejemplo
+necesito ver un caso con regla de tres?,solicitar_ejemplo
+"desde dónde empiezo para aprender probabilidad pls, voy en tercero de secundaria",solicitar_explicacion
+"quiero practicar en el celular, Oye Jarol, ¿es equivalente mi respuesta el sujeto? porfa??",verificar_respuesta
+una duda: ¿mi operación pasó la prueba?,verificar_respuesta
+"oye, nomás indícame por dónde va porfa!",solicitar_pista
+"ando en segundo semestre de bachillerato, hey Jarol, ¿coincide mi solución con la esperada?",verificar_respuesta
+"estudio primero de prepa, Oye Jarol, ¿es equivalente mi respuesta 25? plis",verificar_respuesta
+"bro, ayúdame a revisar el razonamiento donde fallé si puedes",solicitar_retroalimentacion
+"Oye Jarol, muestra cómo se aplica regla de tres en un caso real?",solicitar_ejemplo
+"voy en primero de secundaria, ¿es equivalente mi respuesta 8 centímetros?",verificar_respuesta
+"es para mi tarea, me ayudas? ¿me lo cuentas como si apenas empezara?",simplificar_explicacion
+"oye, ya estuvo por hoy, ahí muere, Jarol",despedirse
+"oye, ¿qué podría revisar para seguir sin copiarte? porfavor sin darme la solución",solicitar_pista
+"hasta aquí con eso, ahora vámonos a verbos",cambiar_tema
+"sale, me tengo que ir, hasta la próxima, fue todo por hoy!",despedirse
+"hola Jarol, dime cuál fue la confusión de fondo porfis!",solicitar_retroalimentacion
+"Oye Jarol, me aburrí de este tema, brincamos a gráficas cuando puedas?",cambiar_tema
+vamos a calarme con un cuestionario de tiempos verbales,solicitar_reto
+"qué tal, qué ondaaa tutor",saludar
+"hola Jarol, ¿en qué competencia he avanzado más? por favor",consultar_progreso
+nomás indícame por dónde va pls sin darme la solución!,solicitar_pista
+"hey Jarol, otra vuelta al mismo reto",repetir_ejercicio
+"buenas, muy buenas Jarol, aquí estamos",saludar
+"bro, ¿podemos repetir el problema tal cual?, tengo examen mañana",repetir_ejercicio
+una duda: me puedes retar con regla de tres porfa,solicitar_reto
+"bueno, ya estuvo por hoy, ahí muere, fue todo por hoy!",despedirse
+"buenas, qué hay de nuevo, qué tal",saludar
+"Jarol, échame un problema para resolver yo porfavor!",solicitar_reto
+¿podemos repetir el problema tal cual? si se puede el de antes,repetir_ejercicio
+"hola Jarol, ¿mi operación pasó la prueba?",verificar_respuesta
+"a ver, píntame una situación donde se use inferencias al leer",solicitar_ejemplo
+"Oye Jarol, ¿puedo saltar a probabilidad en vez de seguir aquí? si se puede",cambiar_tema
+"buenas, holis, aquí estoy, qué gusto!",saludar
+"bro, desde dónde empiezo para aprender sumas con fracciones??",solicitar_explicacion
+"oye, muy buenas Jarol, qué gusto",saludar
+regrésame al ejersicio que fallé por favor el de antes,repetir_ejercicio
+"quiero practicar en el celular, oye, ¿en qué competencia he avanzado más?",consultar_progreso
+me ayudas? ¿mi operación pasó la prueba? xfa,verificar_respuesta
+"apenas estoy aprendiendo, hola Jarol, ¿me lo cuentas como si apenas empezara? porfa",simplificar_explicacion
+"¿cómo se aplicaría eso en la vida diaria?, es para mi tarea",solicitar_ejemplo
+una duda: vamos a calarme con un cuestionario de ortografía xfa??,solicitar_reto
+"hola Jarol, échame un problema para resolver yo, ando en segundo semestre de bachillerato",solicitar_reto
+"a ver, me bloqueé con el problema, ¿una pista? sin darme la solución",solicitar_pista
+"qué tal, holis, aquí estoy, ¿cómo andas?",saludar
+"va, me salgo, continuamos mañana, gracias",despedirse
+"hola Jarol, dejemos pendiente esto, me paso a multiplicaciones pls",cambiar_tema
+"listo, bye bye, ahí te ves, hasta la próxima",despedirse
+"disculpa, ando bien confundido con eso de despejar la x?",solicitar_explicacion
+"hola Jarol, vamos a calarme con un cuestionario de divisiones porfavor",solicitar_reto
+"soy de segundo de secundaria, Oye Jarol, se me hizo bolas la explicación si puedes!",simplificar_explicacion
+"porfa, ¿en qué parte la regué?",solicitar_retroalimentacion
+"disculpa, hasta aquí con eso, ahora vámonos a propiedades de las potencias",cambiar_tema
+quiero entender la idea detrás de gráficas,solicitar_explicacion
+muestra cómo se aplica ortografía en un caso real si se puede,solicitar_ejemplo
+"oye, échame un problema para resolver yo cuando puedas?",solicitar_reto
+"porfa, ¿en qué competencia he avanzado más? hasta hoy",consultar_progreso
+"hola Jarol, ¿en qué competencia he avanzado más?",consultar_progreso
+"hey Jarol, ¿coincide mi solución con la esperada?",verificar_respuesta
+"a ver, ¿puedes comprobar lo que contesté?",verificar_respuesta
+me ayudas? ¿mi operación pasó la prueba? porfa,verificar_respuesta
+"oye, ¿puedes comprobar lo que contesté? plis",verificar_respuesta
+"soy de segundo de secundaria, oye, ¿es equivalente mi respuesta el sujeto?",verificar_respuesta
+"oye, ¿es equivalente mi respuesta 5?",verificar_respuesta
+"a ver, ¿qué idea tuve equivocada?",solicitar_retroalimentacion
+"holaa, muy buenas Jarol, listo para estudiar",saludar
+"apenas estoy aprendiendo, hey Jarol, píntame una situación donde se use conectores plis",solicitar_ejemplo
+"buenas, muy buenas Jarol, listo para estudiar",saludar
+"porfa, ¿cuántas actividades exitosas llevo hasta hoy? porfa",consultar_progreso
+"ok, bye bye, ahí te ves, hasta la próxima",despedirse
+"porfa, ayúdame a revisar el razonamiento donde fallé",solicitar_retroalimentacion
+"lo estamos viendo en clase, hey Jarol, regrésame al ejercicio que fallé",repetir_ejercicio
+"se me complica mucho, me ayudas? dime cuál fue la confusión de fondo xfa",solicitar_retroalimentacion
+"me ayudas? no me lo resuelvas, encamíname gracias, estoy estudiando para un examen con esto",solicitar_pista
+"Oye Jarol, desde dónde empiezo para aprender razonamiento matemático plis",solicitar_explicacion
+"hola Jarol, ando bien confundido con eso de perímetro gracias, voy en primero de secundaria",solicitar_explicacion
+"¿podemos repetir el problema tal cual?, es para mi tarea?",repetir_ejercicio
+"bro, regrésame al ejercicio que fallé por favor",repetir_ejercicio
+me ayudas? me puedes retar con números decimales si puedes,solicitar_reto
+"estudio primero de prepa, otra vuelta al mismo reto",repetir_ejercicio
+"disculpa, ¿puedo saltar a divisiones en vez de seguir aquí? xfa",cambiar_tema
+"tengo examen mañana, bro, vamos a calarme con un cuestionario de fracciones equivalentes",solicitar_reto
+"oye, me salgo, continuamos mañana, toca descansar?",despedirse
+"Jarol, vamos a calarme con un cuestionario de raíz cuadrada??",solicitar_reto
+"Oye Jarol, dejemos pendiente esto, me paso a inferencias al leer por favor",cambiar_tema
+regrésame al ejercicio que fallé pls,repetir_ejercicio
+"me pierdo cuando el profe habla de divisiones plis, estudio primero de prepa",solicitar_explicacion
+"hola Jarol, lo que acabas de decir me confundió más si se puede",simplificar_explicacion
+"estudio primero de prepa, dejemos pendiente esto, me paso a números negativos porfavor",cambiar_tema
+"amigo, holis, aquí estoy, qué tal?",saludar
+"hola Jarol, píntame una situación donde se use metáforas si se puede!",solicitar_ejemplo
+me ayudas? dime cuál fue la confusión de fondo!,solicitar_retroalimentacion
+"Jarol, me aburrí de este tema, brincamos a texto argumentativo si puedes",cambiar_tema
+"Jarol, ¿puedo saltar a uso de la coma en vez de seguir aquí? si puedes, tengo examen mañana!",cambiar_tema
+"disculpa, ¿puedo saltar a números decimales en vez de seguir aquí?",cambiar_tema
+"oye, me bloqueé con el problema, ¿una pista? porfis",solicitar_pista
+"curso cuarto semestre de prepa, quiero entender la idea detrás de acentuación gracias??",solicitar_explicacion
+"soy de segundo de secundaria, Oye Jarol, ¿cuántas actividades exitosas llevo hasta hoy? porfa",consultar_progreso
+"Jarol, qué ondaaa tutor, aquí estamos",saludar
+"me ayudas? ¿me lo cuentas como si apenas empezara?, ando en segundo semestre de bachillerato",simplificar_explicacion
+"profe, qué ondaaa tutor, ya entré",saludar
+muestra como se aplica perímetro en un caso real cuando puedas,solicitar_ejemplo
+"porfa, ¿puedes comprobar lo que contesté? plis",verificar_respuesta
+"bye bye, ahí te ves, fue todo por hoy",despedirse
+"hola Jarol, esa respuesta estuvo pesada, simplifícala gracias",simplificar_explicacion
+"va, ya estuvo por hoy, ahí muere, toca descansar",despedirse
+¿cuántas actividades exitosas llevo hasta hoy?,consultar_progreso
+"ando en segundo semestre de bachillerato, quiero entender la idea detrás de ortografía si se puede",solicitar_explicacion
+¿puedo saltar a teorema de Pitágoras en vez de seguir aquí?,cambiar_tema
+"me aburrí de este tema, brincamos a sujeto y predicado",cambiar_tema
+quiero regresar a esa pregunta y reintentar el de antes!,repetir_ejercicio
+"bro, ¿puedo saltar a sujeto y predicado en vez de seguir aquí?",cambiar_tema
+"hola Jarol, no me lo resuelvas, encamíname en este paso",solicitar_pista
+"soy de segundo de secundaria, a ver, nomás indícame por dónde va en este paso",solicitar_pista
+"voy en tercero de secundaria, porfa, hasta aquí con eso, ahora vámonos a porcentajes!",cambiar_tema
+"hey, qué ondaaa tutor, ya llegué!",saludar
+"holaa, holis, aquí estoy, qué tal",saludar
+"porfa, quiero entender la idea detrás de ángulos",solicitar_explicacion
+me pierdo cuando el profe habla de teorema de Pitágoras porfis,solicitar_explicacion
+"porfa, quiero regresar a esa pregunta y reintentar porfis",repetir_ejercicio
+quiero entrenar con una prueba de verbos cuando puedas!,solicitar_reto
+"oye, esa respuesta estuvo pesada, simplifícala gracias",simplificar_explicacion
+"soy de segundo de secundaria, a ver, ¿puedo saltar a raíz cuadrada en vez de seguir aquí? cuando puedas",cambiar_tema
+una duda: ¿cuántas actividades exitosas llevo hasta hoy? de esta semana,consultar_progreso
+desde dónde empiezo para aprender probabilidad cuando puedas,solicitar_explicacion
+"Jarol, qué ondaaa tutor, ya llegué",saludar
+ando bien confundido con eso de fracciones?,solicitar_explicacion
+"hola Jarol, lo que acabas de decir me confundió más porfis",simplificar_explicacion
+"oye, muy buenas Jarol, aquí estamos",saludar
+"bro, hasta aquí con eso, ahora vámonos a signos de puntuación si se puede!",cambiar_tema
+"disculpa, desde dónde empiezo para aprender ortografía?",solicitar_explicacion
+"se me complica mucho, porfa, regrésame al ejercicio que fallé porfa",repetir_ejercicio
+"a ver, ¿puedo saltar a sinónimos y antónimos en vez de seguir aquí? si se puede",cambiar_tema
+me ayudas? nomás indícame por dónde va por favor!,solicitar_pista
+"hey Jarol, ¿cómo se aplicaría eso en la vida diaria?",solicitar_ejemplo
+"hola Jarol, ¿me lo cuentas como si apenas empezara?",simplificar_explicacion
+"entonces, me tengo que ir, hasta la próxima, seguimos luego?",despedirse
+me ayudas? otra vuelta al mismo reto?,repetir_ejercicio
+"apenas estoy aprendiendo, una duda: me bloqueé con el problema, ¿una pista?",solicitar_pista
+"curso cuarto semestre de prepa, Jarol, me aburrí de este tema, brincamos a sinónimos y antónimos gracias?",cambiar_tema
+"a ver, ¿mi operación pasó la prueba? plis",verificar_respuesta
+"hola Jarol, desde dónde empiezo para aprender regla de tres",solicitar_explicacion
+"bro, me bloqueé con el problema, ¿una pista? plis?",solicitar_pista
+quiero entender la idea detrás de uso de la coma porfavor,solicitar_explicacion
+"hey Jarol, quiero entender la idea detrás de conectores por favor??",solicitar_explicacion
+"hola Jarol, muestra cómo se aplica fracciones en un caso real por favor",solicitar_ejemplo
+"qué hay de nuevo, qué tal",saludar
+"esa respuesta estuvo pesada, simplifícala plis",simplificar_explicacion
+"Oye Jarol, me pierdo cuando el profe habla de números decimales si se puede!",solicitar_explicacion
+"me bloqueé con el problema, ¿una pista? sin darme la solución??",solicitar_pista
+una duda: ¿me lo cuentas como si apenas empezara?,simplificar_explicacion
+"no me lo resuelvas, encamíname plis en este paso",solicitar_pista
+"oye, ¿en qué competencia he avanzado más? xfa?",consultar_progreso
+"quiero practicar en el celular, hasta aquí con eso, ahora vámonos a divisiones si se puede",cambiar_tema
+"entonces, bye bye, ahí te ves, fue todo por hoy",despedirse
+"entonces, me tengo que ir, hasta la próxima!",despedirse
+"disculpa, se me hizo bolas la explicación plis",simplificar_explicacion
+"hey Jarol, píntame una situación donde se use verbos si puedes?",solicitar_ejemplo
+"Jarol, otra vuelta al mismo reto si se puede, es para mi tarea?",repetir_ejercicio
+"a ver, vamos a calarme con un cuestionario de fracciones plis",solicitar_reto
+"porfa, me bloqueé con el problema, ¿una pista?",solicitar_pista
+"lo estamos viendo en clase, nomás indícame por dónde va?",solicitar_pista
+"voy en primero de secundaria, Jarol, otra vuelta al mismo reto!",repetir_ejercicio
+"Oye Jarol, ¿puedes comprobar lo que contesté? cuando puedas!",verificar_respuesta
+"hola Jarol, lo que acabas de decir me confundió mas porfa",simplificar_explicacion
+"holaa, muy buenas Jarol, aquí estamos",saludar
+"estoy estudiando para un examen, quiero entrenar con una prueba de regla de tres",solicitar_reto
+"a ver, se me hizo bolas la explicación!",simplificar_explicacion
+"Oye Jarol, ¿cómo se aplicaría eso en la vida diaria?",solicitar_ejemplo
+"Jarol, qué hay de nuevo, ya llegué",saludar
+"se me complica mucho, Jarol, ¿es equivalente mi respuesta 8 centímetros? gracias",verificar_respuesta
+"a ver, ¿ya subí de nivel o sigo igual?",consultar_progreso
+"hola Jarol, dime cuál fue la confusión de fondo??",solicitar_retroalimentacion
+me ayudas? ¿qué podría revisar para seguir sin copiarte?,solicitar_pista
+"ando en segundo semestre de bachillerato, hey Jarol, ¿puedes comprobar lo que contesté? pls",verificar_respuesta
+"me ayudas? échame un problema para resolver yo, tengo examen mañana?",solicitar_reto
+"oye, necesito ver un caso con probabilidad cuando puedas",solicitar_ejemplo
+"bro, me bloqueé con el problema, ¿una pistita? porfa con esto!",solicitar_pista
+"voy en tercero de secundaria, disculpa, ¿en qué parte la regué? xfa",solicitar_retroalimentacion
+"qué tal, qué hay de nuevo",saludar
+me ayudas? ¿en qué competencia he avanzado más? xfa,consultar_progreso
+"a ver, ¿me lo cuentas como si apenas empezara?, ando en segundo semestre de bachillerato",simplificar_explicacion
+"ok, me salgo, continuamos mañana, Jarol?",despedirse
+"me puedes retar con números negativos porfis, quiero practicar en el celular",solicitar_reto
+"disculpa, échame un problema para resolver yo?",solicitar_reto
+"disculpa, me bloqueé con el problema, ¿una pista? plis",solicitar_pista
+"voy en tercero de secundaria, a ver, vamos a calarme con un cuestionario de raíz cuadrada",solicitar_reto
+"no me lo resuelvas, encamíname plis, curso cuarto semestre de prepa en este paso?",solicitar_pista
+"amigo, qué ondaaa tutor, qué tal?",saludar
+"porfa, ¿me lo cuentas como si apenas empezara?",simplificar_explicacion
+"bro, ¿podemos repetir el problema tal cual? en el chat?",repetir_ejercicio
+"voy en primero de secundaria, hola Jarol, píntame una situación donde se use regla de tres cuando puedas",solicitar_ejemplo
+"listo, me tengo que ir, hasta la próxima, Jarol!",despedirse
+échame un problema para resolver yo gracias??,solicitar_reto
+"a ver, otra vuelta al mismo reto",repetir_ejercicio
+"muy buenas Jarol, ya llegué?",saludar
+"bro, ¿podemos repetir el problema tal cual? si puedes",repetir_ejercicio
+"oye, muestra cómo se aplica ángulos en un caso real cuando puedas?",solicitar_ejemplo
+me ayudas? ¿qué podría revisar para seguir sin copiarte? con esto??,solicitar_pista
+"porfa, esa respuesta estuvo pesada, simplifícala",simplificar_explicacion
+me ayudas? ¿en qué parte la regué? plis,solicitar_retroalimentacion
+"hola Jarol, dime cuál fue la confusión de fondo si se puede!",solicitar_retroalimentacion
+"Oye Jarol, ¿en qué parte la regué? plis",solicitar_retroalimentacion
+"bro, ¿qué idea tuve equivocada?",solicitar_retroalimentacion
+"quiero practicar en el celular, me bloqueé con el problema, ¿una pista?",solicitar_pista
+"Oye Jarol, ¿me puedes dar un resumen de mi progreso académico? porfavor",consultar_progreso
+"ando en segundo semestre de bachillerato, Jarol, ¿en qué parte la regué? porfavor??",solicitar_retroalimentacion
+"hey Jarol, se me hizo bolas la explicación",simplificar_explicacion
+"Oye Jarol, me pierdo cuando el profe habla de ortografía xfa",solicitar_explicacion
+ayúdame a revisar el razonamiento donde fallé xfa?,solicitar_retroalimentacion
+píntame una situación donde se use uso de la coma gracias!,solicitar_ejemplo
+"hola Jarol, hasta aquí con eso, ahora vámonos a raíz cuadrada",cambiar_tema
+"hey Jarol, nomás indícame por dónde va pls",solicitar_pista
+"hola Jarol, regrésame al ejercicio que fallé",repetir_ejercicio
+muestra como se aplica conectores en un caso real,solicitar_ejemplo
+"voy en sexto semestre de bachillerato, me ayudas? ¿qué podría revisar para seguir sin copiarte? en este paso",solicitar_pista
+"sale, bye bye, ahí te ves, Jarol",despedirse
+"porfa, píntame una situación donde se use ecuaciones de primer grado plis, curso cuarto semestre de prepa",solicitar_ejemplo
+¿me puedes dar un resumen de mi progreso académico? xfa,consultar_progreso
+lo que acabas de decir me confundió más xfa,simplificar_explicacion
+"porfa, ¿en qué competencia he avanzado más? por favor",consultar_progreso
+"listo, me salgo, continuamos mañana, gracias",despedirse
+me ayudas? ¿podemos repetir el problema tal cual?,repetir_ejercicio
+"bro, ayúdame a revisar el razonamiento donde fallé plis, tengo examen mañana??",solicitar_retroalimentacion
+"ando en segundo semestre de bachillerato, vamos a calarme con un cuestionario de raíz cuadrada pls",solicitar_reto
+¿en qué competencia he avanzado más? porfa en la app,consultar_progreso
+me ayudas? ¿puedo saltar a tipos de texto en vez de seguir aquí? pls,cambiar_tema
+"oye, échame un problema para resolver yo",solicitar_reto
+"bro, échame un problema para resolver yo porfa",solicitar_reto
+"porfa, ¿qué podría revisar para seguir sin copiarte?",solicitar_pista
+"hey, holis, aquí estoy",saludar
+"no me lo resuelvas, encamíname porfavor con esto",solicitar_pista
+quiero entender la idea detrás de gráficas si puedes,solicitar_explicacion
+"oye, me salgo, continuamos mañana, seguimos luego",despedirse
+"hey Jarol, ando bien confundido con eso de ángulos porfavor, estudio primero de prepa",solicitar_explicacion
+"hey Jarol, me puedes retar con razonamiento matemático por favor",solicitar_reto
+"bro, ayúdame a revisar el razonamiento donde fallé",solicitar_retroalimentacion
+"hola Jarol, muestra cómo se aplica regla de tres en un caso real",solicitar_ejemplo
+"hey Jarol, ¿mi operación pasó la prueba?",verificar_respuesta
+"hola Jarol, me puedes retar con verbos, soy de segundo de secundaria",solicitar_reto
+"Jarol, bye bye, ahí te ves, fue todo por hoy",despedirse
+"me aburrí de este tema, brincamos a divisiones, voy en sexto semestre de bachillerato",cambiar_tema
+"ando en segundo semestre de bachillerato, una duda: kiero regresar a esa pregunta y reintentar!",repetir_ejercicio
+"estoy estudiando para un examen, me puedes retar con comprensión lectora!",solicitar_reto
+"tengo examen mañana, porfa, ¿qué podría revisar para seguir sin copiarte? sin darme la solución",solicitar_pista
+"estoy estudiando para un examen, desde dónde empiezo para aprender tipos de texto",solicitar_explicacion
+"disculpa, quiero entender la idea detrás de gráficas cuando puedas!",solicitar_explicacion
+"Jarol, ¿qué idea tuve equivocada?",solicitar_retroalimentacion
+"hola Jarol, hasta aquí con eso, ahora vámonos a multiplicaciones porfis",cambiar_tema
+otra vuelta al mismo reto por favor,repetir_ejercicio
+"disculpa, se me hizo bolas la explicación por favor",simplificar_explicacion
+"estoy estudiando para un examen, porfa, ¿qué podría revisar para seguir sin copiarte?",solicitar_pista
+"listo, me salgo, continuamos mañana, fue todo por hoy?",despedirse
+"voy en primero de secundaria, hey Jarol, ¿puedo saltar a comprensión lectora en vez de seguir aquí? si se puede",cambiar_tema
+"una duda: hasta aquí con eso, ahora vámonos a números negativos porfa",cambiar_tema
+"amigo, holis, aquí estoy, listo para estudiar?",saludar
+"Oye Jarol, ¿coincide mi solución con la esperada? cuando puedas",verificar_respuesta
+"muy buenas Jarol, qué tal!",saludar
+"disculpa, ¿me puedes dar un resumen de mi progreso académico? de esta semana",consultar_progreso
+"voy en primero de secundaria, hola Jarol, me pierdo cuando el profe habla de signos de puntuación porfavor",solicitar_explicacion
+ando bien confundido con eso de resumen de un texto si se puede,solicitar_explicacion
+"hola Jarol, ¿me puedes dar un resumen de mi progreso académico?, curso cuarto semestre de prepa",consultar_progreso
+una duda: se me hizo bolas la explicación,simplificar_explicacion
+¿qué idea tuve equivocada? si puedes?,solicitar_retroalimentacion
+"Jarol, holis, aquí estoy, soy nuevo",saludar
+¿cuántas actividades exitosas llevo hasta hoy? porfavor de esta semana,consultar_progreso
+"Jarol, me puedes retar con gráficas cuando puedas??",solicitar_reto
+"porfa, ¿qué podría revisar para seguir sin copiarte? si puedes??",solicitar_pista
+"oye, ya estuvo por hoy, ahí muere, seguimos luego",despedirse
+"a ver, ¿qué podría revisar para seguir sin copiarte? plis en este paso??",solicitar_pista
+"a ver, ayúdame a revisar el razonamiento donde fallé!",solicitar_retroalimentacion
+"a ver, me aburrí de este tema, brincamos a números decimales si se puede?",cambiar_tema
+"porfa, ¿me puedes dar un resumen de mi progreso académico? gracias en la app",consultar_progreso
+"porfa, quiero entrenar con una prueba de metáforas??",solicitar_reto
+¿ya subí de nivel o sigo igual? plis,consultar_progreso
+"estudio primero de prepa, me pierdo cuando el profe habla de sujeto y predicado si se puede",solicitar_explicacion
+"me aburrí de este tema, brincamos a raíz cuadrada!",cambiar_tema
+"qué tal, qué ondaaa tutor, ya llegué",saludar
+"profe, qué ondaaa tutor, listo para estudiar",saludar
+se me hizo bolas la explicación porfa,simplificar_explicacion
+"curso cuarto semestre de prepa, ¿puedo saltar a tiempos verbales en vez de seguir aquí?",cambiar_tema
+ando bien confundido con eso de multiplicaciones,solicitar_explicacion
+"¿puedes comprobar lo que contesté? plis, voy en tercero de secundaria??",verificar_respuesta
+"es para mi tarea, ¿mi operación pasó la prueba?",verificar_respuesta
+necesito ver un caso con texto argumentativo!,solicitar_ejemplo
+"hola Jarol, nomás indícame por dónde va si puedes",solicitar_pista
+me puedes retar con metáforas,solicitar_reto
+"oye, bye bye, ahí te ves, gracias",despedirse
+¿es equivalente mi respuesta 25? si se puede??,verificar_respuesta
+muestra cómo se aplica uso de la coma en un caso real,solicitar_ejemplo
+me pierdo cuando el profe habla de raíz cuadrada,solicitar_explicacion
+"estoy estudiando para un examen, me bloqueé con el problema, ¿una pista? gracias??",solicitar_pista
+"porfa, ando bien confundido con eso de divisiones!",solicitar_explicacion
+"estoy estudiando para un examen, esa respuesta estuvo pesada, simplifícala",simplificar_explicacion
+"curso cuarto semestre de prepa, hola Jarol, ¿podemos repetir el problema tal cual? plis",repetir_ejercicio
+"oye, bye bye, ahí te ves, mañana regreso",despedirse
+"Jarol, ¿ya subí de nivel o sigo igual? cuando puedas?",consultar_progreso
+"oye, ya estuvo por hoy, ahí muere, toca descansar",despedirse
+"oye, esa respuesta estuvo pesada, simplifícala pls!",simplificar_explicacion
+"holaa, muy buenas Jarol, q tal!",saludar
+"¿podemos repetir el problema tal cual? si se puede, estoy estudiando para un examen por última vez",repetir_ejercicio
+"a ver, muestra cómo se aplica números decimales en un caso real??",solicitar_ejemplo
+"porfa, ¿en qué parte la regué? si puedes?",solicitar_retroalimentacion
+"oye, muy buenas Jarol, qué tal",saludar
+"me puedes retar con gráficas porfavor, lo estamos viendo en clase??",solicitar_reto
+"Oye Jarol, ¿en qué parte la regué?",solicitar_retroalimentacion
+píntame una situación donde se use resumen de un texto cuando puedas,solicitar_ejemplo
+"holaa, qué hay de nuevo, ¿cómo andas?",saludar
+kiero entender la idea detrás de teorema de Pitágoras?,solicitar_explicacion
+¿me lo cuentas como si apenas empezara?,simplificar_explicacion
+"saludos, holis, aquí estoy, listo para estudiar",saludar
+"quiero practicar en el celular, oye, ¿podemos repetir el problema tal cual?",repetir_ejercicio
+me ayudas? ¿me puedes dar un resumen de mi progreso académico? cuando puedas??,consultar_progreso
+"porfa, me aburrí de este tema, brincamos a inferencias al leer por favor",cambiar_tema
+"Jarol, ¿podemos repetir el problema tal cual? gracias?",repetir_ejercicio
+"oye, se me hizo bolas la explicación porfis, estoy estudiando para un examen??",simplificar_explicacion
+"estudio primero de prepa, ¿en qué parte la regué? cuando puedas?",solicitar_retroalimentacion
+"hey, qué hay de nuevo, listo para estudiar",saludar
+"Jarol, ¿mi operación pasó la prueba?, curso cuarto semestre de prepa",verificar_respuesta
+"Jarol, ¿es equivalente mi respuesta un sustantivo? porfavor",verificar_respuesta
+"hola Jarol, quiero entrenar con una prueba de probabilidad si puedes",solicitar_reto
+"bro, ¿me puedes dar un resumen de mi progreso académico? si se puede",consultar_progreso
+"listo, bye bye, ahí te ves?",despedirse
+una duda: me pierdo cuando el profe habla de acentuación?,solicitar_explicacion
+"Oye Jarol, dime cuál fue la confusión de fondo porfa?",solicitar_retroalimentacion
+"¿qué podría revisar para seguir sin copiarte?, quiero practicar en el celular",solicitar_pista
+"holaa, muy buenas Jarol, ya entré",saludar
+"¿mi operación pasó la prueba?, voy en tercero de secundaria",verificar_respuesta
+quiero regresar a esa pregunta y reintentar gracias de ahorita??,repetir_ejercicio
+"esa respuesta estuvo pesada, simplifícala porfis",simplificar_explicacion
+"holis, aquí estoy",saludar
+"holaa, qué ondaaa tutor!",saludar
+"no me lo resuelvas, encamíname con el ejercicio",solicitar_pista
+"estudio primero de prepa, disculpa, dime cuál fue la confusión de fondo??",solicitar_retroalimentacion
+"buenas, q ondaaa tutor, ¿cómo andas?",saludar
+"hola Jarol, hasta aquí con eso, ahora vámonos a verbos si puedes?",cambiar_tema
+dime cuál fue la confusión de fondo porfis??,solicitar_retroalimentacion
+"Jarol, quiero entender la idea detrás de texto argumentativo pls, quiero practicar en el celular",solicitar_explicacion
+"disculpa, lo que acabas de decir me confundió más",simplificar_explicacion
+"apenas estoy aprendiendo, ¿en q parte la regué?",solicitar_retroalimentacion
+"perfecto, me salgo, continuamos mañana, fue todo por hoy",despedirse
+"estudio primero de prepa, me ayudas? regrésame al ejercicio que fallé gracias??",repetir_ejercicio
+¿puedo saltar a ecuaciones de primer grado en vez de seguir aquí? plis,cambiar_tema
+"porfa, vamos a calarme con un cuestionario de metáforas xfa??",solicitar_reto
+"oye, ¿me lo cuentas como si apenas empezara? pls",simplificar_explicacion
+"Jarol, qué ondaaa tutor, ya entré",saludar
+"bro, ¿me lo cuentas como si apenas empezara? porfis",simplificar_explicacion
+"Jarol, ¿es equivalente mi respuesta un sustantivo?",verificar_respuesta
+"hey, muy buenas Jarol, aquí estamos",saludar
+"oye, quiero entender la idea detrás de teorema de Pitágoras si puedes",solicitar_explicacion
+una duda: ¿es equivalente mi respuesta 8 centímetros? porfa??,verificar_respuesta
+¿en qué competencia he avanzado más? pls,consultar_progreso
+"ando en segundo semestre de bachillerato, una duda: ¿es equivalente mi respuesta el sujeto? porfa",verificar_respuesta
+píntame una situación donde se use perímetro plis!,solicitar_ejemplo
+"hey Jarol, dime cuál fue la confusión de fondo pls?",solicitar_retroalimentacion
+"oye, kiero regresar a esa pregunta y reintentar??",repetir_ejercicio
+"voy en tercero de secundaria, hey Jarol, quiero entender la idea detrás de despejar la x cuando puedas??",solicitar_explicacion
+"a ver, hasta aquí con eso, ahora vámonos a propiedades de las potencias gracias",cambiar_tema
+"Oye Jarol, me puedes retar con razonamiento matemático",solicitar_reto
+"¿en qué competencia he avanzado más?, curso cuarto semestre de prepa de esta semana?",consultar_progreso
+"oye, dejemos pendiente esto, me paso a divisiones si se puede, voy en tercero de secundaria",cambiar_tema
+"oye, ¿cuántas actividades exitosas llevo hasta hoy?",consultar_progreso
+"me aburrí de este tema, brincamos a verbos plis!",cambiar_tema
+nomás indícame por dónde va porfavor,solicitar_pista
+échame un problema para resolver yo pls,solicitar_reto
+"curso cuarto semestre de prepa, me pierdo cuando el profe habla de signos de puntuación",solicitar_explicacion
+"Jarol, me tengo que ir, hasta la próxima, fue todo por hoy?",despedirse
+"porfa, quiero regresar a esa pregunta y reintentar xfa",repetir_ejercicio
+"qué hay de nuevo, ¿cómo andas?",saludar
+"a ver, dime cuál fue la confusión de fondo xfa",solicitar_retroalimentacion
+"voy en primero de secundaria, a ver, ¿qué idea tuve equivocada? xfa",solicitar_retroalimentacion
+"voy en sexto semestre de bachillerato, ¿qué podría revisar para seguir sin copiarte?",solicitar_pista
+"buenas, qué ondaaa tutor, soy nuevo",saludar
+"a ver, ¿es equivalente mi respuesta 12? si puedes",verificar_respuesta
+"hey Jarol, dejemos pendiente esto, me paso a signos de puntuación",cambiar_tema
+"holaa, muy buenas Jarol",saludar
+¿qué podría revisar para seguir sin copiarte? con esto!,solicitar_pista
+"a ver, hasta aquí con eso, ahora vámonos a divisiones porfis, estoy estudiando para un examen?",cambiar_tema
+"dejemos pendiente esto, me paso a divisiones porfis",cambiar_tema
+"quiero practicar en el celular, muestra cómo se aplica ecuaciones de primer grado en un caso real pls?",solicitar_ejemplo
+"es para mi tarea, no me lo resuelvas, encamíname con el ejercicio??",solicitar_pista
+"dejemos pendiente esto, me paso a raíz cuadrada porfis??",cambiar_tema
+"Jarol, quiero entrenar con una prueba de teorema de Pitágoras gracias",solicitar_reto
+"hey Jarol, ¿puedes comprobar lo que contesté?",verificar_respuesta
+"esa respuesta estuvo pesada, simplifícala si se puede",simplificar_explicacion
+"hola Jarol, se me hizo bolas la explicación",simplificar_explicacion
+"perfecto, me tengo que ir, hasta la próxima, fue todo por hoy",despedirse
+"entonces, me salgo, continuamos mañana, ya me voy",despedirse
+"a ver, vamos a calarme con un cuestionario de fracciones",solicitar_reto
+"bro, me pierdo cuando el profe habla de conectores",solicitar_explicacion
+"bro, desde dónde empiezo para aprender tiempos verbales plis, voy en tercero de secundaria!",solicitar_explicacion
+"a ver, vamos a calarme con un cuestionario de multiplicaciones",solicitar_reto
+"una duda: hasta aquí con eso, ahora vámonos a fracciones equivalentes",cambiar_tema
+"qué tal, qué hay de nuevo, ya entré",saludar
+"estoy estudiando para un examen, bro, quiero entrenar con una prueba de idea principal de un texto?",solicitar_reto
+regrésame al ejercicio que fallé si se puede,repetir_ejercicio
+"Jarol, ya estuvo por hoy, ahí muere, ya me voy!",despedirse
+"porfa, ¿me lo cuentas como si apenas empezara? pls",simplificar_explicacion
+"Oye Jarol, nomás indícame por dónde va gracias en este paso",solicitar_pista
+"hasta aquí con eso, ahora vámonos a signos de puntuación porfa",cambiar_tema
+"disculpa, ando bien confundido con eso de propiedades de las potencias, estoy estudiando para un examen??",solicitar_explicacion
+"saludos, qué ondaaa tutor??",saludar
+"tengo examen mañana, bro, quiero entender la idea detrás de sumas con fracciones",solicitar_explicacion
+"hey Jarol, ¿me lo cuentas como si apenas empezara?",simplificar_explicacion
+"Oye Jarol, no me lo resuelvas, encamíname porfis, curso cuarto semestre de prepa",solicitar_pista
+"tengo examen mañana, ¿en qué parte la regué? plis",solicitar_retroalimentacion
+"a ver, dime cuál fue la confusión de fondo",solicitar_retroalimentacion
+"Jarol, ¿qué podría revisar para seguir sin copiarte? con esto",solicitar_pista
+¿qué podría revisar para seguir sin copiarte?,solicitar_pista
+"Jarol, holis, aquí estoy, ¿cómo andas?",saludar
+"oye, se me hizo bolas la explicación cuando puedas",simplificar_explicacion
+quiero entender la idea detrás de fracciones xfa,solicitar_explicacion
+píntame una situación donde se use uso de la coma por favor!,solicitar_ejemplo
+"Jarol, ando bien confundido con eso de conectores??",solicitar_explicacion
+"oye, me tengo que ir, hasta la próxima, Jarol",despedirse
+"Jarol, muy buenas Jarol, ya llegué",saludar
+"hola Jarol, ¿cuántas actividades exitosas llevo hasta hoy? en la app!",consultar_progreso
+"quiero entender la idea detrás de ángulos, curso cuarto semestre de prepa?",solicitar_explicacion
+¿coincide mi solución con la esperada? si puedes,verificar_respuesta
+"oye, ¿me lo cuentas como si apenas empezara? por favor",simplificar_explicacion
+"Jarol, me salgo, continuamos mañana, fue todo por hoy",despedirse
+"porfa, me aburrí de este tema, brincamos a metáforas",cambiar_tema
+"lo estamos viendo en clase, lo que acabas de decir me confundió más si se puede",simplificar_explicacion
+"me ayudas? esa respuesta estuvo pesada, simplifícala gracias?",simplificar_explicacion
+me pierdo cuando el profe habla de ángulos,solicitar_explicacion
+"bro, píntame una situación donde se use divisiones",solicitar_ejemplo
+una duda: ¿cómo se aplicaría eso en la vida diaria?,solicitar_ejemplo
+"hola Jarol, ¿puedes comprobar lo que contesté?, apenas estoy aprendiendo??",verificar_respuesta
+una duda: ¿es equivalente mi respuesta 0.5?,verificar_respuesta
+"bro, dejemos pendiente esto, me paso a tipos de texto porfis?",cambiar_tema
+"se me complica mucho, píntame una situación donde se use perímetro por favor",solicitar_ejemplo
+"es para mi tarea, hey Jarol, ¿cuántas actividades exitosas llevo hasta hoy?",consultar_progreso
+"bueno, bye bye, ahí te ves, hasta la próxima!",despedirse
+"¿puedes comprobar lo que contesté? xfa, tengo examen mañana",verificar_respuesta
+"es para mi tarea, ¿coincide mi solución con la esperada? por favor",verificar_respuesta
+"se me complica mucho, ¿en qué competencia he avanzado más? en la app?",consultar_progreso
+"bro, vamos a calarme con un cuestionario de despejar la x??",solicitar_reto
+"quiero practicar en el celular, dejemos pendiente esto, me paso a texto argumentativo",cambiar_tema
+"lo estamos viendo en clase, hola Jarol, ¿coincide mi solución con la esperada? si se puede??",verificar_respuesta
+"soy de segundo de secundaria, otra vuelta al mismo reto el de antes",repetir_ejercicio
+"buenas, muy buenas Jarol",saludar
+"entonces, me salgo, continuamos mañana, mañana regreso?",despedirse
+"hey Jarol, quiero regresar a esa pregunta y reintentar por favor el de antes",repetir_ejercicio
+"Oye Jarol, ¿puedo saltar a signos de puntuación en vez de seguir aquí?",cambiar_tema
+¿en qué parte la regué?,solicitar_retroalimentacion
+me ayudas? píntame una situación donde se use números negativos,solicitar_ejemplo
+"Oye Jarol, quiero regresar a esa pregunta y reintentar porfavor",repetir_ejercicio
+"hola Jarol, ¿en qué competencia he avanzado más? si se puede?",consultar_progreso
+"hey Jarol, ayúdame a revisar el razonamiento donde fallé porfis!",solicitar_retroalimentacion
+"Jarol, dime cuál fue la confusión de fondo?",solicitar_retroalimentacion
+"listo, bye bye, ahí te ves, ya me voy",despedirse
+quiero entrenar con una prueba de números decimales??,solicitar_reto
+"oye, ¿cuántas actividades exitosas llevo hasta hoy? gracias",consultar_progreso
+"entonces, bye bye, ahí te ves, toca descansar??",despedirse
+¿me lo cuentas como si apenas empezara? gracias??,simplificar_explicacion
+"a ver, necesito ver un caso con texto argumentativo",solicitar_ejemplo
+"apenas estoy aprendiendo, bro, esa respuesta estuvo pesada, simplifícala!",simplificar_explicacion
+vamos a calarme con un cuestionario de tipos de texto porfavor,solicitar_reto
+¿ya subí de nivel o sigo igual? porfavor hasta hoy,consultar_progreso
+¿es equivalente mi respuesta la opción B? porfavor,verificar_respuesta
+"hey Jarol, ¿qué idea tuve equivocada? porfa",solicitar_retroalimentacion
+"qué tal, qué ondaaa tutor, aquí estamos!",saludar
+"tengo examen mañana, ¿ya subí de nivel o sigo igual? porfavor",consultar_progreso
+"kiero practicar en el celular, Jarol, desde dónde empiezo para aprender fracciones equivalentes",solicitar_explicacion
+ayúdame a revisar el razonamiento donde fallé cuando puedas,solicitar_retroalimentacion
+me ayudas? ¿en qué competencia he avanzado más? por favor!,consultar_progreso
+otra vuelta al mismo reto si se puede!,repetir_ejercicio
+"perfecto, me tengo que ir, hasta la próxima, toca descansar",despedirse
+"listo, me tengo que ir, hasta la próxima, ya me voy",despedirse
+"no me lo resuelvas, encamíname",solicitar_pista
+"bro, ¿me lo cuentas como si apenas empezara? gracias",simplificar_explicacion
+"soy de segundo de secundaria, Oye Jarol, ¿q podría revisar para seguir sin copiarte?",solicitar_pista
+"ok, bye bye, ahí te ves, seguimos luego?",despedirse
+"qué ondaaa tutor, qué gusto",saludar
+"perfecto, me tengo que ir, hasta la próxima?",despedirse
+una duda: ¿en qué competencia he avanzado más? porfavor,consultar_progreso
+"voy en sexto semestre de bachillerato, porfa, ¿ya subí de nivel o sigo igual? de la clase",consultar_progreso
+"bro, se me hizo bolas la explicación",simplificar_explicacion
+"una duda: me bloqueé con el problema, ¿una pista?",solicitar_pista
+"no me lo resuelvas, encamíname si se puede",solicitar_pista
+"estudio primero de prepa, disculpa, ¿ya subí de nivel o sigo igual? hasta hoy",consultar_progreso
+"disculpa, necesito ver un caso con ecuaciones de primer grado plis",solicitar_ejemplo
+"bro, quiero entender la idea detrás de multiplicaciones si se puede",solicitar_explicacion
+"hola Jarol, lo que acabas de decir me confundió mas gracias",simplificar_explicacion
+"oye, me salgo, continuamos mañana!",despedirse
+"oye, píntame una situación donde se use comprensión lectora porfis, voy en sexto semestre de bachillerato",solicitar_ejemplo
+"Oye Jarol, se me hizo bolas la explicación, soy de segundo de secundaria",simplificar_explicacion
+"hey Jarol, otra vuelta al mismo reto de ahorita",repetir_ejercicio
+"disculpa, dime cuál fue la confusión de fondo",solicitar_retroalimentacion
+"hola Jarol, ¿cómo se aplicaría eso en la vida diaria? plis",solicitar_ejemplo
+"échame un problema para resolver yo si puedes, estoy estudiando para un examen",solicitar_reto
+"a ver, quiero entrenar con una prueba de teorema de Pitágoras si puedes",solicitar_reto
+"hey, muy buenas Jarol, soy nuevo",saludar
+"me bloqueé con el problema, ¿una pista? cuando puedas?",solicitar_pista
+"disculpa, necesito ver un caso con probabilidad si se puede",solicitar_ejemplo
+"bye bye, ahí te ves, Jarol?",despedirse
+quiero regresar a esa pregunta y reintentar por favor,repetir_ejercicio
+"oye, necesito ver un caso con idea principal de un texto cuando puedas!",solicitar_ejemplo
+"quiero practicar en el celular, me aburrí de este tema, brincamos a texto argumentativo porfavor",cambiar_tema
+"porfa, muestra cómo se aplica regla de tres en un caso real si se puede??",solicitar_ejemplo
+quiero entender la idea detrás de sumas con fracciones porfavor??,solicitar_explicacion
+"me bloqueé con el problema, ¿una pista? porfis con el ejercicio??",solicitar_pista
+"voy en primero de secundaria, Oye Jarol, ¿coincide mi solución con la esperada? pls",verificar_respuesta
+"Jarol, ¿en qué parte la regué? si puedes, quiero practicar en el celular",solicitar_retroalimentacion
+"Oye Jarol, me puedes retar con ortografía cuando puedas!",solicitar_reto
+"me pierdo cuando el profe habla de verbos si se puede, es para mi tarea",solicitar_explicacion
+me ayudas? ayúdame a revisar el razonamiento donde fallé por favor,solicitar_retroalimentacion
+píntame una situación donde se use conectores porfavor,solicitar_ejemplo
+"porfa, ¿me puedes dar un resumen de mi progreso académico?",consultar_progreso
+me puedes retar con sinónimos y antónimos por favor?,solicitar_reto
+¿en qué parte la regué? pls,solicitar_retroalimentacion
+"disculpa, ¿coincide mi solución con la esperada? si puedes",verificar_respuesta
+"hola Jarol, ¿en qué parte la regué?",solicitar_retroalimentacion
+"dejemos pendiente esto, me paso a razonamiento matemático!",cambiar_tema
+"quiero practicar en el celular, me ayudas? me puedes retar con signos de puntuación",solicitar_reto
+"estoy estudiando para un examen, hey Jarol, se me hizo bolas la explicación",simplificar_explicacion
+"perfecto, ya estuvo por hoy, ahí muere, gracias",despedirse
+"disculpa, ¿me puedes dar un resumen de mi progreso académico? si se puede, tengo examen mañana",consultar_progreso
+"Jarol, ¿es equivalente mi respuesta 5?",verificar_respuesta
+¿puedes comprobar lo que contesté? si puedes,verificar_respuesta
+"porfa, ¿mi operación pasó la prueba?",verificar_respuesta
+"estoy estudiando para un examen, ¿me lo cuentas como si apenas empezara? xfa??",simplificar_explicacion
+"oye, desde dónde empiezo para aprender áreas de figuras??",solicitar_explicacion
+"hey, qué hay de nuevo, soy nuevo",saludar
+"ando bien confundido con eso de despejar la x, es para mi tarea??",solicitar_explicacion
+"estudio primero de prepa, ¿puedo saltar a verbos en vez de seguir aquí?",cambiar_tema
+"estoy estudiando para un examen, una duda: ¿ya subí de nivel o sigo igual? porfa",consultar_progreso
+¿en qué parte la regué? xfa,solicitar_retroalimentacion
+"estoy estudiando para un examen, una duda: quiero entrenar con una prueba de tipos de texto cuando puedas",solicitar_reto
+"hola Jarol, ¿qué podría revisar para seguir sin copiarte? porfavor??",solicitar_pista
+"quiero practicar en el celular, desde dónde empiezo para aprender razonamiento matemático",solicitar_explicacion
+una duda: ¿podemos repetir el problema tal cual?,repetir_ejercicio
+¿me puedes dar un resumen de mi progreso académico?,consultar_progreso
+"voy en primero de secundaria, a ver, regrésame al ejercicio que fallé el de antes??",repetir_ejercicio
+"hey Jarol, se me hizo bolas la explicación por favor",simplificar_explicacion
+nomás indícame por dónde va xfa,solicitar_pista
+"porfa, esa respuesta estuvo pesada, simplifícala gracias!",simplificar_explicacion
+"Jarol, me tengo que ir, hasta la próxima, gracias",despedirse
+"hey Jarol, ¿es equivalente mi respuesta el sujeto? porfavor??",verificar_respuesta
+una duda: ¿en qué competencia he avanzado más? por favor,consultar_progreso
+"porfa, desde dónde empiezo para aprender propiedades de las potencias si se puede",solicitar_explicacion
+"perfecto, me tengo que ir, hasta la próxima, ya me voy",despedirse
+"disculpa, ¿cuántas actividades exitosas llevo hasta hoy? por favor, lo estamos viendo en clase",consultar_progreso
+"me tengo que ir, hasta la próxima",despedirse
+"dejemos pendiente esto, me paso a tiempos verbales porfis",cambiar_tema
+"voy en sexto semestre de bachillerato, una duda: ¿qué podría revisar para seguir sin copiarte? sin darme la solución",solicitar_pista
+una duda: necesito ver un caso con números negativos xfa??,solicitar_ejemplo
+"disculpa, ¿puedes comprobar lo que contesté?",verificar_respuesta
+"perfecto, ya estuvo por hoy, ahí muere, fue todo por hoy",despedirse
+una duda: se me hizo bolas la explicación porfavor,simplificar_explicacion
+¿en qué parte la regué? porfa,solicitar_retroalimentacion
+"Jarol, bye bye, ahí te ves",despedirse
+"Oye Jarol, ¿es equivalente mi respuesta 12? por favor",verificar_respuesta
+¿me puedes dar un resumen de mi progreso académico? porfavor hasta hoy,consultar_progreso
+necesito ver un caso con raíz cuadrada si puedes!,solicitar_ejemplo
+"ando en segundo semestre de bachillerato, oye, dime cuál fue la confusión de fondo si puedes!",solicitar_retroalimentacion
+"saludos, muy buenas Jarol, ya llegué",saludar
+"a ver, dejemos pendiente esto, me paso a sujeto y predicado",cambiar_tema
+"voy en tercero de secundaria, esa respuesta estuvo pesada, simplifícala",simplificar_explicacion
+"disculpa, quiero entender la idea detrás de fracciones equivalentes plis, tengo examen mañana",solicitar_explicacion
+dime cuál fue la confusión de fondo,solicitar_retroalimentacion
+"disculpa, ¿coincide mi solución con la esperada?",verificar_respuesta
+"quiero entrenar con una prueba de metáforas si puedes, soy de segundo de secundaria!",solicitar_reto
+se me hizo bolas la explicación porfavor,simplificar_explicacion
+"es para mi tarea, ¿podemos repetir el problema tal cual? pls",repetir_ejercicio
+"hey, qué hay de nuevo, ¿cómo andas?",saludar
+"voy en primero de secundaria, ¿cuántas actividades exitosas llevo hasta hoy? porfavor?",consultar_progreso
+¿es equivalente mi respuesta x = 7?,verificar_respuesta
+¿ya subí de nivel o sigo igual? xfa,consultar_progreso
+"me puedes retar con uso de la coma, voy en tercero de secundaria",solicitar_reto
+"holaa, holis, aquí estoy, ¿cómo andas?",saludar
+"bro, quiero entender la idea detrás de raíz cuadrada porfis??",solicitar_explicacion
+"a ver, ¿me lo cuentas como si apenas empezara? cuando puedas",simplificar_explicacion
+"curso cuarto semestre de prepa, échame un problema para resolver yo",solicitar_reto
+"me ayudas? me aburrí de este tema, brincamos a acentuación si puedes",cambiar_tema
+¿es equivalente mi respuesta la segunda opción? xfa,verificar_respuesta
+"bro, quiero regresar a esa pregunta y reintentar gracias!",repetir_ejercicio
+"disculpa, ¿mi operación pasó la prueba? pls?",verificar_respuesta
+"saludos, qué ondaaa tutor, qué gusto",saludar
+"hey Jarol, nomás indícame por dónde va por favor con el ejercicio",solicitar_pista
+una duda: ¿ya subí de nivel o sigo igual? xfa hasta hoy,consultar_progreso
+"porfa, ¿podemos repetir el problema tal cual? en el chat??",repetir_ejercicio
+"voy en tercero de secundaria, píntame una situación donde se use inferencias al leer porfavor",solicitar_ejemplo
+"píntame una situación donde se use tipos de texto, es para mi tarea",solicitar_ejemplo
+"voy en tercero de secundaria, hey Jarol, ¿mi operación pasó la prueba?",verificar_respuesta
+"me ayudas? ¿cómo se aplicaría eso en la vida diaria?, estudio primero de prepa",solicitar_ejemplo
+dime cuál fue la confusión de fondo pls,solicitar_retroalimentacion
+¿es equivalente mi respuesta 8 centímetros?,verificar_respuesta
+"apenas estoy aprendiendo, ¿puedes comprobar lo que contesté?",verificar_respuesta
+"a ver, dejemos pendiente esto, me paso a raíz cuadrada",cambiar_tema
+¿q idea tuve equivocada? plis!,solicitar_retroalimentacion
+"a ver, ¿en qué parte la regué?",solicitar_retroalimentacion
+"hey Jarol, necesito ver un caso con gráficas?",solicitar_ejemplo
+una duda: píntame una situación donde se use gráficas,solicitar_ejemplo
+quiero entender la idea detrás de idea principal de un texto si se puede,solicitar_explicacion
+"ando en segundo semestre de bachillerato, porfa, me puedes retar con resumen de un texto?",solicitar_reto
+"hola Jarol, ¿coincide mi solución con la esperada?",verificar_respuesta
+"estoy estudiando para un examen, ¿cuántas actividades exitosas llevo hasta hoy? en la app",consultar_progreso
+"¿cuántas actividades exitosas llevo hasta hoy?, es para mi tarea",consultar_progreso
+"estudio primero de prepa, desde dónde empiezo para aprender razonamiento matemático porfa",solicitar_explicacion
+"qué tal, muy buenas Jarol, qué gusto",saludar
+quiero regresar a esa pregunta y reintentar,repetir_ejercicio
+"Jarol, no me lo resuelvas, encamíname!",solicitar_pista
+"porfa, muestra cómo se aplica propiedades de las potencias en un caso real",solicitar_ejemplo
+¿ya subí de nivel o sigo igual?,consultar_progreso
+"bueno, me salgo, continuamos mañana, Jarol??",despedirse
+¿qué idea tuve equivocada?,solicitar_retroalimentacion
+"hola Jarol, ¿en q parte la regué?",solicitar_retroalimentacion
+"estudio primero de prepa, oye, ¿cómo se aplicaría eso en la vida diaria?",solicitar_ejemplo
+"holaa, muy buenas Jarol, soy nuevo",saludar
+"tengo examen mañana, dejemos pendiente esto, me paso a gráficas gracias",cambiar_tema
+"amigo, qué ondaaa tutor, ya entré!",saludar
+"porfa, dejemos pendiente esto, me paso a inferencias al leer xfa",cambiar_tema
+"esa respuesta estuvo pesada, simplifícala cuando puedas, soy de segundo de secundaria",simplificar_explicacion
+"porfa, vamos a calarme con un cuestionario de razonamiento matemático",solicitar_reto
+¿puedo saltar a propiedades de las potencias en vez de seguir aquí?,cambiar_tema
+"qué tal, holis, aquí estoy",saludar
+"entonces, ya estuvo por hoy, ahí muere, hasta la próxima?",despedirse
+"porfa, ¿cuántas actividades exitosas llevo hasta hoy?",consultar_progreso
+desde dónde empiezo para aprender tipos de texto,solicitar_explicacion
+"soy de segundo de secundaria, otra vuelta al mismo reto si se puede el de antes",repetir_ejercicio
+"porfa, hasta aquí con eso, ahora vámonos a números negativos gracias",cambiar_tema
+otra vuelta al mismo reto gracias?,repetir_ejercicio
+"Jarol, me salgo, continuamos mañana, hasta la próxima",despedirse
+"me ayudas? no me lo resuelvas, encamíname si puedes",solicitar_pista
+"quiero practicar en el celular, una duda: me bloqueé con el problema, ¿una pista? cuando puedas con el ejercicio",solicitar_pista
+ayúdame a revisar el razonamiento donde fallé,solicitar_retroalimentacion
+una duda: ¿coincide mi solución con la esperada?,verificar_respuesta
+vamos a calarme con un cuestionario de sujeto y predicado,solicitar_reto
+otra vuelta al mismo reto porfis de ahorita,repetir_ejercicio
+¿en qué competencia he avanzado más? porfavor,consultar_progreso
+"listo, bye bye, ahí te ves, gracias",despedirse
+échame un problema para resolver yo cuando puedas,solicitar_reto
+una duda: regrésame al ejercicio que fallé!,repetir_ejercicio
+"voy en primero de secundaria, Oye Jarol, ¿en qué competencia he avanzado más? plis?",consultar_progreso
+"oye, ¿me puedes dar un resumen de mi progreso académico? porfavor",consultar_progreso
+"dejemos pendiente esto, me paso a ecuaciones de primer grado porfa, ando en segundo semestre de bachillerato",cambiar_tema
+"oye, ¿podemos repetir el problema tal cual? en el chat",repetir_ejercicio
+"oye, necesito ver un caso con ecuaciones de primer grado si puedes",solicitar_ejemplo
+"Jarol, ¿en qué parte la regué?",solicitar_retroalimentacion
+¿qué podría revisar para seguir sin copiarte? por favor,solicitar_pista
+"muy buenas Jarol, listo para estudiar",saludar
+"porfa, quiero entrenar con una prueba de probabilidad",solicitar_reto
+"no me lo resuelvas, encamíname porfis",solicitar_pista
+"saludos, muy buenas Jarol, qué tal",saludar
+otra vuelta al mismo reto en el chat??,repetir_ejercicio
+otra vuelta al mismo reto,repetir_ejercicio
+"hey Jarol, me aburrí de este tema, brincamos a gráficas pls",cambiar_tema
+"no me lo resuelvas, encamíname plis!",solicitar_pista
+"oye, necesito ver un caso con fracciones equivalentes plis",solicitar_ejemplo
+"voy en primero de secundaria, me pierdo cuando el profe habla de sujeto y predicado gracias!",solicitar_explicacion
+"tengo examen mañana, porfa, me bloqueé con el problema, ¿una pista?",solicitar_pista
+"bro, ¿me puedes dar un resumen de mi progreso académico?",consultar_progreso
+quiero regresar a esa pregunta y reintentar por última vez,repetir_ejercicio
+"Jarol, me aburrí de este tema, brincamos a propiedades de las potencias porfa",cambiar_tema
+"quiero practicar en el celular, ¿puedes comprobar lo que contesté?",verificar_respuesta
+"quiero practicar en el celular, bro, esa respuesta estuvo pesada, simplifícala?",simplificar_explicacion
+"a ver, desde dónde empiezo para aprender sumas con fracciones plis!",solicitar_explicacion
+"hola Jarol, ¿qué podría revisar para seguir sin copiarte? sin darme la solución?",solicitar_pista
+nomás indícame por dónde va!,solicitar_pista
+"bro, ¿puedo saltar a teorema de Pitágoras en vez de seguir aquí?",cambiar_tema
+"porfa, me pierdo cuando el profe habla de áreas de figuras",solicitar_explicacion
+"holaa, muy buenas Jarol, qué gusto",saludar
+"otra vuelta al mismo reto si se puede, estudio primero de prepa",repetir_ejercicio
+"quiero practicar en el celular, bro, ¿coincide mi solución con la esperada? cuando puedas?",verificar_respuesta
+"tengo examen mañana, bro, muestra cómo se aplica razonamiento matemático en un caso real",solicitar_ejemplo
+"hola Jarol, ¿qué idea tuve equivocada?",solicitar_retroalimentacion
+"porfa, ¿qué podría revisar para seguir sin copiarte? plis",solicitar_pista
+"bro, ¿en qué competencia he avanzado más?",consultar_progreso
+"porfa, me bloqueé con el problema, ¿una pista? por favor",solicitar_pista
+échame un problema para resolver yo,solicitar_reto
+"amigo, qué ondaaa tutor, soy nuevo?",saludar
+"hola Jarol, ¿qué podría revisar para seguir sin copiarte? porfavor con el ejercicio",solicitar_pista
+regrésame al ejercicio que fallé cuando puedas,repetir_ejercicio
+"porfa, ¿me lo cuentas como si apenas empezara? porfavor??",simplificar_explicacion
+"Oye Jarol, desde dónde empiezo para aprender uso de la coma por favor??",solicitar_explicacion
+"curso cuarto semestre de prepa, se me hizo bolas la explicación si puedes",simplificar_explicacion
+"oye, desde dónde empiezo para aprender despejar la x",solicitar_explicacion
+"Jarol, quiero regresar a esa pregunta y reintentar gracias por última vez",repetir_ejercicio
+me puedes retar con metáforas pls,solicitar_reto
+"disculpa, quiero regresar a esa pregunta y reintentar, se me complica mucho",repetir_ejercicio
+"hey Jarol, ¿es equivalente mi respuesta 25? si puedes",verificar_respuesta
+me ayudas? ¿en qué parte la regué? si puedes,solicitar_retroalimentacion
+"Jarol, ya estuvo por hoy, ahí muere, Jarol??",despedirse
+me ayudas? vamos a calarme con un cuestionario de metáforas porfa,solicitar_reto
+"voy en sexto semestre de bachillerato, me ayudas? quiero regresar a esa pregunta y reintentar si se puede??",repetir_ejercicio
+¿en qué competencia he avanzado más? por favor,consultar_progreso
+"a ver, quiero entender la idea detrás de probabilidad",solicitar_explicacion
+"voy en primero de secundaria, se me hizo bolas la explicación",simplificar_explicacion
+"hey Jarol, vamos a calarme con un cuestionario de sumas con fracciones",solicitar_reto
+"lo estamos viendo en clase, ayúdame a revisar el razonamiento donde fallé!",solicitar_retroalimentacion
+"qué tal, holis, aquí estoy, listo para estudiar",saludar
+"a ver, ¿me lo cuentas como si apenas empezara?",simplificar_explicacion
+¿es equivalente mi respuesta la segunda opción? por favor,verificar_respuesta
+"voy en primero de secundaria, hey Jarol, lo que acabas de decir me confundió más!",simplificar_explicacion
+"tengo examen mañana, necesito ver un caso con ecuaciones de primer grado si se puede??",solicitar_ejemplo
+píntame una situación donde se use ecuaciones de primer grado plis,solicitar_ejemplo
+"disculpa, me bloqueé con el problema, ¿una pista?",solicitar_pista
+"se me complica mucho, porfa, necesito ver un caso con tipos de texto gracias",solicitar_ejemplo
+"profe, qué hay de nuevo, qué gusto",saludar
+"soy de segundo de secundaria, bro, dejemos pendiente esto, me paso a regla de tres?",cambiar_tema
+"hey Jarol, quiero entrenar con una prueba de resumen de un texto si puedes, soy de segundo de secundaria",solicitar_reto
+¿es equivalente mi respuesta la opción B?,verificar_respuesta
+otra vuelta al mismo reto si puedes de ahorita,repetir_ejercicio
+regrésame al ejersicio que fallé el de antes,repetir_ejercicio
+"a ver, vamos a calarme con un cuestionario de multiplicaciones cuando puedas",solicitar_reto
+"Oye Jarol, otra vuelta al mismo reto porfavor!",repetir_ejercicio
+"Jarol, vamos a calarme con un cuestionario de probabilidad",solicitar_reto
+"oye, ¿cómo se aplicaría eso en la vida diaria?",solicitar_ejemplo
+"ayúdame a revisar el razonamiento donde fallé, tengo examen mañana??",solicitar_retroalimentacion
+"disculpa, necesito ver un caso con áreas de figuras, soy de segundo de secundaria?",solicitar_ejemplo
+me ayudas? ¿puedes comprobar lo que contesté?,verificar_respuesta
+"Jarol, ¿ya subí de nivel o sigo igual? plis",consultar_progreso
+"ya estuvo por hoy, ahí muere",despedirse
+"porfa, ando bien confundido con eso de verbos cuando puedas, se me complica mucho",solicitar_explicacion
+"Jarol, ¿mi operación pasó la prueba? xfa?",verificar_respuesta
+"sale, me salgo, continuamos mañana, gracias",despedirse
+"disculpa, otra vuelta al mismo reto gracias, voy en sexto semestre de bachillerato?",repetir_ejercicio
+¿me lo cuentas como si apenas empezara? cuando puedas,simplificar_explicacion
+"a ver, dejemos pendiente esto, me paso a signos de puntuación porfa?",cambiar_tema
+"a ver, ¿podemos repetir el problema tal cual? porfa",repetir_ejercicio
+"Oye Jarol, desde dónde empiezo para aprender ecuaciones de primer grado, voy en primero de secundaria",solicitar_explicacion
+¿puedes comprobar lo que contesté?,verificar_respuesta
+"quiero practicar en el celular, Oye Jarol, quiero entrenar con una prueba de ángulos si puedes!",solicitar_reto
+una duda: muestra cómo se aplica ortografía en un caso real pls,solicitar_ejemplo
+"oye, me pierdo cuando el profe habla de tiempos verbales??",solicitar_explicacion
+"¿qué podría revisar para seguir sin copiarte? si se puede, lo estamos viendo en clase",solicitar_pista
+"listo, ya estuvo por hoy, ahí muere, mañana regreso??",despedirse
+"bro, échame un problema para resolver yo si puedes",solicitar_reto
+"bro, nomás indícame por dónde va",solicitar_pista
+me ayudas? ¿es equivalente mi respuesta 12?,verificar_respuesta
+"Jarol, qué ondaaa tutor, soy nuevo",saludar
+"sale, me tengo que ir, hasta la próxima, seguimos luego??",despedirse
+"curso cuarto semestre de prepa, ¿me lo cuentas como si apenas empezara?",simplificar_explicacion
+"hola Jarol, lo que acabas de decir me confundió más si se puede, quiero practicar en el celular",simplificar_explicacion
+"me bloqueé con el problema, ¿una pista?",solicitar_pista
+"apenas estoy aprendiendo, disculpa, regrésame al ejercicio que fallé",repetir_ejercicio
+"holis, aquí estoy, aquí estamos",saludar
+"Jarol, me salgo, continuamos mañana, Jarol?",despedirse
+"bro, me aburrí de este tema, brincamos a sinónimos y antónimos",cambiar_tema
+"a ver, ¿puedo saltar a inferencias al leer en vez de seguir aquí?",cambiar_tema
+ando bien confundido con eso de metáforas porfavor,solicitar_explicacion
+"dejemos pendiente esto, me paso a propiedades de las potencias si puedes",cambiar_tema
+me pierdo cuando el profe habla de probabilidad,solicitar_explicacion
+"Jarol, desde dónde empiezo para aprender perímetro",solicitar_explicacion
+"saludos, qué hay de nuevo, aquí estamos",saludar
+"me ayudas? no me lo resuelvas, encamíname!",solicitar_pista
+"buenas, holis, aquí estoy, soy nuevo",saludar
+"hola Jarol, ¿cuántas actividades exitosas llevo hasta hoy?",consultar_progreso
+"me tengo que ir, hasta la próxima, toca descansar?",despedirse
+"tengo examen mañana, disculpa, me bloqueé con el problema, ¿una pista?",solicitar_pista
+"hola Jarol, dejemos pendiente esto, me paso a ecuaciones de primer grado??",cambiar_tema
+"hola Jarol, échame un problema para resolver yo porfavor??",solicitar_reto
+"oye, me puedes retar con perímetro",solicitar_reto
+"profe, muy buenas Jarol, qué gusto",saludar
+"hola Jarol, desde dónde empiezo para aprender divisiones porfavor",solicitar_explicacion
+me ayudas? ayúdame a revisar el razonamiento donde fallé?,solicitar_retroalimentacion
+"buenas, muy buenas Jarol, qué gusto",saludar
+"Jarol, quiero regresar a esa pregunta y reintentar de ahorita??",repetir_ejercicio
+"Oye Jarol, no me lo resuelvas, encamíname xfa",solicitar_pista
+"porfa, quiero entender la idea detrás de ecuaciones de primer grado porfa!",solicitar_explicacion
+"Oye Jarol, lo que acabas de decir me confundió más plis??",simplificar_explicacion
+"apenas estoy aprendiendo, me ayudas? píntame una situación donde se use números decimales!",solicitar_ejemplo
+me puedes retar con resumen de un texto,solicitar_reto
+se me hizo bolas la explicación pls,simplificar_explicacion
+"oye, ¿me lo cuentas como si apenas empezara?",simplificar_explicacion
+"Jarol, ¿mi operación pasó la prueba? porfis",verificar_respuesta
+"hola Jarol, regrésame al ejercicio que fallé cuando puedas",repetir_ejercicio
+"me bloqueé con el problema, ¿una pistita?",solicitar_pista
+me pierdo cuando el profe habla de fracciones equivalentes cuando puedas,solicitar_explicacion
+"bueno, bye bye, ahí te ves, gracias!",despedirse
+"es para mi tarea, Oye Jarol, ¿me lo cuentas como si apenas empezara?",simplificar_explicacion
+"Jarol, regrésame al ejercicio que fallé por última vez?",repetir_ejercicio
+una duda: ¿qué idea tuve equivocada?,solicitar_retroalimentacion
+¿es equivalente mi respuesta un sustantivo?,verificar_respuesta
+quiero entrenar con una prueba de propiedades de las potencias gracias?,solicitar_reto
+"porfa, hasta aquí con eso, ahora vámonos a gráficas!",cambiar_tema
+"hola Jarol, ¿en qué parte la regué? porfis?",solicitar_retroalimentacion
+"Jarol, holis, aquí estoy, ya llegué",saludar
+"¿me puedes dar un resumen de mi progreso académico? por favor, lo estamos viendo en clase hasta hoy",consultar_progreso
+"oye, me tengo que ir, hasta la próxima, gracias?",despedirse
+me ayudas? ¿mi operación pasó la prueba?,verificar_respuesta
+"qué tal, holis, aquí estoy, qué gusto??",saludar
+"hey Jarol, ¿mi operación pasó la prueba? xfa",verificar_respuesta
+"lo estamos viendo en clase, hola Jarol, ¿ya subí de nivel o sigo igual?",consultar_progreso
+"hey, qué ondaaa tutor, soy nuevo",saludar
+"entonces, me salgo, continuamos mañana, toca descansar",despedirse
+¿es equivalente mi respuesta 3/4? gracias,verificar_respuesta
+"se me complica mucho, bro, ¿me lo cuentas como si apenas empezara? porfavor",simplificar_explicacion
+"apenas estoy aprendiendo, disculpa, ¿es equivalente mi respuesta 5? porfa",verificar_respuesta
+¿mi operación pasó la prueba?,verificar_respuesta
+"necesito ver un caso con sinónimos y antónimos porfa, curso cuarto semestre de prepa",solicitar_ejemplo
+necesito ver un caso con verbos porfis,solicitar_ejemplo
+"bro, ¿ya subí de nivel o sigo igual? si puedes??",consultar_progreso
+una duda: ¿puedes comprobar lo que contesté?,verificar_respuesta
+una duda: ¿puedes comprobar lo que contesté? plis,verificar_respuesta
+¿me lo cuentas como si apenas empezara? porfavor,simplificar_explicacion
+"ok, ya estuvo por hoy, ahí muere, ya me voy",despedirse
+"porfa, quiero entender la idea detrás de divisiones por favor",solicitar_explicacion
+"voy en primero de secundaria, píntame una situación donde se use áreas de figuras cuando puedas",solicitar_ejemplo
+"a ver, píntame una situación donde se use signos de puntuación",solicitar_ejemplo
+"porfa, me puedes retar con verbos cuando puedas",solicitar_reto
+"buenas, qué hay de nuevo, ya llegué!",saludar
+"buenas, qué ondaaa tutor, ya entré",saludar
+"hola Jarol, hasta aquí con eso, ahora vámonos a verbos!",cambiar_tema
+"Oye Jarol, se me hizo bolas la explicación pls",simplificar_explicacion
+"quiero practicar en el celular, ¿me puedes dar un resumen de mi progreso académico? si se puede",consultar_progreso
+¿puedes comprobar lo que contesté? porfa,verificar_respuesta
+"oye, ¿ya subí de nivel o sigo igual?",consultar_progreso
+"Oye Jarol, esa respuesta estuvo pesada, simplifícala",simplificar_explicacion
+"es para mi tarea, ¿cuántas actividades exitosas llevo hasta hoy? en la app",consultar_progreso
+"disculpa, me aburrí de este tema, brincamos a regla de tres por favor!",cambiar_tema
+"bro, otra vuelta al mismo reto!",repetir_ejercicio
+¿me puedes dar un resumen de mi progreso académico? si se puede,consultar_progreso
+"holaa, qué ondaaa tutor, ya llegué",saludar
+¿q idea tuve equivocada?,solicitar_retroalimentacion
+"Oye Jarol, quiero entrenar con una prueba de despejar la x",solicitar_reto
+"hola Jarol, desde dónde empiezo para aprender sujeto y predicado cuando puedas",solicitar_explicacion
+"¿cómo se aplicaría eso en la vida diaria? porfa, apenas estoy aprendiendo??",solicitar_ejemplo
+"porfa, me aburrí de este tema, brincamos a sumas con fracciones",cambiar_tema
+"voy en tercero de secundaria, Jarol, ¿me puedes dar un resumen de mi progreso académico?",consultar_progreso
+¿qué podría revisar para seguir sin copiarte? porfis con el ejercicio!,solicitar_pista
+"lo estamos viendo en clase, ¿es equivalente mi respuesta 3/4? xfa",verificar_respuesta
+"soy de segundo de secundaria, ¿es equivalente mi respuesta x = 7?",verificar_respuesta
+"¿cómo se aplicaría eso en la vida diaria?, soy de segundo de secundaria",solicitar_ejemplo
+¿qué idea tuve equivocada? xfa,solicitar_retroalimentacion
+"es para mi tarea, ¿puedo saltar a ecuaciones de primer grado en vez de seguir aquí? cuando puedas",cambiar_tema
+"Oye Jarol, quiero entrenar con una prueba de conectores si se puede?",solicitar_reto
+"una duda: esa respuesta estuvo pesada, simplifícala",simplificar_explicacion
+"ando en segundo semestre de bachillerato, oye, ¿me lo cuentas como si apenas empezara? plis!",simplificar_explicacion
+"¿me lo cuentas como si apenas empezara? porfa, apenas estoy aprendiendo",simplificar_explicacion
+"va, bye bye, ahí te ves, mañana regreso",despedirse
+"¿es equivalente mi respuesta 25? porfavor, lo estamos viendo en clase",verificar_respuesta
+"voy en tercero de secundaria, ¿puedes comprobar lo que contesté?",verificar_respuesta
+¿qué podría revisar para seguir sin copiarte? por favor sin darme la solución,solicitar_pista
+"Jarol, ya estuvo por hoy, ahí muere, seguimos luego",despedirse
+"una duda: otra vuelta al mismo reto, voy en tercero de secundaria",repetir_ejercicio
+"Oye Jarol, ¿es equivalente mi respuesta el sujeto?",verificar_respuesta
+"porfa, muestra cómo se aplica divisiones en un caso real porfavor",solicitar_ejemplo
+me puedes retar con propiedades de las potencias gracias!,solicitar_reto
+"buenas, holis, aquí estoy, ¿cómo andas?",saludar
+"no me lo resuelvas, encamíname si se puede con esto",solicitar_pista
+"¿coincide mi solución con la esperada? porfavor, quiero practicar en el celular!",verificar_respuesta
+"hey Jarol, ¿cuántas actividades exitosas llevo hasta hoy?",consultar_progreso
+¿podemos repetir el problema tal cual? el de antes,repetir_ejercicio
+"qué tal, muy buenas Jarol, ya llegué",saludar
+"¿mi operación pasó la prueba?, estudio primero de prepa!",verificar_respuesta
+¿qué idea tuve equivocada? por favor,solicitar_retroalimentacion
+me ayudas? me pierdo cuando el profe habla de signos de puntuación si puedes,solicitar_explicacion
+"disculpa, ¿ya subí de nivel o sigo igual?",consultar_progreso
+"porfa, ¿cuántas actividades exitosas llevo hasta hoy? de la clase??",consultar_progreso
+"ok, bye bye, ahí te ves, toca descansar!",despedirse
+"Jarol, desde dónde empiezo para aprender tiempos verbales!",solicitar_explicacion
+"curso cuarto semestre de prepa, me ayudas? ¿podemos repetir el problema tal cual? porfa",repetir_ejercicio
+"oye, holis, aquí estoy, qué gusto?",saludar
+"disculpa, ¿puedes comprobar lo que contesté? porfis",verificar_respuesta
+"dime cuál fue la confusión de fondo cuando puedas, lo estamos viendo en clase",solicitar_retroalimentacion
+"curso cuarto semestre de prepa, ¿me puedes dar un resumen de mi progreso académico? pls?",consultar_progreso
+"listo, ya estuvo por hoy, ahí muere, seguimos luego?",despedirse
+"Jarol, holis, aquí estoy, qué tal",saludar
+"holaa, qué ondaaa tutor, ya entré",saludar
+"oye, necesito ver un caso con ángulos plis",solicitar_ejemplo
+¿podemos repetir el problema tal cual? cuando puedas,repetir_ejercicio
+"me salgo, continuamos mañana, toca descansar",despedirse
+"una duda: me bloqueé con el problema, ¿una pista? gracias con esto!",solicitar_pista
+"bueno, me salgo, continuamos mañana, mañana regreso",despedirse
+"estoy estudiando para un examen, hey Jarol, nomás indícame por dónde va con el ejercicio!",solicitar_pista
+"bro, regrésame al ejercicio que fallé plis??",repetir_ejercicio
+"a ver, ando bien confundido con eso de idea principal de un texto cuando puedas",solicitar_explicacion
+"se me complica mucho, hey Jarol, dejemos pendiente esto, me paso a porcentajes",cambiar_tema
+"hola Jarol, ¿coincide mi solución con la esperada? por favor",verificar_respuesta
+"amigo, muy buenas Jarol, ya llegué",saludar

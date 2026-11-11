@@ -1,0 +1,38 @@
+
+text,intent
+"Hola Jarol",saludar
+"Buenas tardes",saludar
+"Qué onda Jarol",saludar
+"Explícame qué son las fracciones",solicitar_explicacion
+"No entiendo cómo despejar la x",solicitar_explicacion
+"Qué es la idea principal de un texto",solicitar_explicacion
+"Explícamelo más fácil",simplificar_explicacion
+"No entendí esa explicación",simplificar_explicacion
+"Puedes decirlo con palabras más sencillas",simplificar_explicacion
+"Dame un ejemplo de ecuaciones",solicitar_ejemplo
+"Muéstrame un ejemplo",solicitar_ejemplo
+"Pon un ejemplo de comprensión lectora",solicitar_ejemplo
+"Dame una pista",solicitar_pista
+"Ayúdame sin decirme la respuesta",solicitar_pista
+"No sé cuál es el siguiente paso",solicitar_pista
+"Quiero resolver un reto",solicitar_reto
+"Ponme un ejercicio de matemáticas",solicitar_reto
+"Hazme una pregunta para practicar español",solicitar_reto
+"Está bien mi respuesta",verificar_respuesta
+"Revisa si lo hice correctamente",verificar_respuesta
+"Mi resultado es correcto",verificar_respuesta
+"En qué me equivoqué",solicitar_retroalimentacion
+"Por qué estuvo mal",solicitar_retroalimentacion
+"Dime qué puedo mejorar",solicitar_retroalimentacion
+"Quiero intentarlo otra vez",repetir_ejercicio
+"Repite el ejercicio",repetir_ejercicio
+"Déjame resolverlo de nuevo",repetir_ejercicio
+"Ahora quiero estudiar historia",cambiar_tema
+"Cambiemos a español",cambiar_tema
+"Quiero estudiar otro tema",cambiar_tema
+"Cuánto he avanzado",consultar_progreso
+"Muéstrame mi progreso",consultar_progreso
+"Cómo voy en matemáticas",consultar_progreso
+"Gracias nos vemos",despedirse
+"Hasta luego Jarol",despedirse
+"Ya terminé por hoy",despedirse
