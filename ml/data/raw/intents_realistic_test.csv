@@ -1,0 +1,121 @@
+text,intent
+¿qué tengo que identificar primero?,solicitar_pista
+quiero repetir la pregunta que acabo de fallar,repetir_ejercicio
+"checa mi operación, porfis",verificar_respuesta
+como es eso de las palabras graves,solicitar_explicacion
+hey ¿andamos?,saludar
+¿me muestras un caso de fracciones equivalentes?,solicitar_ejemplo
+holis ya estoy acá,saludar
+¿en cuál paso metí la pata?,solicitar_retroalimentacion
+cómo funcionan las fracciones si tengo pedazos diferentes,solicitar_explicacion
+¿subí a plata esta semana?,consultar_progreso
+ponme una ecuación para resolver yo,solicitar_reto
+¿me lo dices como para alguien que empieza?,simplificar_explicacion
+¿qué debería corregir de mi razonamiento?,solicitar_retroalimentacion
+qué debería revisar primero de este problema,solicitar_pista
+deja que lo vuelva a intentar sin cambiar los números,repetir_ejercicio
+¿lo que escribí cuenta como respuesta correcta?,verificar_respuesta
+pon un caso de un triángulo de la vida real,solicitar_ejemplo
+quiero ver cómo he mejorado con fracciones,consultar_progreso
+"puse que era el predicado, ¿está bien?",verificar_respuesta
+"mi x salió 7, ¿si está correcto?",verificar_respuesta
+enséñame el historial de mis retos,consultar_progreso
+"me cambio de tema, quiero porcentajes",cambiar_tema
+"ya estuvo, luego regreso",despedirse
+qué parte de mi explicación estuvo mal,solicitar_retroalimentacion
+necesito una mano para continuar sin copiar,solicitar_pista
+"me revolví con ese párrafo, acláralo",simplificar_explicacion
+ando atorado con el tema de los porcentajes,solicitar_explicacion
+quiero competir conmigo con preguntas,solicitar_reto
+¿lo que contesté se acepta?,verificar_respuesta
+oye ¿sí está bien que me diera tres cuartos?,verificar_respuesta
+pon otro caso diferente para comprender,solicitar_ejemplo
+"listo por hoy, me desconecto",despedirse
+no entiendo por qué la x pasa del otro lado,solicitar_explicacion
+"cierro por hoy, saludos",despedirse
+"no me mandes otro, repite este",repetir_ejercicio
+"no me sueltes la respuesta, nomás oriéntame",solicitar_pista
+me lo podrías explicar sin tanta palabra rara,simplificar_explicacion
+"me tengo que ir a clase, bye",despedirse
+ey tutor,saludar
+quiero rehacer el problema anterior,repetir_ejercicio
+¿por qué se marca incorrecto lo que hice?,solicitar_retroalimentacion
+qué fue lo que confundí para fallar,solicitar_retroalimentacion
+yo no entendí lo que acabas de escribir,simplificar_explicacion
+¿puedes hacerlo más básico que eso?,simplificar_explicacion
+ke onda jarol,saludar
+"no entendí tu explicación anterior, inténtalo fácil",simplificar_explicacion
+una demostración de cuándo se usa la regla de tres,solicitar_ejemplo
+"no te caché ni una, háblame normal",simplificar_explicacion
+dame una señal para seguir pensando,solicitar_pista
+dame un ejemplo de texto argumentativo,solicitar_ejemplo
+eso que pusiste está muy difícil para mí,simplificar_explicacion
+no uses términos tan técnicos,simplificar_explicacion
+¿cuáles son mis puntos actuales?,consultar_progreso
+¿mi resultado coincide con el del reto?,verificar_respuesta
+"se acabó mi tiempo, nos vemos",despedirse
+reinicia ese mismo reto para mí,repetir_ejercicio
+¿dónde se rompió mi procedimiento?,solicitar_retroalimentacion
+deja esto tantito y vamos con ecuaciones,cambiar_tema
+¿cómo voy de aciertos en matemáticas?,consultar_progreso
+quiero hacer un mini examen de español,solicitar_reto
+¿puedo intentar un problema de pitágoras?,solicitar_reto
+me gustaría volver a contestarlo,repetir_ejercicio
+"si me dio 42, ¿le atiné?",verificar_respuesta
+"me ayudas con un paso, no con todo",solicitar_pista
+¿podemos arrancar otra vez ese ejercicio?,repetir_ejercicio
+"gracias por ayudarme, hasta mañana",despedirse
+explícame por qué no le atiné,solicitar_retroalimentacion
+¿el procedimiento que hice sirve?,verificar_respuesta
+me explicas cómo hacer el mínimo común múltiplo,solicitar_explicacion
+"no más fracciones, ahora álgebra",cambiar_tema
+se me hace difícil entender qué significa una metáfora,solicitar_explicacion
+"terminé aquí, ahora a comprensión lectora",cambiar_tema
+regresa el ejercicio al principio,repetir_ejercicio
+profe yo me pierdo con la idea principal de un cuento,solicitar_explicacion
+de qué va el teorema de pitagoras,solicitar_explicacion
+salgamos de geometría y pasemos a ortografía,cambiar_tema
+"no quiero solo que me digas mal, dime por qué",solicitar_retroalimentacion
+¿me puedes ilustrar con una cuenta de supermercado?,solicitar_ejemplo
+mejor cambiamos de fracciones a gramática,cambiar_tema
+¿me dejas una práctica cortita de lectura?,solicitar_reto
+"ya me voy a dormir, adiós",despedirse
+quiero ver una aplicación de esto en casa,solicitar_ejemplo
+quiero entender el fallo que tuve,solicitar_retroalimentacion
+"ya no quiero mate, mejor español",cambiar_tema
+una pista chiquita nada más porfa,solicitar_pista
+explícame qué es el sujeto en una oración,solicitar_explicacion
+¿en qué fallo más seguido según mis resultados?,consultar_progreso
+qué significa que dos fracciones sean equivalentes,solicitar_explicacion
+ola jarol,saludar
+"ahí te ves jarol, mañana sigo",despedirse
+hasta la próxima jarol,despedirse
+otra oportunidad con el mismo problema porfa,repetir_ejercicio
+¿me confirmas si la opción b es correcta?,verificar_respuesta
+¿cuánto me falta para la siguiente liga?,consultar_progreso
+dejo esto para luego y vemos sujeto y predicado,cambiar_tema
+¿cómo se vería eso en una oración real?,solicitar_ejemplo
+buenas buenas,saludar
+"me quedé en blanco, dame una ayudita",solicitar_pista
+se me hizo bolas lo que dijiste,simplificar_explicacion
+hazme cinco preguntas de ortografía,solicitar_reto
+ponme un cuestionario para practicar,solicitar_reto
+quiero pasar de español a matemáticas,cambiar_tema
+hola soy nuevo acá,saludar
+¿qué temas ya traigo dominados?,consultar_progreso
+"no lo hagas por mí, solo guíame",solicitar_pista
+¿me enseñas dónde estuvo mi error?,solicitar_retroalimentacion
+échame un reto de fracciones para ver si puedo,solicitar_reto
+buenas joven,saludar
+hazme resolver un problema sin darme el resultado,solicitar_reto
+¿cuántos ejercicios hice esta semana?,consultar_progreso
+quiero un ejemplo concreto con números,solicitar_ejemplo
+¿puedes usar una historia corta para ilustrarlo?,solicitar_ejemplo
+qué rollo maestro,saludar
+"qué ondaa, ya entré",saludar
+¿puedo darle otra vuelta a ese mismo?,repetir_ejercicio
+nos vemos luego profe virtual,despedirse
+tírame un ejercicio de porcentajes,solicitar_reto
+¿cuántos xp junté desde ayer?,consultar_progreso
+"me atasqué, ¿por dónde empiezo?",solicitar_pista
+mejor abrimos el tema de Pitágoras,cambiar_tema
