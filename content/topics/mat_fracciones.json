@@ -1,0 +1,36 @@
+
+{
+  "id": "mat_fracciones",
+  "subject": "matematicas",
+  "name": "Fracciones",
+  "competency": "suma_fracciones_igual_denominador",
+  "levels": ["secundaria", "bachillerato"],
+  "diagnostic": {
+    "id": "diag_frac_001",
+    "question": "¿Qué representa el denominador de una fracción?",
+    "options": [
+      "La cantidad de partes que tomamos",
+      "La cantidad de partes iguales del total",
+      "El resultado de una división"
+    ],
+    "correct_index": 1
+  },
+  "explanations": {
+    "basic": "Una fracción representa partes de un todo dividido en partes iguales.",
+    "intermediate": "Una fracción tiene numerador y denominador. El denominador indica en cuántas partes iguales se divide el total.",
+    "alternative": "Imagina una pizza dividida en partes iguales. Una fracción permite representar cuántas partes seleccionamos."
+  },
+  "exercise": {
+    "id": "frac_001",
+    "difficulty": 1,
+    "type": "fraction",
+    "question": "¿Cuánto es 1/4 + 2/4?",
+    "expected_answer": "3/4",
+    "hints": [
+      "Observa si las dos fracciones tienen el mismo denominador.",
+      "Cuando los denominadores son iguales, puedes conservar ese denominador.",
+      "Piensa qué operación debes realizar con los numeradores."
+    ]
+  }
+}
+
