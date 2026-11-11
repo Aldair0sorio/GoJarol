@@ -1,0 +1,109 @@
+
+[
+  {
+    "id": "mat_fracciones",
+    "subject": "matematicas",
+    "name": "Fracciones",
+    "aliases": [
+      "fracciones",
+      "numerador y denominador",
+      "sumar fracciones",
+      "restar fracciones",
+      "fracciones equivalentes",
+      "operaciones con fracciones"
+    ],
+    "description": "Representación de partes de un todo y operaciones con fracciones."
+  },
+  {
+    "id": "mat_ecuaciones",
+    "subject": "matematicas",
+    "name": "Ecuaciones lineales",
+    "aliases": [
+      "ecuaciones",
+      "despejar x",
+      "resolver ecuaciones",
+      "incógnitas",
+      "ecuaciones de primer grado"
+    ],
+    "description": "Resolución de igualdades con una incógnita."
+  },
+  {
+    "id": "mat_pitagoras",
+    "subject": "matematicas",
+    "name": "Teorema de Pitágoras",
+    "aliases": [
+      "pitágoras",
+      "teorema de pitágoras",
+      "hipotenusa",
+      "catetos",
+      "triángulos rectángulos"
+    ],
+    "description": "Relación entre los lados de un triángulo rectángulo."
+  },
+  {
+    "id": "mat_porcentajes",
+    "subject": "matematicas",
+    "name": "Porcentajes",
+    "aliases": [
+      "porcentajes",
+      "calcular porcentaje",
+      "descuentos",
+      "aumentos porcentuales",
+      "por ciento"
+    ],
+    "description": "Cálculo y aplicación de porcentajes."
+  },
+  {
+    "id": "esp_comprension",
+    "subject": "espanol",
+    "name": "Comprensión lectora",
+    "aliases": [
+      "comprensión lectora",
+      "entender un texto",
+      "interpretar lecturas",
+      "idea principal",
+      "ideas secundarias"
+    ],
+    "description": "Interpretación y comprensión de textos."
+  },
+  {
+    "id": "esp_ortografia",
+    "subject": "espanol",
+    "name": "Ortografía",
+    "aliases": [
+      "ortografía",
+      "errores ortográficos",
+      "reglas de escritura",
+      "palabras con b y v",
+      "uso de la h"
+    ],
+    "description": "Reglas para escribir correctamente."
+  },
+  {
+    "id": "esp_acentuacion",
+    "subject": "espanol",
+    "name": "Acentuación",
+    "aliases": [
+      "acentos",
+      "tildes",
+      "palabras agudas",
+      "palabras graves",
+      "palabras esdrújulas"
+    ],
+    "description": "Reglas de acentuación en español."
+  },
+  {
+    "id": "esp_gramatica",
+    "subject": "espanol",
+    "name": "Gramática",
+    "aliases": [
+      "gramática",
+      "sujeto y predicado",
+      "sustantivos",
+      "adjetivos",
+      "verbos",
+      "oraciones"
+    ],
+    "description": "Estructura y elementos gramaticales de las oraciones."
+  }
+]
