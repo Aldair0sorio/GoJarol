@@ -1,4 +1,5 @@
 import React from 'react';
+import { AccountMenu } from '../profile/AccountMenu';
 import { useAuth } from '../../context/AuthContext';
 import {
   MessageSquareText,
@@ -9,9 +10,7 @@ import {
   LayoutDashboard,
   GraduationCap,
   Sparkles,
-  UserCheck,
   Flame,
-  Settings,
 } from 'lucide-react';
 
 interface SidebarTab {
@@ -25,16 +24,14 @@ interface DesktopSidebarProps {
   currentTab: string;
   onTabChange: (tab: string) => void;
   onOpenProfile: () => void;
-  onOpenAuth: () => void;
 }
 
 export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
   currentTab,
   onTabChange,
   onOpenProfile,
-  onOpenAuth,
 }) => {
-  const { user, role, switchRole, isAuthenticated } = useAuth();
+  const { user, role } = useAuth();
 
   const studentTabs: SidebarTab[] = [
     { id: 'chat', label: 'Tutor Jarol', icon: MessageSquareText, badge: 'IA' },
@@ -81,7 +78,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
         </div>
 
         {/* Indicador de Racha / XP en Desktop */}
-        {role === 'student' && isAuthenticated && (
+        {role === 'student' && (
           <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#F7F5EF] border border-[#E8E5DC]">
             <div className="flex items-center gap-1.5 text-xs font-display font-bold text-amber-700">
               <Flame className="w-4 h-4 text-amber-500 fill-amber-500" />
@@ -93,22 +90,6 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
             </div>
           </div>
         )}
-
-        {/* Botón de alternar rol para presentación rápida */}
-        <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200">
-          <div className="flex items-center gap-2">
-            <UserCheck className="w-4 h-4 text-[#126B73]" />
-            <span className="text-xs font-display font-semibold text-[#0A1D2C]">
-              Modo {role === 'student' ? 'Estudiante' : 'Docente'}
-            </span>
-          </div>
-          <button
-            onClick={() => switchRole(role === 'student' ? 'teacher' : 'student')}
-            className="text-[11px] font-display font-bold px-2 py-1 rounded-lg bg-white border border-[#E8E5DC] text-[#126B73] hover:bg-[#DCEFEB]/50 active:scale-95 transition-all cursor-pointer"
-          >
-            Cambiar
-          </button>
-        </div>
 
         {/* Navegación Principal */}
         <nav className="flex flex-col gap-1.5 mt-2">
@@ -154,49 +135,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
 
       {/* Footer del Sidebar: Perfil y Ajustes */}
       <div className="pt-3 border-t border-[#E8E5DC] flex flex-col gap-2">
-        {!isAuthenticated ? (
-          <div className="flex flex-col gap-2 p-2.5 rounded-xl bg-[#DCEFEB]/40 border border-[#126B73]/20">
-            <span className="text-[11px] text-[#596B72] text-center font-medium">
-              Aún no has iniciado sesión
-            </span>
-            <button
-              onClick={onOpenAuth}
-              className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-[#126B73] hover:bg-[#005158] text-white font-display font-bold text-xs shadow-[0_2px_0_#003b40] transition-all cursor-pointer active:translate-y-0.5"
-            >
-              <UserCheck className="w-3.5 h-3.5 stroke-[2.5px]" />
-              <span>Iniciar Sesión / Registro</span>
-            </button>
-          </div>
-        ) : (
-          <>
-            <button
-              onClick={onOpenProfile}
-              className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-[#F7F5EF] transition-colors text-left cursor-pointer"
-            >
-              <img
-                src={user.avatarUrl}
-                alt={user.name}
-                className="w-10 h-10 rounded-full object-cover ring-2 ring-[#126B73]/20"
-              />
-              <div className="flex-1 min-w-0">
-                <span className="font-display font-bold text-xs text-[#0A1D2C] block truncate">
-                  {user.name}
-                </span>
-                <span className="text-[11px] text-[#596B72] truncate block">
-                  {user.school}
-                </span>
-              </div>
-              <Settings className="w-4 h-4 text-[#596B72]" />
-            </button>
-
-            <button
-              onClick={onOpenAuth}
-              className="text-center text-[11px] font-display font-semibold text-[#126B73] hover:underline py-1 cursor-pointer"
-            >
-              Cambiar / Registrar cuenta
-            </button>
-          </>
-        )}
+        <AccountMenu onOpenProfile={onOpenProfile} />
       </div>
     </aside>
   );

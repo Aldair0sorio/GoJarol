@@ -2,20 +2,11 @@ import {
   MOCK_FEEDBACK_DB,
   MOCK_EXERCISE_FRACTIONS_1,
   MOCK_EXERCISE_FRACTIONS_2,
-  MOCK_STUDENT,
 } from './mockData';
 import type { AnswerFeedback, ChatMessage, ExerciseCardData } from '../types/chat';
-import type {
-  Subject,
-  ClassGroup,
-  StudentMastery,
-  GroupTopicAnalytics,
-  ClassChallengeItem,
-  ClassAnnouncementItem,
-  StudentTopicMetric,
-} from '../types/curriculum';
+import type { Subject, ClassGroup, StudentMastery, GroupTopicAnalytics, ClassChallengeItem, ClassAnnouncementItem, StudentTopicMetric } from '../types/curriculum';
 import type { DetailedStudent, StudentExerciseAttempt } from '../types/leagues';
-import type { User } from '../types/auth';
+import type { User, BackendProfile, ProfileChanges } from '../types/auth';
 
 const API_BASE = '/api/v1';
 
@@ -30,25 +21,7 @@ function getAuthHeaders(includeJson = true): Record<string, string> {
     headers['Content-Type'] = 'application/json';
   }
   const token = getAuthToken();
-  if (
-    token &&
-    !token.startsWith('jarol_demo_') &&
-    !token.startsWith('jarol_gtoken_') &&
-    !token.startsWith('jarol_token_')
-  ) {
-    headers['Authorization'] = `Token ${token}`;
-  }
-  try {
-    const rawUser = localStorage.getItem('jarol_current_user');
-    if (rawUser) {
-      const parsed = JSON.parse(rawUser);
-      if (parsed?.id) headers['X-Jarol-User-Id'] = String(parsed.id);
-      if (parsed?.email) headers['X-Jarol-User-Email'] = String(parsed.email);
-      if (parsed?.name) headers['X-Jarol-User-Name'] = String(parsed.name);
-    }
-  } catch {
-    // ignore
-  }
+  if (isBackendToken(token)) headers['Authorization'] = `Token ${token}`;
   return headers;
 }
 
@@ -190,143 +163,26 @@ export const apiService = {
    * Inicia sesión o registra usuario mediante Google OAuth.
    */
   async loginWithGoogle(payload: {
-    credential?: string;
-    email: string;
-    name: string;
-    picture?: string;
+    credential: string;
     role: 'student' | 'teacher';
-    explicitRole?: boolean;
-    grade?: string;
-    school?: string;
+    nivel?: 'secundaria' | 'bachillerato';
+    grado?: number;
   }): Promise<{ success: boolean; token?: string; user?: User; error?: string }> {
     try {
+      await getAuthConfig();
       const res = await fetch(`${API_BASE}/auth/google/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          credential: payload.credential,
-          email: payload.email,
-          name: payload.name,
-          role: payload.role === 'teacher' ? 'docente' : 'estudiante',
-          explicit_role: Boolean(payload.explicitRole),
-          picture: payload.picture,
-          grade: payload.grade,
-          school: payload.school,
-        }),
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ credential: payload.credential,
+          role: payload.role === 'teacher' ? 'docente' : 'estudiante', nivel: payload.nivel, grado: payload.grado }),
       });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data.token) {
-          setAuthToken(data.token);
-        }
-        return {
-          success: true,
-          token: data.token,
-          user: {
-            id: String(data.user?.id || 'google-user'),
-            name: data.user?.alias || payload.name,
-            email: data.user?.email || payload.email,
-            role: data.user?.rol === 'docente' ? 'teacher' : 'student',
-            grade: payload.grade,
-            school: payload.school,
-            avatarUrl: payload.picture || data.picture || '/mascot/jarol-crab.png',
-            xp: Number(data.user?.xp ?? 0),
-            streakDays: Number(data.user?.streak_days ?? 1),
-          },
-        };
+      const data = await res.json();
+      if (!res.ok || !isBackendToken(data.token) || !data.user?.id || !['estudiante', 'docente', 'admin'].includes(data.user.rol)) {
+        return { success: false, error: authError(data, 'Google no pudo verificar tu cuenta. Usa tu contraseña o intenta de nuevo.') };
       }
-    } catch (err) {
-      console.warn('Error de red al conectar con Google Auth backend:', err);
-    }
-
-    const mockToken = `jarol_gtoken_${Date.now()}`;
-    setAuthToken(mockToken);
-    return {
-      success: true,
-      token: mockToken,
-      user: {
-        id: `google-${Date.now()}`,
-        name: payload.name,
-        email: payload.email,
-        role: payload.role,
-        grade: payload.grade,
-        school: payload.school,
-        avatarUrl: payload.picture || '/mascot/jarol-crab.png',
-        xp: 0,
-        streakDays: 1,
-      },
-    };
-  },
-
-  /**
-   * Inicia sesión con una cuenta demo real en PostgreSQL (Estudiante o Docente).
-   */
-  async loginDemo(
-    profile: 'student' | 'teacher'
-  ): Promise<{ success: boolean; token?: string; user?: User; error?: string }> {
-    try {
-      const res = await fetch(`${API_BASE}/auth/demo/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ profile }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.token) {
-          setAuthToken(data.token);
-        }
-        const isTeacher = data.user?.rol === 'docente';
-        return {
-          success: true,
-          token: data.token,
-          user: {
-            id: String(data.user?.id),
-            name: data.user?.alias || data.user?.username,
-            email: data.user?.email || '',
-            role: isTeacher ? 'teacher' : 'student',
-            grade: isTeacher ? 'Docente Facilitador' : '3° de Secundaria',
-            school: 'Secundaria Técnica #26 · Boca del Río',
-            avatarUrl: isTeacher
-              ? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80'
-              : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
-            xp: Number(data.user?.xp ?? 0),
-            streakDays: Number(data.user?.streak_days ?? 1),
-          },
-        };
-      }
+      return { success: true, token: data.token, user: profileToUser(data.user) };
     } catch {
-      // ignore
+      return { success: false, error: 'No se pudo conectar con Google. No se inició ninguna sesión.' };
     }
-    return {
-      success: false,
-      error: 'No se pudo iniciar sesión demo con el servidor.',
-    };
-  },
-
-  /**
-   * Sincroniza el cambio de rol (Estudiante <-> Docente) en PostgreSQL para presentación y pruebas.
-   */
-  async switchBackendRole(
-    role: 'student' | 'teacher'
-  ): Promise<{ success: boolean; role?: 'student' | 'teacher' }> {
-    try {
-      const res = await fetch(`${API_BASE}/auth/switch-role/`, {
-        method: 'POST',
-        headers: getAuthHeaders(true),
-        body: JSON.stringify({ role: role === 'teacher' ? 'docente' : 'estudiante' }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        return {
-          success: true,
-          role: data.user?.rol === 'docente' ? 'teacher' : 'student',
-        };
-      }
-    } catch {
-      // ignore
-    }
-    return { success: false };
   },
 
   /**
@@ -335,7 +191,7 @@ export const apiService = {
   async login(credentials: {
     username: string;
     password?: string;
-  }): Promise<{ success: boolean; token?: string; user?: User; error?: string }> {
+  }): Promise<{ success: boolean; token?: string; user?: User; verificationRequired?: boolean; error?: string }> {
     try {
       const res = await fetch(`${API_BASE}/auth/login/`, {
         method: 'POST',
@@ -348,35 +204,15 @@ export const apiService = {
 
       if (res.ok) {
         const data = await res.json();
-        if (data.token) {
-          setAuthToken(data.token);
+        if (!isBackendToken(data.token) || !data.user?.id || !['estudiante', 'docente', 'admin'].includes(data.user.rol)) {
+          return { success: false, error: 'El servidor no devolvió una sesión válida.' };
         }
-        const isBachillerato = data.user?.nivel === 'bachillerato';
-        const gradoNum = data.user?.grado || 1;
-        return {
-          success: true,
-          token: data.token,
-          user: {
-            id: String(data.user?.id || 'user'),
-            name: data.user?.alias || data.user?.username || credentials.username,
-            email: data.user?.email || '',
-            role: data.user?.rol === 'docente' ? 'teacher' : 'student',
-            grade:
-              data.user?.rol === 'docente'
-                ? 'Docente Facilitador'
-                : isBachillerato
-                  ? `${gradoNum}° semestre de Bachillerato`
-                  : `${gradoNum}° año de Secundaria`,
-            school: 'Veracruz',
-            avatarUrl: '/mascot/jarol-crab.png',
-            xp: Number(data.user?.xp ?? 0),
-            streakDays: Number(data.user?.streak_days ?? 1),
-          },
-        };
+        setAuthToken(data.token);
+        return { success: true, token: data.token, user: profileToUser(data.user) };
       } else {
         const err = await res.json().catch(() => ({}));
-        const msg = err.error?.message || err.detail || 'Usuario o contraseña incorrectos.';
-        return { success: false, error: msg };
+        const msg = authError(err, 'Usuario o contraseña incorrectos.');
+        return { success: false, verificationRequired: err.verification_required === true, error: msg };
       }
     } catch {
       return {
@@ -390,73 +226,31 @@ export const apiService = {
    * Registra un nuevo estudiante o docente en el backend.
    */
   async register(payload: {
-    username: string;
-    email: string;
-    password: string;
-    alias: string;
-    role: 'student' | 'teacher';
-    nivel?: 'secundaria' | 'bachillerato';
-    grado?: number;
-    school?: string;
-  }): Promise<{ success: boolean; token?: string; user?: User; error?: string }> {
+    username: string; email: string; password: string; passwordConfirm: string;
+    fullName: string; role: 'student' | 'teacher'; nivel?: 'secundaria' | 'bachillerato';
+    grado?: number; estado: string;
+  }): Promise<{ success: boolean; verificationRequired?: boolean; emailSent?: boolean; error?: string }> {
     try {
-      const res = await fetch(`${API_BASE}/auth/register/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: payload.username.trim(),
-          email: payload.email.trim(),
-          password: payload.password,
-          alias: payload.alias.trim(),
-          rol: payload.role === 'teacher' ? 'docente' : 'estudiante',
-          nivel: payload.nivel || 'secundaria',
-          grado: payload.grado || 1,
-        }),
+      await getAuthConfig(); // Never create an unverified legacy account on an outdated backend.
+      const response = await fetch(`${API_BASE}/auth/register/`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: payload.username.trim(), email: payload.email.trim(),
+          password: payload.password, password_confirm: payload.passwordConfirm, full_name: payload.fullName.trim(),
+          rol: payload.role === 'teacher' ? 'docente' : 'estudiante', nivel: payload.nivel,
+          grado: payload.grado, estado: payload.estado }),
       });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data.token) {
-          setAuthToken(data.token);
-        }
-        const isBach = payload.nivel === 'bachillerato';
-        const gradoNum = payload.grado || 1;
-        return {
-          success: true,
-          token: data.token,
-          user: {
-            id: String(data.user?.id || 'new-user'),
-            name: data.user?.alias || payload.alias,
-            email: data.user?.email || payload.email,
-            role: payload.role,
-            grade:
-              payload.role === 'teacher'
-                ? 'Docente Facilitador'
-                : isBach
-                  ? `${gradoNum}° semestre de Bachillerato`
-                  : `${gradoNum}° año de Secundaria`,
-            school: payload.school || 'Veracruz',
-            avatarUrl: '/mascot/jarol-crab.png',
-            xp: Number(data.user?.xp ?? 0),
-            streakDays: Number(data.user?.streak_days ?? 1),
-          },
-        };
-      } else {
-        const err = await res.json().catch(() => ({}));
-        let msg = err.error?.message || err.detail;
-        if (!msg) {
-          const firstKey = Object.keys(err)[0];
-          msg = firstKey
-            ? `${firstKey}: ${Array.isArray(err[firstKey]) ? err[firstKey][0] : err[firstKey]}`
-            : 'Error al registrar usuario.';
-        }
-        return { success: false, error: msg };
+      const data = await response.json();
+      if (!isObject(data) || ['token', 'access', 'refresh', 'access_token', 'refresh_token', 'user'].some(key => key in data)) {
+        return { success: false, error: AUTH_CONTRACT_ERROR };
       }
-    } catch {
-      return {
-        success: false,
-        error: 'No se pudo conectar con el servidor para crear la cuenta.',
-      };
+      if (response.ok && data.verification_required === true && data.email_sent === true) {
+        return { success: true, verificationRequired: true, emailSent: true };
+      }
+      return { success: false, verificationRequired: data.account_created === true,
+        emailSent: false, error: authError(data, data.account_created === true ? 'Tu cuenta se creó, pero no pudimos enviar el correo. Solicita un reenvío más tarde.' : 'No se pudo crear la cuenta.') };
+    } catch (error) {
+      if (error instanceof AuthConfigurationError) return { success: false, error: AUTH_CONTRACT_ERROR };
+      return { success: false, error: 'No pudimos confirmar el registro. Comprueba tu conexión; antes de repetirlo puedes solicitar un reenvío.' };
     }
   },
 
@@ -1135,32 +929,114 @@ export const apiService = {
    * Obtener perfil del usuario activo desde el backend.
    */
   async getProfile(): Promise<User> {
-    try {
-      const res = await fetch(`${API_BASE}/auth/me/`, {
-        headers: getAuthHeaders(false),
-      });
-      if (res.ok) {
-        const u = await res.json();
-        return {
-          id: String(u.id),
-          name: u.alias || u.username,
-          email: u.email,
-          role: u.rol === 'docente' ? 'teacher' : 'student',
-          grade:
-            u.rol === 'docente'
-              ? 'Docente Facilitador'
-              : u.nivel === 'bachillerato'
-                ? `${u.grado || 1}° semestre de Bachillerato`
-                : `${u.grado || 1}° año de Secundaria`,
-          school: 'Veracruz',
-          avatarUrl: '/mascot/jarol-crab.png',
-          xp: Number(u.xp ?? 0),
-          streakDays: Number(u.streak_days ?? 1),
-        };
-      }
-    } catch {
-      // fallback
-    }
-    return MOCK_STUDENT;
+    return profileToUser(await getProfile());
   },
 };
+
+export class ProfileApiError extends Error {
+  status: number;
+  constructor(status: number, message: string) { super(message); this.status = status; }
+}
+
+async function profileRequest(path: string, method = 'GET', body?: ProfileChanges): Promise<Response> {
+  const response = await fetch(`${API_BASE}/auth/${path}/`, {
+    method, headers: getAuthHeaders(), credentials: 'same-origin',
+    ...(body ? { body: JSON.stringify(body) } : {}),
+  });
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    const message = authError(data, 'No se pudo completar la solicitud. Intenta de nuevo.');
+    throw new ProfileApiError(response.status, message || 'No se pudo completar la solicitud. Intenta de nuevo.');
+  }
+  return response;
+}
+export async function getProfile(): Promise<BackendProfile> {
+  return (await profileRequest('me')).json();
+}
+export async function saveProfile(changes: ProfileChanges): Promise<BackendProfile> {
+  return (await profileRequest('me', 'PATCH', changes)).json();
+}
+export async function endSession(): Promise<void> { await profileRequest('logout', 'POST'); }
+export function profileToUser(profile: BackendProfile): User {
+  return { id: String(profile.id), name: [profile.first_name, profile.last_name].filter(Boolean).join(' ') || profile.alias || profile.username,
+    email: profile.email, role: profile.rol === 'estudiante' ? 'student' : profile.rol === 'docente' ? 'teacher' : 'admin',
+    grade: profile.nivel ? `${profile.grado ?? '—'}° ${profile.nivel === 'bachillerato' ? 'semestre de Bachillerato' : 'de Secundaria'}` : '',
+    xp: profile.xp, streakDays: profile.streak_days };
+}
+
+export function isBackendToken(token: unknown): token is string {
+  return typeof token === 'string' && /^[a-f0-9]{40}$/.test(token);
+}
+
+const AUTH_CONTRACT_ERROR = 'El registro no está disponible porque el servidor necesita actualizarse. No se inició ninguna sesión. Intenta más tarde.';
+function isObject(data: unknown): data is Record<string, unknown> {
+  return typeof data === 'object' && data !== null && !Array.isArray(data);
+}
+
+// Never echo arbitrary server fields or messages. Even error.message can contain
+// tokens, passwords or SMTP credentials from a legacy/debug server.
+export function authError(data: unknown, fallback: string): string {
+  if (!isObject(data)) return fallback;
+  const codes: Record<string, string> = {
+    invalid_credentials: 'Usuario o contraseña incorrectos.',
+    invalid_google_token: 'La identidad de Google no pudo verificarse.',
+    google_unavailable: 'Google no está disponible ahora. Usa tu contraseña o intenta más tarde.',
+    account_link_required: 'Usa el acceso original de tu cuenta. No se vinculan cuentas automáticamente por correo.',
+    identity_changed: 'Se requiere revisar la vinculación de tu cuenta. Usa tu acceso original.',
+    inactive_account: 'Esta cuenta no está disponible.',
+  };
+  if (isObject(data.error) && typeof data.error.code === 'string' && Object.hasOwn(codes, data.error.code)) return codes[data.error.code];
+  const fields: Record<string, string> = {
+    full_name: 'Nombre completo: escribe tu nombre (máximo 150 caracteres).',
+    email: 'Correo: revisa la dirección. Si ya tienes cuenta, inicia sesión o solicita verificarla.',
+    username: 'Usuario: revisa el formato o elige otro nombre disponible.',
+    nivel: 'Nivel escolar: selecciona secundaria o bachillerato.',
+    grado: 'Selecciona un año (1–3) o semestre (1–6) válido.',
+    estado: 'Estado de residencia: selecciona una opción de la lista.',
+    password: 'Contraseña: usa al menos 8 caracteres; evita solo números, datos personales y contraseñas comunes.',
+    password_confirm: 'Las contraseñas deben coincidir.',
+  };
+  return Object.keys(fields).filter(field => Object.hasOwn(data, field)).map(field => fields[field]).join(' ') || fallback;
+}
+
+export interface PublicAuthConfig {
+  auth_contract_version: 2;
+  registration_mode: 'email_verification';
+  google_client_id: string | null;
+}
+export class AuthConfigurationError extends Error {}
+export async function getAuthConfig(): Promise<PublicAuthConfig> {
+  const response = await fetch(`${API_BASE}/auth/config/`, { cache: 'no-store', credentials: 'same-origin', signal: AbortSignal.timeout(10000) });
+  const data: unknown = await response.json().catch(() => null);
+  if (!response.ok || !isObject(data) || data.auth_contract_version !== 2 || data.registration_mode !== 'email_verification'
+      || !(data.google_client_id === null || typeof data.google_client_id === 'string')) {
+    throw new AuthConfigurationError(AUTH_CONTRACT_ERROR);
+  }
+  return { auth_contract_version: 2, registration_mode: 'email_verification', google_client_id: data.google_client_id as string | null };
+}
+export function resolveGoogleClientId(config: PublicAuthConfig, buildId?: string): string | null {
+  const serverId = config.google_client_id?.trim();
+  if (!serverId || !/^[a-zA-Z0-9_-]+\.apps\.googleusercontent\.com$/.test(serverId)) return null;
+  if (buildId?.trim() && buildId.trim() !== serverId) return null;
+  return serverId;
+}
+export async function verifyEmail(uid: string, token: string): Promise<void> {
+  await verificationRequest('verify-email', { uid, token });
+}
+export class VerificationApiError extends Error {
+  status: number;
+  constructor(status: number, message: string) { super(message); this.status = status; }
+}
+export async function resendVerification(email: string): Promise<void> {
+  await verificationRequest('resend-verification', { email });
+}
+async function verificationRequest(path: string, body: Record<string, string>): Promise<void> {
+  const response = await fetch(`${API_BASE}/auth/${path}/`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new VerificationApiError(response.status, authError(data, response.status === 429 ? 'Espera un minuto entre envíos. El máximo es de cinco por hora.' : 'No se pudo completar la solicitud. Intenta de nuevo o solicita otro enlace.'));
+  if (!isObject(data) || (path === 'verify-email' ? data.email_verified !== true : response.status !== 202 || typeof data.message !== 'string')) {
+    throw new VerificationApiError(502, 'El servidor no pudo confirmar la operación. Intenta más tarde.');
+  }
+}

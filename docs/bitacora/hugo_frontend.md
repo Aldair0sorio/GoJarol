@@ -564,4 +564,3 @@ Para cada sesión o iteración se documenta:
   - `frontend/src/views/teacher/TeacherDashboardView.tsx`, `frontend/src/views/teacher/StudentDetailModal.tsx`
   - `frontend/src/views/student/ClassesView.tsx`, `frontend/src/views/student/ClassDetailModal.tsx`
   - `docs/bitacora/hugo_frontend.md`
-

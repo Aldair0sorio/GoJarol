@@ -1,15 +1,22 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, override_settings
+from django.urls import include, path
+from rest_framework.authtoken.models import Token
+from accounts.test_profile_api import database
 from rest_framework.test import APIClient
 
 User = get_user_model()
 
 
+urlpatterns = [path('api/v1/auth/', include('accounts.urls'))]
+
+
+@override_settings(ROOT_URLCONF=__name__)
 class GoogleLoginTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
 
-    def test_google_login_creates_new_student(self):
+    def test_google_login_without_verified_credential_cannot_create_student(self):
         payload = {
             "email": "emiliano.valdes@estudiantes.sev.gob.mx",
             "name": "Emiliano Valdés",
@@ -18,12 +25,11 @@ class GoogleLoginTestCase(TestCase):
             "grade": "3° de Secundaria",
         }
         res = self.client.post("/api/v1/auth/google/", payload, format="json")
-        self.assertEqual(res.status_code, 200)
-        self.assertIn("token", res.data)
-        self.assertEqual(res.data["user"]["email"], "emiliano.valdes@estudiantes.sev.gob.mx")
-        self.assertEqual(res.data["user"]["rol"], "estudiante")
+        self.assertEqual(res.status_code, 400)
+        self.assertNotIn('token', res.data)
+        self.assertFalse(User.objects.filter(email=payload['email']).exists())
 
-    def test_google_login_existing_user(self):
+    def test_google_login_email_alone_cannot_take_over_existing_user(self):
         # Crear primero
         User.objects.create_user(
             username="lauramendoza",
@@ -37,11 +43,12 @@ class GoogleLoginTestCase(TestCase):
             "role": "docente",
         }
         res = self.client.post("/api/v1/auth/google/", payload, format="json")
-        self.assertEqual(res.status_code, 200)
-        self.assertIn("token", res.data)
-        self.assertEqual(res.data["user"]["email"], "laura.mendoza@docentes.sev.gob.mx")
-        self.assertEqual(res.data["user"]["rol"], "docente")
+        self.assertEqual(res.status_code, 400)
+        self.assertNotIn('token', res.data)
+        user = User.objects.get(email=payload['email'])
+        self.assertEqual(user.rol, 'docente')
+        self.assertFalse(Token.objects.filter(user=user).exists())
 
-    def test_google_login_missing_email_fails(self):
+    def test_google_login_missing_credential_fails(self):
         res = self.client.post("/api/v1/auth/google/", {}, format="json")
         self.assertEqual(res.status_code, 400)

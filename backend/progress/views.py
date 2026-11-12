@@ -251,32 +251,17 @@ def compute_user_diagnostics(progress_obj: StudentProgress | None, user_obj=None
 
 
 def resolve_user_for_request(request):
+    # Identity comes only from validated authentication, never client headers/body.
     if request.user and request.user.is_authenticated:
         return request.user
-
-    req_data = request.data if hasattr(request, "data") and isinstance(request.data, dict) else {}
-    email = (request.headers.get("X-Jarol-User-Email") or req_data.get("user_email") or "").strip()
-    user_id = str(request.headers.get("X-Jarol-User-Id") or req_data.get("user_id") or "").strip()
-    user_name = (request.headers.get("X-Jarol-User-Name") or req_data.get("user_name") or "").strip()
-
-    user_obj = None
-    if user_id.isdigit():
-        user_obj = User.objects.filter(id=int(user_id)).first()
-    if not user_obj and email:
-        user_obj = User.objects.filter(email__iexact=email).first()
-    if not user_obj and user_name:
-        user_obj = (
-            User.objects.filter(username__iexact=user_name).first()
-            or User.objects.filter(alias__iexact=user_name).first()
-        )
-    return user_obj
+    return None
 
 
 def resolve_progress_for_request(request) -> StudentProgress | None:
-    user_obj = resolve_user_for_request(request)
-    if user_obj:
-        prog, _ = StudentProgress.objects.get_or_create(user=user_obj)
-        return prog
+    user = resolve_user_for_request(request)
+    if user is not None:
+        progress, _ = StudentProgress.objects.get_or_create(user=user)
+        return progress
     return None
 
 

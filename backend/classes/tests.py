@@ -1,66 +1,64 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, override_settings
+from django.core import mail
+from django.core.cache import cache
+from django.core.mail.utils import DNS_NAME
+from django.urls import include, path
+from unittest.mock import patch
+import re
+# Shared isolated pytest database; Django's runner creates its own test database.
+from accounts.test_profile_api import database
 from rest_framework.test import APIClient
 
 User = get_user_model()
 
 
+urlpatterns = [
+    path('api/v1/auth/', include('accounts.urls')),
+    path('api/v1/', include('classes.urls')),
+    path('api/v1/', include('exercises.urls')),
+    path('api/v1/', include('chat.urls')),
+    path('api/v1/', include('progress.urls')),
+]
+
+
+@override_settings(ROOT_URLCONF=__name__, DEBUG=True, FRONTEND_URL='https://app.example.test',
+    DEFAULT_FROM_EMAIL='Go Jarol <no.reply.trees.25@gmail.com>',
+    MAILERS={'default': {'BACKEND': 'django.core.mail.backends.locmem.EmailBackend'}})
 class TeacherStudentClassroomFlowTests(TestCase):
+    def register_verified(self, client, **fields):
+        password = 'PasswordSegura2026!'
+        registration = client.post('/api/v1/auth/register/', {
+            **fields, 'password': password, 'password_confirm': password, 'estado': '30',
+        }, format='json')
+        self.assertEqual(registration.status_code, 201)
+        self.assertTrue(registration.data['verification_required'])
+        self.assertNotIn('token', registration.data)
+        match = re.search(r'/verificar-correo/(\d+)/([A-Za-z0-9_-]+)', mail.outbox[-1].body)
+        self.assertIsNotNone(match)
+        confirmation = client.post('/api/v1/auth/verify-email/', {'uid': match[1], 'token': match[2]}, format='json')
+        self.assertEqual(confirmation.status_code, 200)
+        login = client.post('/api/v1/auth/login/', {'username': fields['username'], 'password': password}, format='json')
+        self.assertEqual(login.status_code, 200)
+        client.credentials(HTTP_AUTHORIZATION='Token '+login.data['token'])
+        return login.data
+
     def setUp(self):
-        self.teacher_client = APIClient()
-        self.student_client = APIClient()
-        self.other_student_client = APIClient()
-
-        res_t = self.teacher_client.post(
-            "/api/v1/auth/register/",
-            {
-                "username": "profe_ana",
-                "email": "ana@docentes.sev.gob.mx",
-                "password": "PasswordSegura2026!",
-                "rol": "docente",
-                "alias": "Prof. Ana Ruiz",
-            },
-            format="json",
-        )
-        self.assertEqual(res_t.status_code, 201)
-        self.teacher_token = res_t.data["token"]
-        self.teacher_client.credentials(HTTP_AUTHORIZATION=f"Token {self.teacher_token}")
-
-        res_s = self.student_client.post(
-            "/api/v1/auth/register/",
-            {
-                "username": "luis_est",
-                "email": "luis@estudiantes.sev.gob.mx",
-                "password": "PasswordSegura2026!",
-                "rol": "estudiante",
-                "nivel": "secundaria",
-                "grado": 3,
-                "alias": "Luis Hernández",
-            },
-            format="json",
-        )
-        self.assertEqual(res_s.status_code, 201)
-        self.student_token = res_s.data["token"]
-        self.student_id = res_s.data["user"]["id"]
-        self.student_client.credentials(HTTP_AUTHORIZATION=f"Token {self.student_token}")
-
-        res_s2 = self.other_student_client.post(
-            "/api/v1/auth/register/",
-            {
-                "username": "maria_est",
-                "email": "maria@estudiantes.sev.gob.mx",
-                "password": "PasswordSegura2026!",
-                "rol": "estudiante",
-                "nivel": "secundaria",
-                "grado": 2,
-                "alias": "María López",
-            },
-            format="json",
-        )
-        self.assertEqual(res_s2.status_code, 201)
-        self.other_student_client.credentials(
-            HTTP_AUTHORIZATION=f"Token {res_s2.data['token']}"
-        )
+        cache.clear()
+        mail.outbox = []
+        dns = patch.object(DNS_NAME, '_fqdn', 'testhost.invalid', create=True)
+        dns.start()
+        self.addCleanup(dns.stop)
+        self.teacher_client, self.student_client, self.other_student_client = APIClient(), APIClient(), APIClient()
+        teacher = self.register_verified(self.teacher_client, username='profe_ana', email='ana@docentes.sev.gob.mx',
+            full_name='Prof. Ana Ruiz', rol='docente')
+        self.teacher_token = teacher['token']
+        self.teacher_id = teacher['user']['id']
+        student = self.register_verified(self.student_client, username='luis_est', email='luis@estudiantes.sev.gob.mx',
+            full_name='Luis Hernández', rol='estudiante', nivel='secundaria', grado=3)
+        self.student_token, self.student_id = student['token'], student['user']['id']
+        self.register_verified(self.other_student_client, username='maria_est', email='maria@estudiantes.sev.gob.mx',
+            full_name='María López', rol='estudiante', nivel='secundaria', grado=2)
 
     def test_full_teacher_class_join_analytics_challenges_and_cleanup(self):
         # 1. Docente crea una clase
@@ -229,18 +227,13 @@ class TeacherStudentClassroomFlowTests(TestCase):
         del_class = self.teacher_client.delete(f"/api/v1/classes/{class_id}/")
         self.assertEqual(del_class.status_code, 200)
 
-    def test_demo_login_and_switch_role(self):
-        res_demo = self.teacher_client.post(
-            "/api/v1/auth/demo/",
-            {"profile": "teacher"},
-            format="json",
-        )
-        self.assertEqual(res_demo.status_code, 200)
-        self.assertEqual(res_demo.data["user"]["rol"], "docente")
-        self.assertIn("token", res_demo.data)
-
-        demo_client = APIClient()
-        demo_client.credentials(HTTP_AUTHORIZATION=f"Token {res_demo.data['token']}")
-        sw = demo_client.post("/api/v1/auth/switch-role/", {"role": "student"}, format="json")
-        self.assertEqual(sw.status_code, 200)
-        self.assertEqual(sw.data["user"]["rol"], "estudiante")
+    def test_legacy_demo_and_role_changes_do_not_bypass_authentication(self):
+        before = User.objects.count()
+        res_demo = APIClient().post('/api/v1/auth/demo/', {'profile': 'teacher'}, format='json')
+        self.assertEqual(res_demo.status_code, 410)
+        self.assertNotIn('token', res_demo.data)
+        self.assertEqual(User.objects.count(), before)
+        sw = self.student_client.post('/api/v1/auth/switch-role/', {'role': 'teacher'}, format='json')
+        self.assertEqual(sw.status_code, 403)
+        self.assertEqual(User.objects.get(pk=self.student_id).rol, 'estudiante')
+        self.assertEqual(APIClient().post('/api/v1/auth/switch-role/', {'role':'teacher'}, format='json').status_code, 401)

@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "frontend/index.html"
+        ],
+        "createdAt": "2026-11-12T08:00:01.462Z",
+        "reason": "User explicitly required preserving Go Jarol's existing visual identity and palette in phase 2; index.html already uses the established #F7F5EF canvas from src/index.css."
+      }
+    ]
+  }
+}

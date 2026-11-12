@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getProfile, profileToUser, endSession, ProfileApiError, isBackendToken, getAuthToken } from '../services/api';
 import type { User, UserRole } from '../types/auth';
-import { apiService, getAuthToken } from '../services/api';
 
 export const GUEST_USER: User = {
   id: 'guest',
@@ -18,11 +18,10 @@ interface AuthContextType {
   user: User;
   role: UserRole;
   isAuthenticated: boolean;
+  isLoading: boolean;
   isGoogleUser: boolean;
   login: (user: User, token?: string) => void;
-  loginWithGoogle: (googleUser: Partial<User>, token?: string) => void;
-  logout: () => void;
-  switchRole: (newRole: UserRole) => Promise<void>;
+  logout: () => Promise<void>;
   addXP: (amount: number) => void;
   updateUser: (fields: Partial<User>) => void;
 }
@@ -30,97 +29,11 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    const savedUser = localStorage.getItem('jarol_current_user');
-    const savedToken = localStorage.getItem('jarol_token');
-    return Boolean(savedUser && (savedToken || localStorage.getItem('jarol_is_google') === 'true'));
-  });
-
-  const [currentUser, setCurrentUser] = useState<User>(() => {
-    const savedUser = localStorage.getItem('jarol_current_user');
-    if (savedUser) {
-      try {
-        const parsed = JSON.parse(savedUser);
-        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-          const rawRole = String(parsed.role || parsed.rol || '').toLowerCase();
-          return {
-            ...GUEST_USER,
-            ...parsed,
-            name: String(parsed.name || parsed.alias || parsed.username || 'Usuario'),
-            role: rawRole === 'teacher' || rawRole === 'docente' ? 'teacher' : 'student',
-            avatarUrl: parsed.avatarUrl || '/mascot/jarol-crab.png',
-          };
-        }
-      } catch {
-        // fallback a guest
-      }
-    }
-    return GUEST_USER;
-  });
-
-  const [role, setRole] = useState<UserRole>(() => {
-    return currentUser.role || 'student';
-  });
-
-  const [isGoogleUser, setIsGoogleUser] = useState<boolean>(() => {
-    return Boolean(
-      currentUser.email &&
-        (currentUser.email.endsWith('@gmail.com') ||
-          localStorage.getItem('jarol_is_google') === 'true')
-    );
-  });
-
-  // Si hay una sesión demo o Google vieja sin token DRF real, sincronizar automáticamente con backend
-  React.useEffect(() => {
-    const token = getAuthToken();
-    if (!isAuthenticated) return;
-    if (token && token.startsWith('jarol_demo_')) {
-      const profile: 'student' | 'teacher' =
-        currentUser.role === 'teacher' ? 'teacher' : 'student';
-      apiService.loginDemo(profile).then((res) => {
-        if (res.success && res.user) {
-          setCurrentUser(res.user);
-          setRole(res.user.role);
-          localStorage.setItem('jarol_current_user', JSON.stringify(res.user));
-        }
-      });
-    } else if (
-      (!token || token.startsWith('jarol_gtoken_') || token.startsWith('jarol_token_')) &&
-      currentUser.email
-    ) {
-      apiService
-        .loginWithGoogle({
-          email: currentUser.email,
-          name: currentUser.name,
-          role: currentUser.role === 'teacher' ? 'teacher' : 'student',
-          grade: currentUser.grade,
-          school: currentUser.school,
-        })
-        .then((res) => {
-          if (res.success && res.user && res.token && !res.token.startsWith('jarol_')) {
-            setCurrentUser(res.user);
-            setRole(res.user.role);
-            localStorage.setItem('jarol_current_user', JSON.stringify(res.user));
-          }
-        });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const switchRole = async (newRole: UserRole) => {
-    const normalized: 'student' | 'teacher' = newRole === 'teacher' ? 'teacher' : 'student';
-    setRole(normalized);
-    setCurrentUser((prev) => {
-      const updated = { ...prev, role: normalized };
-      if (isAuthenticated) {
-        localStorage.setItem('jarol_current_user', JSON.stringify(updated));
-      }
-      return updated;
-    });
-    if (isAuthenticated) {
-      await apiService.switchBackendRole(normalized);
-    }
-  };
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<User>(GUEST_USER);
+  const [role, setRole] = useState<UserRole>('student');
+  const [isGoogleUser, setIsGoogleUser] = useState(false);
 
   const addXP = (amount: number) => {
     if (role === 'student') {
@@ -148,6 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const login = (newUser: User, token?: string) => {
+    if (!isBackendToken(token)) throw new Error('No se recibió una sesión válida del servidor.');
     setCurrentUser(newUser);
     setRole(newUser.role);
     setIsAuthenticated(true);
@@ -158,31 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const loginWithGoogle = (googleUser: Partial<User>, token?: string) => {
-    const updatedUser: User = {
-      id: googleUser.id || `guser_${Date.now()}`,
-      name: googleUser.name || 'Estudiante Google',
-      email: googleUser.email || '',
-      role: googleUser.role || role,
-      grade: googleUser.grade || '3° de Secundaria',
-      school: googleUser.school || 'Secundaria Técnica #26 · Veracruz',
-      avatarUrl: googleUser.avatarUrl || '/mascot/jarol-crab.png',
-      xp: googleUser.xp ?? 0,
-      streakDays: googleUser.streakDays ?? 1,
-    };
-
-    setCurrentUser(updatedUser);
-    setRole(updatedUser.role);
-    setIsAuthenticated(true);
-    setIsGoogleUser(true);
-    localStorage.setItem('jarol_is_google', 'true');
-    localStorage.setItem('jarol_current_user', JSON.stringify(updatedUser));
-    if (token) {
-      localStorage.setItem('jarol_token', token);
-    }
-  };
-
-  const logout = () => {
+  const clearSession = () => {
     localStorage.removeItem('jarol_current_user');
     localStorage.removeItem('jarol_token');
     localStorage.removeItem('jarol_is_google');
@@ -194,17 +84,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsGoogleUser(false);
   };
 
+  const logout = async () => {
+    try { await endSession(); }
+    catch (error) { if (!(error instanceof ProfileApiError && error.status === 401)) throw error; }
+    clearSession();
+  };
+
+  useEffect(() => {
+    const token = getAuthToken();
+    if (!token) { setIsLoading(false); return; }
+    if (!isBackendToken(token)) { clearSession(); setIsLoading(false); return; }
+    let active = true;
+    getProfile().then(profile => {
+      if (!active || getAuthToken() !== token) return;
+      const realUser = profileToUser(profile);
+      setCurrentUser(realUser); setRole(realUser.role); setIsAuthenticated(true);
+      localStorage.setItem('jarol_current_user', JSON.stringify(realUser));
+      setIsGoogleUser(localStorage.getItem('jarol_is_google') === 'true');
+    }).catch(error => {
+      if (active && getAuthToken() === token && error instanceof ProfileApiError && error.status === 401) clearSession();
+    }).finally(() => { if (active) setIsLoading(false); });
+    return () => { active = false; };
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
         user: currentUser,
         role,
         isAuthenticated,
+        isLoading,
         isGoogleUser,
         login,
-        loginWithGoogle,
         logout,
-        switchRole,
         addXP,
         updateUser,
       }}

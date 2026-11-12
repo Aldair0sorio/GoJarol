@@ -17,3 +17,13 @@ export interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
 }
+
+export interface BackendProfile {
+  id: number; username: string; first_name: string; last_name: string; alias: string;
+  email: string; rol: 'estudiante' | 'docente' | 'admin';
+  estado: string; email_status: 'legacy' | 'pending' | 'verified';
+  nivel: '' | 'secundaria' | 'bachillerato'; grado: number | null;
+  xp: number; streak_days: number;
+}
+export type ProfileChanges = Pick<BackendProfile, 'first_name' | 'last_name' | 'alias'> &
+  Partial<Pick<BackendProfile, 'nivel' | 'grado' | 'estado'>>;

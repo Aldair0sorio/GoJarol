@@ -21,9 +21,10 @@ services:
     container_name: gojarol_backend
     restart: always
     command: >
-      sh -c "for i in 1 2 3 4 5; do python manage.py migrate --noinput && break || sleep 2; done &&
+      sh -c "migrated=0; for i in 1 2 3 4 5; do python manage.py migrate --noinput && migrated=1 && break; sleep 2; done;
+      test $$migrated -eq 1 &&
       python manage.py collectstatic --noinput &&
-      gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3"
+      exec gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3"
     env_file:
       - .env
     environment:
@@ -42,6 +43,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-}
     container_name: gojarol_frontend
     restart: always
     ports:
