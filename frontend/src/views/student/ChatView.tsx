@@ -143,21 +143,20 @@ export const ChatView: React.FC<ChatViewProps> = ({ initialPrompt, onPromptConsu
         {messages.map((msg) => (
           <React.Fragment key={msg.id}>
             {msg.sender === 'jarol' ? (
-              <JarolBubble text={msg.text} timestamp={msg.timestamp} />
+              msg.exercise ? (
+                <div className="w-full max-w-[96%] my-1">
+                  <ExerciseCard
+                    exercise={msg.exercise}
+                    onNextExercise={(nextEx) =>
+                      handleNextExercise(nextEx, msg.exercise?.topicName)
+                    }
+                  />
+                </div>
+              ) : (
+                <JarolBubble text={msg.text} timestamp={msg.timestamp} />
+              )
             ) : (
               <UserBubble text={msg.text} timestamp={msg.timestamp} />
-            )}
-
-            {/* Ejercicio anexo si el mensaje de Jarol lo incluye */}
-            {msg.exercise && (
-              <div className="w-full max-w-[94%] ml-auto sm:ml-8">
-                <ExerciseCard
-                  exercise={msg.exercise}
-                  onNextExercise={(nextEx) =>
-                    handleNextExercise(nextEx, msg.exercise?.topicName)
-                  }
-                />
-              </div>
             )}
           </React.Fragment>
         ))}
