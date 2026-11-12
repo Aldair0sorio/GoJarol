@@ -39,6 +39,9 @@ ANSWER_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+# Respuesta a un menú de diagnóstico: "b", "B)", "la b", "opción c", "inciso a"...
+MENU_LETTER_PATTERN = re.compile(r"(?:(?:la|el|opcion|inciso|letra)\s+)*([a-z])")
+
 
 class TutorService:
     def __init__(self, analyzer, knowledge, hints, adaptive=None, selector=None, curriculum=None):
@@ -74,7 +77,49 @@ class TutorService:
             "academic_context": {},
             "current_competency_id": None,
             "curriculum": None,
+            "pending_explanation_menu": None,
         }
+
+    def _match_menu_choice(self, message, topic_id):
+        """Devuelve la letra elegida si el mensaje responde al menú; si no, None."""
+        options = self.knowledge.get_explanation_menu(topic_id)["options"]
+        normalized = normalize_context_text(message)
+
+        letter = MENU_LETTER_PATTERN.fullmatch(normalized)
+        if letter:
+            for option in options:
+                if option["label"].casefold() == letter.group(1):
+                    return option["label"]
+            return None
+
+        option_texts = [
+            (option["label"], normalize_context_text(option["text"]))
+            for option in options
+        ]
+        for label, text in option_texts:
+            if normalized == text:
+                return label
+
+        # Un fragmento de al menos dos palabras que aparece en una sola opción.
+        if len(normalized.split()) >= 2:
+            matches = [label for label, text in option_texts if normalized in text]
+            if len(matches) == 1:
+                return matches[0]
+
+        return None
+
+    def _explanation_menu(self, topic_id, state):
+        menu = self.knowledge.get_explanation_menu(topic_id)
+        state["pending_explanation_menu"] = {"topic": topic_id}
+        lines = [menu["question"], ""]
+        lines.extend(f"{option['label']}) {option['text']}" for option in menu["options"])
+        lines.extend(["", "Responde con la letra o escribe la opción con tus palabras."])
+        return self._response(
+            "\n".join(lines),
+            state,
+            "explanation_menu",
+            menu=menu["options"],
+        )
 
     @staticmethod
     def _response(message, state, response_type, **extra):
@@ -150,6 +195,25 @@ class TutorService:
                 state["current_competency_id"] = None
                 state["curriculum"] = None
             state["academic_context"] = deepcopy(academic_context)
+
+        # Si Jarol acaba de preguntar qué parte se le complica, la respuesta
+        # (letra u opción) se interpreta aquí, sin pasar por el clasificador.
+        # Cualquier otro mensaje descarta el menú y sigue el flujo normal.
+        skipped_menu_topic = None
+        pending_menu = state.get("pending_explanation_menu")
+        if pending_menu:
+            state["pending_explanation_menu"] = None
+            menu_topic = pending_menu.get("topic") if isinstance(pending_menu, dict) else None
+            if menu_topic and self.knowledge.has_explanation_menu(menu_topic):
+                choice = self._match_menu_choice(message, menu_topic)
+                if choice:
+                    return self._response(
+                        self.knowledge.get_menu_explanation(menu_topic, choice),
+                        state,
+                        "explanation",
+                        menu_choice=choice,
+                    )
+            skipped_menu_topic = menu_topic
 
         # Si hay un ejercicio activo, primero detectamos respuestas.
         active_id = state.get("active_exercise_id")
@@ -344,6 +408,17 @@ class TutorService:
                 "topic_required",
             )
 
+        # Preguntar antes de explicar: primero qué parte se le complica.
+        # Si vuelve a pedir la explicación sin elegir, o tiene un ejercicio
+        # activo (sus opciones también usan letras), va la explicación completa.
+        if (
+            intent == "solicitar_explicacion"
+            and not state["active_exercise_id"]
+            and topic_id != skipped_menu_topic
+            and self.knowledge.has_explanation_menu(topic_id)
+        ):
+            return self._explanation_menu(topic_id, state)
+
         if intent in {
             "solicitar_explicacion",
             "simplificar_explicacion",
@@ -398,6 +473,7 @@ class TutorService:
                     "exercise_unavailable",
                 )
 
+            state["pending_explanation_menu"] = None
             if state["active_exercise_id"] != exercise["id"]:
                 state["active_exercise_id"] = exercise["id"]
                 state["active_exercise_type"] = exercise["type"]

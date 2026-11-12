@@ -49,8 +49,12 @@ class ChatMessageView(APIView):
         previous_exercise_id = state.get("active_exercise_id")
         hints_before = state.get("hints_used", 0)
 
-        # 1. Revisar si el alumno pregunta por una operación específica (ej. "y cuanto seria 5/2", dividir, multiplicar, restar, sumar)
-        specific = match_specific_operation_guide(message, state)
+        # 1. Revisar si el alumno pregunta por una operación específica (ej. "y cuanto seria 5/2", dividir, multiplicar, restar, sumar).
+        # Si Jarol espera la respuesta a su menú de diagnóstico, el TutorService la interpreta primero.
+        specific = (
+            None if state.get("pending_explanation_menu")
+            else match_specific_operation_guide(message, state)
+        )
         if specific is not None:
             guide_text, mapped_topic = specific
             if mapped_topic:
@@ -142,16 +146,21 @@ class ChatMessageView(APIView):
 
         formatted_exercise = runtime.format_exercise_for_frontend(topic_id, raw_exercise)
 
-        return Response(
-            {
-                "reply": reply_text,
-                "type": response_type,
-                "exercise": formatted_exercise,
-                "evaluation": evaluation,
-                "nextAction": result.get("next_action"),
-                "xpEarned": xp_earned,
-                "totalXp": progress_obj.xp if progress_obj is not None else None,
-                "streakDays": progress_obj.streak_days if progress_obj else 1,
-                "currentTopic": topic_id,
-            }
-        )
+        payload = {
+            "reply": reply_text,
+            "type": response_type,
+            "exercise": formatted_exercise,
+            "evaluation": evaluation,
+            "nextAction": result.get("next_action"),
+            "xpEarned": xp_earned,
+            "totalXp": progress_obj.xp if progress_obj is not None else None,
+            "streakDays": progress_obj.streak_days if progress_obj else 1,
+            "currentTopic": topic_id,
+        }
+        # Opciones del menú de diagnóstico, para que el frontend pueda mostrarlas como botones.
+        if response_type == "explanation_menu":
+            payload["menu"] = [
+                {"label": option["label"], "text": option["text"]}
+                for option in result.get("menu") or []
+            ]
+        return Response(payload)

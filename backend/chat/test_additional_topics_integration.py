@@ -32,7 +32,7 @@ def tutor(analyzer):
 @pytest.mark.parametrize("topic,name,prefix,answers", NEW_TOPICS)
 def test_new_topics_explain_and_adapt_with_real_nlp(tutor, topic, name, prefix, answers):
     explanation = tutor.process_message(f"Explícame {name}")
-    assert explanation["type"] == "explanation"
+    assert explanation["type"] == "explanation_menu"  # Jarol pregunta antes de explicar.
     assert explanation["state"]["current_topic"] == topic
     result = tutor.process_message(f"Ponme un ejercicio de {name}", explanation["state"])
     for attempt, (number, answer) in enumerate(zip([1, 2, 4, 5, 7, 8, 9], answers), 1):

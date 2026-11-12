@@ -83,7 +83,7 @@ def test_login_by_email_and_chat_remain_available(client):
     assert login.status_code==200
     visitor.credentials(HTTP_AUTHORIZATION='Token '+login.data['token'])
     chat=visitor.post('/chat/messages/',{'message':'Explícame las fracciones'},format='json')
-    assert chat.status_code==200 and chat.data['type']=='explanation'
+    assert chat.status_code==200 and chat.data['type']=='explanation_menu'
     assert c.patch('/auth/me/',{'first_name':'Nombre guardado'},format='json').status_code==200
     assert visitor.get('/auth/me/').data['first_name']=='Nombre guardado'
     assert visitor.get('/auth/me/').data['rol']=='estudiante'

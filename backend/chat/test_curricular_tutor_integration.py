@@ -49,7 +49,7 @@ def test_secondary_curriculum_uses_existing_evaluation_hints_and_adaptation(tuto
 def test_bachillerato_reuses_assets_but_does_not_invent_a_semester_mapping(tutor):
     profile = {"level": "bachillerato", "model": "mccems_2025", "semester": 3}
     result = tutor.process_message("Explícame ecuaciones", academic_context=profile)
-    assert result["type"] == "explanation"
+    assert result["type"] == "explanation_menu"  # Jarol pregunta antes de explicar.
     assert result["curriculum"]["competency_id"] == "mx.mccems.2025.pm.algebra"
     assert tutor.curriculum.get(result["curriculum"]["competency_id"])["semester"] is None
     result = tutor.process_message("Ponme un ejercicio de ecuaciones", result["state"])
@@ -81,7 +81,7 @@ def test_ambiguity_requests_context_and_selection_resolves_it(tutor):
     assert result["type"] == "curriculum_clarification"
     assert len(result["candidates"]) == 2
     result = tutor.process_message("Explícame fracciones", result["state"], academic_context={"level": "secundaria", "grade": 1})
-    assert result["type"] == "explanation"
+    assert result["type"] == "explanation_menu"  # Jarol pregunta antes de explicar.
     assert result["curriculum"]["competency_id"] == "mx.sep.f6.2024.mat.g1.operaciones"
 
 

@@ -2,6 +2,13 @@ import re
 from sympy import Rational, sympify
 from gojarol_ml.nlp.topic_retriever import normalize_text
 
+from chat.services.guided_problems import (
+    GUIDED_KINDS,
+    handle_guided_message,
+    start_division_problem,
+    start_fraction_problem,
+)
+
 
 SPECIFIC_GUIDES = [
     # 1. Operaciones específicas CON fracciones
@@ -158,6 +165,10 @@ def evaluate_pending_custom_problem(message: str, state: dict) -> str | None:
     if not custom or state.get("active_exercise_id"):
         return None
 
+    # Suma/resta de fracciones y división: resolución guiada por pasos.
+    if custom.get("kind") in GUIDED_KINDS:
+        return handle_guided_message(message, state)
+
     m = NUMERIC_REPLY_RE.match(message.strip())
     if not m:
         return None
@@ -201,21 +212,15 @@ def build_socratic_math_guide(message: str, state: dict) -> str | None:
         if b == 0 or d == 0:
             return "Recuerda que el denominador de una fracción no puede ser **0**, porque no podemos dividir entre cero."
 
+        # Suma y resta: resolución guiada por pasos (no muestra el resultado).
+        if op in {"+", "-"}:
+            problem, text = start_fraction_problem(a, b, op, c, d)
+            state["custom_problem"] = problem
+            return text
+
         f1, f2 = Rational(a, b), Rational(c, d)
         expr_str = f"{a}/{b} {op} {c}/{d}"
-        if op == "+":
-            ans = f1 + f2
-            if b == d:
-                hint = f"Como ambas tienen denominador **{b}**, conserva el **{b}** abajo y suma los numeradores: **{a} + {c}**."
-            else:
-                hint = f"Busca un denominador común entre **{b}** y **{d}**, convierte a fracciones equivalentes y suma los numeradores."
-        elif op == "-":
-            ans = f1 - f2
-            if b == d:
-                hint = f"Conserva el denominador **{b}** y resta los numeradores: **{a} - {c}**."
-            else:
-                hint = f"Convierte **{a}/{b}** y **{c}/{d}** a un denominador común y luego resta los numeradores."
-        elif op in {"*", "x", "×"}:
+        if op in {"*", "x", "×"}:
             ans = f1 * f2
             hint = f"Multiplica en línea recta: arriba **{a} × {c}** y abajo **{b} × {d}**."
         else:
@@ -244,39 +249,10 @@ def build_socratic_math_guide(message: str, state: dict) -> str | None:
         if b == 0:
             return "No es posible dividir entre **0**. Intenta con un divisor distinto de cero."
 
-        q = a // b
-        r = a % b
-        exact_val = Rational(a, b)
-        expr_str = f"{a} ÷ {b}"
-
-        if r == 0:
-            hint = f"Busca qué número multiplicado por **{b}** da exactamente **{a}** ({b} × ? = {a})."
-            steps = (
-                f"1. **Dividendo**: **{a}** | **Divisor**: **{b}**.\n"
-                f"2. Es una división exacta: piensa cuántas veces cabe el **{b}** dentro del **{a}**.\n"
-                f"3. Pista: repasa la tabla del **{b}** hasta llegar a **{a}**."
-            )
-        else:
-            near = q * b
-            hint = f"El **{b}** cabe **{q}** veces en el **{a}** ({b} × {q} = {near}) y sobra **{r}**. Luego divide ese residuo **{r} ÷ {b}** para obtener la parte decimal."
-            steps = (
-                f"1. **Dividendo**: **{a}** | **Divisor**: **{b}**.\n"
-                f"2. **Parte entera**: ¿Cuántas veces enteras cabe el **{b}** en el **{a}** sin pasarse? Cabe **{q}** {'vez' if q == 1 else 'veces'} porque **{b} × {q} = {near}**.\n"
-                f"3. **Residuo**: A **{a}** réstale **{near}** y te sobra **{r}**.\n"
-                f"4. **Parte decimal**: Para repartir el **{r}** que sobra, pon un punto decimal, agrégale un cero (**{r * 10}**) y divide **{r * 10} ÷ {b}**."
-            )
-
-        state["custom_problem"] = {
-            "expr": expr_str,
-            "expected": str(exact_val),
-            "hint": hint,
-            "closing": "¡Excelente dominio de la división!",
-        }
-        return (
-            f"¡Analicemos **{a} ÷ {b}** (**{a}/{b}**) paso a paso para que tú mismo saques el resultado!\n\n"
-            f"{steps}\n\n"
-            f"¿Cuánto te da entonces **{a} ÷ {b}** (en decimal o fracción)? Escríbelo aquí para comprobarlo:"
-        )
+        # Resolución guiada: pregunta la parte entera, lo que sobra y el decimal, sin darlos.
+        problem, text = start_division_problem(a, b)
+        state["custom_problem"] = problem
+        return text
 
     # 3. Suma, resta o multiplicación de dos enteros: ej. "cuanto es 8 * 7", "cuanto es 15 + 28"
     m_arith = ARITH_RE.search(norm)

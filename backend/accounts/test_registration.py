@@ -103,7 +103,7 @@ def test_register_direct_login_profile_chat_logout(role):
     assert visitor.patch('/auth/me/', {'estado': '09'}, format='json').status_code == 200
     assert visitor.get('/auth/me/').data['estado'] == '09'
     chat = visitor.post('/chat/messages/', {'message': 'Explícame las fracciones'}, format='json')
-    assert chat.status_code == 200 and chat.data['type'] == 'explanation'
+    assert chat.status_code == 200 and chat.data['type'] == 'explanation_menu'
     assert visitor.post('/auth/logout/').status_code == 204
     assert visitor.get('/auth/me/').status_code == 401
 
