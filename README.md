@@ -7,6 +7,12 @@ Tutor conversacional para secundaria y bachillerato que pregunta antes de explic
 - **Demo:** https://gojarol.tecnodesarrollo.site
 - **Video de respaldo (máx. 2 min):** [https://drive.google.com/file/d/1-i9tIwOY3AI-S6-TA0tUElyOeF3uu3Xw/view]
 
+## Problema
+
+Muchas y muchos estudiantes de secundaria y bachillerato en Veracruz estudian con conexión limitada, desde el celular y sin alguien que les resuelva dudas fuera del aula. Según la [ENDUTIH 2025 del INEGI](https://www.inegi.org.mx/contenidos/saladeprensa/boletines/2026/endutih/ENDUTIH_25.pdf), solo 68.3 % de los hogares de Veracruz tiene internet en casa (31.7 % no), uno de los porcentajes más bajos del país. Una IA puede ser un buen tutor si se usa bien, pero también puede servir para copiar. Go Jarol busca que el estudiante aprenda a resolver, no a copiar, y que el docente vea cómo avanza el grupo.
+
+**Personas usuarias:** estudiantes de secundaria y bachillerato (usuarios principales) y docentes que dan seguimiento a su grupo.
+
 ## 1. Qué es y para quién
 
 Go Jarol es una plataforma web para estudiantes de **secundaria y bachillerato de Veracruz** y sus docentes. Jarol, un cangrejo profe, conversa con el alumno: le pregunta qué parte se le complica, explica con analogías cotidianas y ejemplos con otros números, propone ejercicios y los revisa con SymPy. El docente crea grupos con un código, ve el avance por tema y por alumno, asigna retos y ve las señales de que alguien pide la respuesta en lugar de aprender.
