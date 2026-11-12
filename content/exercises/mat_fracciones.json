@@ -1,0 +1,79 @@
+
+{
+  "topic_id": "mat_fracciones",
+  "competency": "suma_fracciones_igual_denominador",
+  "exercises": [
+    {
+      "id": "frac_001",
+      "difficulty": 1,
+      "type": "fraction",
+      "question": "¿Cuánto es 1/4 + 2/4?",
+      "expected_answer": "3/4",
+      "hints": [
+        "Observa los denominadores de ambas fracciones.",
+        "Cuando los denominadores son iguales, se conserva ese denominador.",
+        "Suma los numeradores y revisa el resultado."
+      ]
+    },
+    {
+      "id": "frac_002",
+      "difficulty": 1,
+      "type": "fraction",
+      "question": "¿Cuánto es 2/5 + 1/5?",
+      "expected_answer": "3/5",
+      "hints": [
+        "Identifica el denominador común.",
+        "No necesitas sumar los denominadores.",
+        "Suma solamente los numeradores."
+      ]
+    },
+    {
+      "id": "frac_003",
+      "difficulty": 2,
+      "type": "fraction",
+      "question": "¿Cuánto es 7/12 + 5/12?",
+      "expected_answer": "1",
+      "hints": [
+        "Ambas fracciones tienen el mismo denominador.",
+        "Suma los numeradores.",
+        "Comprueba si la fracción resultante representa un entero."
+      ]
+    },
+    {
+      "id": "frac_004",
+      "difficulty": 2,
+      "type": "fraction",
+      "question": "¿Cuánto es 11/20 + 7/20?",
+      "expected_answer": "9/10",
+      "hints": [
+        "Conserva el denominador común.",
+        "Realiza la suma de los numeradores.",
+        "Revisa si puedes simplificar el resultado."
+      ]
+    },
+    {
+      "id": "frac_005",
+      "difficulty": 3,
+      "type": "fraction",
+      "question": "¿Cuánto es 7/12 + 11/12 + 5/12?",
+      "expected_answer": "23/12",
+      "hints": [
+        "Puedes sumar tres fracciones con el mismo denominador.",
+        "Conserva el denominador común y suma los tres numeradores.",
+        "El resultado puede ser una fracción mayor que uno."
+      ]
+    },
+    {
+      "id": "frac_006",
+      "difficulty": 3,
+      "type": "fraction",
+      "question": "¿Cuánto es 11/15 + 8/15 + 4/15?",
+      "expected_answer": "23/15",
+      "hints": [
+        "Observa qué tienen en común las tres fracciones.",
+        "Suma sus numeradores conservando el denominador.",
+        "No es obligatorio convertir el resultado a número mixto."
+      ]
+    }
+  ]
+}

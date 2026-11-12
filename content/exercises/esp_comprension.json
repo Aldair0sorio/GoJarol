@@ -1,0 +1,133 @@
+
+{
+  "topic_id": "esp_comprension",
+  "competencies": ["identificar_informacion_explicita", "identificar_idea_principal", "inferir_con_evidencia"],
+  "curriculum": {
+    "level": "secundaria",
+    "source": "SEP - Programa Sintético Fase 6",
+    "version": "2024",
+    "url": "https://educacionbasica.sep.gob.mx/wp-content/uploads/2024/06/Programa_Sintetico_Fase_6.pdf",
+    "pages": [29, 30, 34, 35],
+    "scope": "Referencia general al campo Lenguajes: lectura e interpretación de textos y situaciones escolares y comunitarias. Las competencias y dificultades de este banco son una organización interna de práctica; no son PDA textuales ni equivalencias oficiales con grados escolares."
+  },
+  "authorship": "Lecturas y actividades originales de Go Jarol; no son extractos de libros de texto.",
+  "exercises": [
+    {
+      "id": "esp_comp_001",
+      "difficulty": 1,
+      "type": "multiple_choice",
+      "competency": "identificar_informacion_explicita",
+      "reading_text": "Los estudiantes de una secundaria organizaron un huerto escolar. Sembraron verduras y aprendieron a cuidar el suelo. Al final del mes compartieron sus observaciones en una exposición.",
+      "question": "¿Qué proyecto organizaron los estudiantes para cultivar verduras?",
+      "options": {"A": "Una exposición de observaciones", "B": "Un huerto escolar", "C": "Una campaña de recolección de semillas"},
+      "expected_answer": "B",
+      "answer_explanation": "La primera oración identifica el huerto y la segunda indica que allí sembraron verduras. La exposición ocurrió después y no se menciona una campaña de semillas.",
+      "hints": [
+        "Distingue el proyecto de cultivo de la actividad en que compartieron sus observaciones.",
+        "Relee las dos primeras oraciones y relaciona el proyecto con lo que sembraron."
+      ]
+    },
+    {
+      "id": "esp_comp_004",
+      "difficulty": 1,
+      "type": "multiple_choice",
+      "competency": "identificar_informacion_explicita",
+      "reading_text": "El club de lectura se reúne los martes en la biblioteca. Este jueves preparará carteles en el salón de artes. El viernes colocará los carteles en el patio para invitar a más estudiantes.",
+      "question": "¿Dónde preparará los carteles el club de lectura?",
+      "options": {"A": "En el salón de artes", "B": "En la biblioteca", "C": "En el patio"},
+      "expected_answer": "A",
+      "answer_explanation": "La segunda oración sitúa la preparación en el salón de artes. La biblioteca es el lugar de reunión y el patio es donde colocarán los carteles.",
+      "hints": ["Identifica la acción que pregunta el enunciado: preparar, no reunirse ni colocar.", "Busca la oración que contiene esa acción y revisa el lugar que menciona."]
+    },
+    {
+      "id": "esp_comp_005",
+      "difficulty": 1,
+      "type": "multiple_choice",
+      "competency": "identificar_informacion_explicita",
+      "reading_text": "Para registrar la historia del barrio, un grupo entrevistó a varias personas mayores. Antes de las entrevistas preparó preguntas. Durante cada conversación grabó el audio con permiso. Después escribió un resumen de los testimonios.",
+      "question": "¿Qué hizo el grupo después de las entrevistas?",
+      "options": {"A": "Preparó las preguntas", "B": "Grabó las conversaciones", "C": "Escribió un resumen de los testimonios"},
+      "expected_answer": "C",
+      "answer_explanation": "El marcador 'Después' introduce la escritura del resumen. Las preguntas se prepararon antes y la grabación se realizó durante las entrevistas.",
+      "hints": ["Ordena las acciones usando los marcadores de tiempo.", "Distingue lo que hicieron antes, durante y después de conversar."]
+    },
+    {
+      "id": "esp_comp_002",
+      "difficulty": 2,
+      "type": "multiple_choice",
+      "competency": "identificar_idea_principal",
+      "reading_text": "En una escuela instalaron recipientes para recolectar agua de lluvia. Después utilizaron esa agua para regar las plantas del jardín. Un equipo revisaba los recipientes y otro organizaba el riego. Así aprovecharon la lluvia para atender una necesidad del plantel.",
+      "question": "¿Qué idea resume mejor el texto completo?",
+      "options": {"A": "La escuela organizó la recolección y el uso de agua de lluvia para cuidar su jardín", "B": "Un equipo escolar se encargaba de revisar los recipientes", "C": "La escuela instaló recipientes para almacenar agua destinada a la venta"},
+      "expected_answer": "A",
+      "answer_explanation": "A integra la recolección, la organización y el uso del agua. B es un detalle verdadero, pero no resume el conjunto; C introduce una venta que el texto no menciona.",
+      "hints": [
+        "Identifica qué acción conecta las dos oraciones.",
+        "Descarta las opciones que solo recogen un detalle o añaden una finalidad que no aparece."
+      ]
+    },
+    {
+      "id": "esp_comp_006",
+      "difficulty": 2,
+      "type": "multiple_choice",
+      "competency": "identificar_idea_principal",
+      "reading_text": "Cada mes, el grupo de segundo prepara una muestra de recomendaciones de lectura. Algunas personas escriben reseñas y otras diseñan carteles. Durante el recreo presentan sus recomendaciones y prestan los libros disponibles. La actividad busca que más estudiantes encuentren lecturas de su interés.",
+      "question": "¿Cuál es la idea principal del texto?",
+      "options": {"A": "Algunas personas del grupo diseñan carteles para una muestra", "B": "El grupo organiza recomendaciones y préstamos para acercar lecturas a otros estudiantes", "C": "El grupo sustituye las clases por préstamos de libros durante el recreo"},
+      "expected_answer": "B",
+      "answer_explanation": "B integra las acciones y su propósito. A describe solo una tarea y C afirma una sustitución de clases que no ocurre en el texto.",
+      "hints": ["Relaciona las tareas del grupo con el propósito de la actividad.", "Elige una idea que abarque varias acciones, sin añadir consecuencias ajenas al texto."]
+    },
+    {
+      "id": "esp_comp_007",
+      "difficulty": 2,
+      "type": "multiple_choice",
+      "competency": "identificar_idea_principal",
+      "reading_text": "Para una exposición sobre la memoria del barrio, el alumnado reunió fotografías antiguas y entrevistó a sus habitantes. Comparó las imágenes con los testimonios y escribió pequeñas descripciones. En la exposición mostró cómo habían cambiado algunos espacios y qué costumbres continuaban.",
+      "question": "¿Qué enunciado expresa mejor la idea principal?",
+      "options": {"A": "El alumnado escribió pequeñas descripciones para acompañar fotografías", "B": "El alumnado mostró que todas las costumbres del barrio habían desaparecido", "C": "El alumnado usó imágenes y testimonios para mostrar cambios y continuidades del barrio"},
+      "expected_answer": "C",
+      "answer_explanation": "C reúne las fuentes y el propósito de la exposición. A es una tarea parcial; B contradice la continuidad de algunas costumbres indicada al final.",
+      "hints": ["Pregúntate qué tienen en común la búsqueda de imágenes, las entrevistas y la exposición.", "Una síntesis debe recoger tanto lo que cambió como lo que permaneció, sin exagerar."]
+    },
+    {
+      "id": "esp_comp_003",
+      "difficulty": 3,
+      "type": "multiple_choice",
+      "competency": "inferir_con_evidencia",
+      "reading_text": "Durante una semana, una comunidad organizó jornadas de limpieza del río. Al finalizar, los vecinos acordaron repetir la actividad cada mes y anotaron quién llevaría los materiales en la siguiente jornada. El río estaba más limpio, pero todavía encontraron residuos junto al puente.",
+      "question": "¿Qué conclusión está mejor apoyada por los acuerdos de los vecinos?",
+      "options": {"A": "Consideran que basta con la jornada realizada para resolver el problema de manera definitiva", "B": "Planean sustituir la limpieza por un registro de materiales sin nuevas jornadas", "C": "Consideran necesario dar continuidad al cuidado del río"},
+      "expected_answer": "C",
+      "answer_explanation": "La repetición mensual y la preparación de materiales apoyan la continuidad. A contradice las futuras jornadas; B confunde el registro de materiales con una sustitución de la limpieza.",
+      "hints": [
+        "Una inferencia es una conclusión apoyada en lo que dice el texto.",
+        "Relaciona la frecuencia acordada con la preparación de materiales para la siguiente jornada."
+      ]
+    },
+    {
+      "id": "esp_comp_008",
+      "difficulty": 3,
+      "type": "multiple_choice",
+      "competency": "inferir_con_evidencia",
+      "reading_text": "Mara ensayó en casa la lectura de su cuento. Al llegar al círculo de lectura, dejó que pasaran dos compañeros antes de levantar la mano. Cuando comenzó, apretaba las hojas y hablaba muy bajo. Tras escuchar los primeros comentarios de apoyo, levantó la vista y su voz se oyó con mayor claridad.",
+      "question": "¿Qué interpretación del cambio de Mara tiene más apoyo en el relato?",
+      "options": {"A": "El apoyo del grupo parece haberle dado confianza para seguir leyendo", "B": "Los comentarios hicieron que decidiera abandonar la lectura", "C": "La falta de ensayo en casa explica que bajara la voz al final"},
+      "expected_answer": "A",
+      "answer_explanation": "El cambio de postura y volumen sucede después del apoyo. Es una inferencia prudente sobre confianza, no un diagnóstico. B contradice que siguió leyendo y C contradice el ensayo y el aumento de volumen.",
+      "hints": ["Compara su conducta al comenzar y después de escuchar al grupo.", "Elige una interpretación que explique el cambio sin contradecir lo que hizo antes ni afirmar más de lo que permite el relato."]
+    },
+    {
+      "id": "esp_comp_009",
+      "difficulty": 3,
+      "type": "multiple_choice",
+      "competency": "inferir_con_evidencia",
+      "reading_text": "El comité quería que más estudiantes asistieran al taller de radio. En lugar de fijar de inmediato un horario, preguntó en cada grupo a qué hora podían participar. Después eligió la franja con más respuestas favorables y anunció una sesión de prueba. Aclaró que revisaría el horario si la asistencia resultaba baja.",
+      "question": "¿Qué criterio parece orientar las decisiones del comité?",
+      "options": {"A": "Mantener el primer horario elegido aunque nadie pueda asistir", "B": "Ajustar la organización según la disponibilidad y la participación del alumnado", "C": "Decidir el horario sin consultar a los grupos para iniciar antes"},
+      "expected_answer": "B",
+      "answer_explanation": "La consulta, la elección y la revisión prevista apoyan la adaptación a la participación. A contradice la revisión y C contradice la consulta previa.",
+      "hints": ["Observa qué información recogió el comité antes de decidir.", "Relaciona la consulta inicial con la posibilidad de revisar la decisión después de probarla."]
+    }
+  ]
+}
