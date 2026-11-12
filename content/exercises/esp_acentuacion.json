@@ -1,0 +1,167 @@
+{
+  "topic_id": "esp_acentuacion",
+  "exercises": [
+    {
+      "id": "acent_001",
+      "difficulty": 1,
+      "type": "multiple_choice",
+      "competency": "silaba_tonica",
+      "question": "En la palabra ventana, dividida ven-ta-na, ¿cuál es la sílaba tónica?",
+      "options": {
+        "A": "ven",
+        "B": "ta",
+        "C": "na"
+      },
+      "expected_answer": "B",
+      "hints": [
+        "Pronuncia la palabra de forma natural y escucha dónde recae la mayor fuerza.",
+        "Distingue la posición del acento al hablar de la presencia de una tilde escrita."
+      ],
+      "answer_explanation": "Ventana es llana: la fuerza recae en ta. Ven y na son átonas."
+    },
+    {
+      "id": "acent_002",
+      "difficulty": 1,
+      "type": "multiple_choice",
+      "competency": "clasificacion_prosodica",
+      "question": "La palabra reloj se pronuncia con fuerza en loj. ¿Cómo se clasifica por la posición de su sílaba tónica?",
+      "options": {
+        "A": "Grave",
+        "B": "Esdrújula",
+        "C": "Aguda"
+      },
+      "expected_answer": "C",
+      "hints": [
+        "Cuenta las sílabas desde el final de la palabra.",
+        "La clasificación depende de la posición de la sílaba tónica, aunque no se escriba tilde."
+      ],
+      "answer_explanation": "Re-loj tiene la sílaba tónica al final: es aguda. No es grave ni esdrújula."
+    },
+    {
+      "id": "acent_003",
+      "difficulty": 1,
+      "type": "multiple_choice",
+      "competency": "clasificacion_prosodica",
+      "question": "En música, la sílaba tónica es mú. ¿Cómo se clasifica la palabra?",
+      "options": {
+        "A": "Esdrújula",
+        "B": "Grave",
+        "C": "Aguda"
+      },
+      "expected_answer": "A",
+      "hints": [
+        "Separa la palabra en sílabas y cuenta desde el final.",
+        "Ubica la sílaba tónica respecto de las dos sílabas que la siguen."
+      ],
+      "answer_explanation": "Mú-si-ca tiene el acento en la antepenúltima sílaba: es esdrújula."
+    },
+    {
+      "id": "acent_004",
+      "difficulty": 2,
+      "type": "multiple_choice",
+      "competency": "reglas_tilde",
+      "question": "¿Qué regla explica la tilde de canción?",
+      "options": {
+        "A": "Es grave y termina en n",
+        "B": "Es aguda y termina en n",
+        "C": "Es esdrújula y termina en vocal"
+      },
+      "expected_answer": "B",
+      "hints": [
+        "Primero localiza la sílaba que recibe la fuerza de voz.",
+        "Combina la clasificación prosódica con la letra final; ambas deben coincidir con la explicación."
+      ],
+      "answer_explanation": "Can-ción es aguda y termina en n; esa combinación exige tilde. Las otras opciones clasifican mal la palabra."
+    },
+    {
+      "id": "acent_005",
+      "difficulty": 2,
+      "type": "multiple_choice",
+      "competency": "reglas_tilde",
+      "question": "¿Cuál es la escritura correcta de la palabra que nombra el instrumento de grafito para escribir?",
+      "options": {
+        "A": "lapiz",
+        "B": "lápíz",
+        "C": "lápiz"
+      },
+      "expected_answer": "C",
+      "hints": [
+        "La sílaba tónica es la primera de las dos sílabas.",
+        "Revisa la regla de las llanas terminadas en una consonante distinta de n o s. Una palabra simple no lleva dos tildes."
+      ],
+      "answer_explanation": "Lá-piz es llana terminada en z: lleva tilde en á. Lapiz omite la tilde y lápíz añade una indebida."
+    },
+    {
+      "id": "acent_006",
+      "difficulty": 2,
+      "type": "multiple_choice",
+      "competency": "prosodia_y_tilde",
+      "question": "La palabra joven es grave. ¿Por qué no lleva tilde?",
+      "options": {
+        "A": "Porque las graves terminadas en n no llevan tilde según la regla general",
+        "B": "Porque todas las palabras agudas terminadas en n carecen de tilde",
+        "C": "Porque las palabras esdrújulas no llevan tilde"
+      },
+      "expected_answer": "A",
+      "hints": [
+        "No cambies la clasificación que indica el enunciado.",
+        "Compara la terminación con las condiciones de la regla general de las palabras graves."
+      ],
+      "answer_explanation": "Jo-ven es llana terminada en n y no requiere tilde. Las otras afirmaciones contradicen las reglas generales."
+    },
+    {
+      "id": "acent_007",
+      "difficulty": 3,
+      "type": "multiple_choice",
+      "competency": "tilde_diacritica_contexto",
+      "question": "Selecciona la oración con las tildes correctas: una forma de él/el se refiere a una persona y la otra acompaña al sustantivo libro.",
+      "options": {
+        "A": "El trajo él libro.",
+        "B": "Él trajo el libro.",
+        "C": "Él trajó el libro."
+      },
+      "expected_answer": "B",
+      "hints": [
+        "Distingue un pronombre personal de un artículo.",
+        "Revisa también el verbo: no basta con corregir solo una de las palabras."
+      ],
+      "answer_explanation": "Él es pronombre y lleva tilde diacrítica; el es artículo. Trajo es llana terminada en vocal y no lleva tilde."
+    },
+    {
+      "id": "acent_008",
+      "difficulty": 3,
+      "type": "multiple_choice",
+      "competency": "interrogativa_indirecta",
+      "question": "Se quiere expresar que se desconoce qué objeto trajo alguien. ¿Cuál oración está correctamente acentuada?",
+      "options": {
+        "A": "No se que trajiste.",
+        "B": "No sé que trajiste.",
+        "C": "No sé qué trajiste."
+      },
+      "expected_answer": "C",
+      "hints": [
+        "Identifica la forma del verbo saber y la palabra que introduce la pregunta indirecta.",
+        "Las preguntas indirectas conservan la tilde del interrogativo aunque no lleven signos de interrogación."
+      ],
+      "answer_explanation": "Sé es una forma de saber y qué introduce una interrogativa indirecta. Las otras opciones omiten una o ambas tildes necesarias."
+    },
+    {
+      "id": "acent_009",
+      "difficulty": 3,
+      "type": "multiple_choice",
+      "competency": "tilde_diacritica_contexto",
+      "question": "¿Cuál oración distingue correctamente el pronombre de la palabra que indica posesión?",
+      "options": {
+        "A": "Tú guardaste tu cuaderno.",
+        "B": "Tu guardaste tú cuaderno.",
+        "C": "Tú guardáste tú cuaderno."
+      },
+      "expected_answer": "A",
+      "hints": [
+        "Comprueba qué palabra funciona como sujeto y cuál acompaña a un sustantivo.",
+        "Después revisa el verbo con las reglas generales; no agregues tildes solo por énfasis."
+      ],
+      "answer_explanation": "Tú es pronombre, tu es posesivo y guardaste es llana terminada en vocal sin tilde. Las otras opciones alteran estas reglas."
+    }
+  ]
+}

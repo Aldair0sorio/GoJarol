@@ -1,0 +1,43 @@
+{
+  "id": "mat_porcentajes",
+  "subject": "matematicas",
+  "name": "Porcentajes",
+  "competency": "resolver_problemas_porcentuales",
+  "levels": [
+    "secundaria"
+  ],
+  "curriculum": {
+    "source": "SEP - Programa Sintético de la Fase 6",
+    "version": "2024",
+    "url": "https://educacionbasica.sep.gob.mx/wp-content/uploads/2024/06/Programa_Sintetico_Fase_6.pdf",
+    "page": 59,
+    "scope": "Referencia a problemas de porcentajes en diversas situaciones. Práctica de apoyo para secundaria, sin equivalencia oficial entre dificultad y grado ni validación específica para bachillerato. Redacción original; no reproduce textos de libros."
+  },
+  "diagnostic": {
+    "id": "diag_pct_001",
+    "question": "¿Qué representa un porcentaje?",
+    "options": [
+      "Una comparación con cien como referencia",
+      "Siempre una cantidad de dinero",
+      "Una comparación sin total de referencia"
+    ],
+    "correct_index": 0
+  },
+  "explanations": {
+    "basic": "Un porcentaje expresa una razón respecto de cien. Para calcular p% de una cantidad, multiplica el total por p/100. Ejemplo: el 50% de 30 es 30 × 50/100 = 15. Una fracción se convierte a porcentaje multiplicando por cien. Para saber qué porcentaje representa una parte, divide la parte entre el total y multiplica por cien.",
+    "alternative": "Distingue la tasa de la cantidad: un porcentaje lleva como referencia un total. En un descuento resta del precio la cantidad descontada; en un aumento súmala. Ejemplo: con 10% de descuento en 70 pesos, descuentas 7 y pagas 63. En cambios sucesivos usa el resultado anterior como nueva base, sin sumar automáticamente las tasas. Si conoces el precio rebajado, divide entre la fracción del precio original que se conserva."
+  },
+  "exercise": {
+    "id": "pct_001",
+    "difficulty": 1,
+    "type": "numeric",
+    "competency": "porcentaje_de_cantidad",
+    "question": "Un grupo tiene 80 estudiantes. El 10% participa en ajedrez. ¿Cuántos estudiantes participan? Responde con la cantidad, sin %.",
+    "expected_answer": "8",
+    "hints": [
+      "Identifica el total al que se aplica el porcentaje.",
+      "Convierte la tasa en una fracción con denominador cien y multiplícala por el total."
+    ],
+    "answer_explanation": "80 × 10/100 = 8 estudiantes."
+  }
+}

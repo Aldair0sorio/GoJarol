@@ -123,10 +123,77 @@ def test_cannot_repeat_completed_exercise(tutor):
         correct["state"],
     )
 
-    assert repeat["type"] == "exercise_unavailable"
+    assert repeat["type"] == "exercise"
+    assert repeat["exercise"]["id"] == "frac_002"
 
 
 def test_topic_required(tutor):
     result = tutor.process_message("Explícame algo")
 
     assert result["type"] == "topic_required"
+
+
+def test_dont_know_during_exercise(tutor):
+    start = start_exercise(tutor)
+
+    result = tutor.process_message(
+        "La verdad no sé",
+        start["state"],
+    )
+
+    assert result["type"] == "hint"
+    assert result["state"]["hints_used"] == 1
+
+
+def test_another_hint_with_short_message(tutor):
+    start = start_exercise(tutor)
+
+    first = tutor.process_message(
+        "Dame una pista",
+        start["state"],
+    )
+
+    second = tutor.process_message(
+        "¿Otra?",
+        first["state"],
+    )
+
+    assert second["type"] == "hint"
+    assert second["state"]["hints_used"] == 2
+    assert first["message"] != second["message"]
+
+
+def test_reflection_after_correct_answer(tutor):
+    start = start_exercise(tutor)
+
+    correct = tutor.process_message(
+        "6/8",
+        start["state"],
+    )
+
+    assert correct["state"]["awaiting_reflection"] is True
+
+    reflection = tutor.process_message(
+        "Solo llegué",
+        correct["state"],
+    )
+
+    assert reflection["type"] == "reflection"
+    assert reflection["state"]["awaiting_reflection"] is False
+
+
+def test_new_request_after_correct_answer(tutor):
+    start = start_exercise(tutor)
+
+    correct = tutor.process_message(
+        "3/4",
+        start["state"],
+    )
+
+    result = tutor.process_message(
+        "Ponme un ejercicio",
+        correct["state"],
+    )
+
+    assert result["type"] == "exercise"
+    assert result["exercise"]["id"] == "frac_002"

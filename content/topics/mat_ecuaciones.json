@@ -1,0 +1,38 @@
+{
+  "id": "mat_ecuaciones",
+  "subject": "matematicas",
+  "name": "Ecuaciones de primer grado",
+  "competency": "resolver_ecuaciones_lineales",
+  "levels": ["secundaria"],
+  "curriculum": {
+    "source": "SEP - Programa Sintético de la Fase 6",
+    "version": "2024",
+    "url": "https://educacionbasica.sep.gob.mx/wp-content/uploads/2024/06/Programa_Sintetico_Fase_6.pdf",
+    "page": 59,
+    "scope": "Referencia al contenido de ecuaciones lineales y propiedades de la igualdad de Matemáticas. Los niveles 1, 2 y 3 son dificultades internas de práctica, sin equivalencia con grados escolares."
+  },
+  "diagnostic": {
+    "id": "diag_ecu_001",
+    "question": "Para conservar una igualdad al restar una cantidad, ¿dónde debes restarla?",
+    "options": ["Solo en el lado izquierdo", "En ambos lados", "Solo en el lado derecho"],
+    "correct_index": 1
+  },
+  "explanations": {
+    "basic": "Una ecuación es una igualdad con un valor desconocido, como x. Resolverla es encontrar el valor que hace iguales ambos lados.\n1. Identifica qué operaciones acompañan a x.\n2. Deshazlas con operaciones inversas, aplicando la misma operación a ambos lados.\n3. Si hay dos operaciones, deshaz primero la suma o resta externa y después la multiplicación o división.\n4. Sustituye tu valor en la ecuación original para comprobarlo.\nEjemplos distintos de los ejercicios: x + 4 = 14 → resta 4 en ambos lados → x = 10; x - 6 = 2 → suma 6 en ambos lados → x = 8.",
+    "intermediate": "Multiplicación: en 4x = 20, divide ambos lados entre 4; x = 5. División: en x/3 = 4, multiplica ambos lados por 3; x = 12. Dos operaciones: en 3x + 4 = 10, resta 4 en ambos lados para obtener 3x = 6; divide ambos lados entre 3 para obtener x = 2. Comprobación: 3·2 + 4 = 10. Estos son ejemplos de explicación, distintos de las actividades del banco.",
+    "alternative": "Piensa en una balanza equilibrada: si quitas o agregas lo mismo en ambos platos, sigue equilibrada.\n1. Deshaz una suma restando la misma cantidad en ambos lados, o una resta sumándola.\n2. Deshaz una multiplicación dividiendo ambos lados por el coeficiente distinto de cero; deshaz una división multiplicando por el divisor.\n3. Revisa los signos y comprueba tu resultado por sustitución. Para una expresión como ax + b, primero deshaz la suma externa y después el producto."
+  },
+  "exercise": {
+    "id": "ecu_001",
+    "question": "Resuelve x + 5 = 12. ¿Cuál es el valor de x?",
+    "type": "numeric",
+    "difficulty": 1,
+    "competency": "despejar_suma_resta",
+    "expected_answer": "7",
+    "hints": [
+      "Identifica qué cantidad se suma a la incógnita.",
+      "Para deshacer una suma, resta esa misma cantidad en ambos lados de la igualdad.",
+      "Realiza la resta del lado derecho y comprueba el valor obtenido en la ecuación inicial."
+    ]
+  }
+}

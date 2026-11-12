@@ -1,0 +1,25 @@
+{
+  "id": "esp_comprension",
+  "subject": "espanol",
+  "name": "Comprensión lectora",
+  "competency": "identificar_idea_principal",
+  "competencies": ["identificar_informacion_explicita", "identificar_idea_principal", "inferir_con_evidencia"],
+  "diagnostic": {
+    "id": "diag_comp_001",
+    "question": "¿Qué expresa la idea principal de un texto?",
+    "options": ["El asunto central", "Un detalle secundario", "Una palabra aislada"],
+    "correct_index": 0
+  },
+  "explanations": {
+    "basic": "Comprender un texto implica identificar información explícita, reconocer la idea principal y relacionar pistas para inferir. La información explícita aparece escrita; la idea principal reúne el asunto central; una inferencia es una conclusión apoyada en el texto, aunque no esté escrita literalmente.",
+    "alternative": "Primero revisa qué te preguntan. Para localizar un dato, busca la acción, persona, lugar o momento mencionado. Para encontrar la idea principal, relaciona todas las oraciones. Para inferir, conecta las pistas y descarta conclusiones que contradigan el texto o añadan información sin apoyo."
+  },
+  "exercise": {
+    "id": "esp_comp_001",
+    "difficulty": 1,
+    "type": "multiple_choice",
+    "question": "Lee: Los estudiantes organizaron un huerto escolar. Sembraron verduras y cuidaron el suelo. ¿Qué organizaron?\nA) Un festival\nB) Un huerto escolar\nC) Una competencia",
+    "expected_answer": "B",
+    "hints": ["Identifica la actividad principal mencionada en la primera oración."]
+  }
+}

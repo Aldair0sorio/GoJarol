@@ -1,0 +1,167 @@
+{
+  "topic_id": "esp_ortografia",
+  "exercises": [
+    {
+      "id": "orto_001",
+      "difficulty": 1,
+      "type": "multiple_choice",
+      "competency": "escritura_convencional",
+      "question": "¿Cuál palabra está correctamente escrita para nombrar el lugar donde se consultan y prestan libros?",
+      "options": {
+        "A": "biblioteca",
+        "B": "bibloteca",
+        "C": "vivlioteca"
+      },
+      "expected_answer": "A",
+      "hints": [
+        "Pronuncia despacio y revisa todas las sílabas, no solo la primera letra.",
+        "Comprueba que no falten vocales y revisa la escritura convencional con b."
+      ],
+      "answer_explanation": "Biblioteca conserva todas las sílabas y las dos b. Bibloteca omite una i y vivlioteca cambia letras."
+    },
+    {
+      "id": "orto_002",
+      "difficulty": 1,
+      "type": "multiple_choice",
+      "competency": "letras_frecuentes",
+      "question": "¿Cuál es la escritura correcta del nombre de la estación más fría del año?",
+      "options": {
+        "A": "imbierno",
+        "B": "invierno",
+        "C": "inviermno"
+      },
+      "expected_answer": "B",
+      "hints": [
+        "Revisa el grupo de letras que precede a la vocal i.",
+        "La regla de m ante b y p no autoriza a cambiar una v por b; comprueba también que no sobren consonantes."
+      ],
+      "answer_explanation": "Invierno es la forma convencional, con nv. Imbierno cambia n y v; inviermno añade una m indebida."
+    },
+    {
+      "id": "orto_003",
+      "difficulty": 1,
+      "type": "multiple_choice",
+      "competency": "uso_h",
+      "question": "¿Qué infinitivo, con el significado de realizar, está correctamente escrito?",
+      "options": {
+        "A": "acer",
+        "B": "haser",
+        "C": "hacer"
+      },
+      "expected_answer": "C",
+      "hints": [
+        "Que una letra no se pronuncie no significa que pueda omitirse.",
+        "Revisa tanto la letra inicial como la consonante interior; el seseo no cambia la escritura convencional."
+      ],
+      "answer_explanation": "Hacer se escribe con h inicial y c. Acer omite h y haser sustituye c por s."
+    },
+    {
+      "id": "orto_004",
+      "difficulty": 2,
+      "type": "multiple_choice",
+      "competency": "homofonos_contexto",
+      "question": "Completa: Ayer Ana ___ que esperar el autobús.",
+      "options": {
+        "A": "tubo",
+        "B": "tuvo",
+        "C": "tubó"
+      },
+      "expected_answer": "B",
+      "hints": [
+        "La oración necesita una forma verbal, no el nombre de un objeto.",
+        "Reconoce el tiempo pasado del verbo tener antes de elegir entre b y v."
+      ],
+      "answer_explanation": "Tuvo es pretérito de tener. Tubo es un sustantivo y tubó no es la forma requerida."
+    },
+    {
+      "id": "orto_005",
+      "difficulty": 2,
+      "type": "multiple_choice",
+      "competency": "expresiones_contexto",
+      "question": "Completa con el sentido de observar: Vamos ___ la exposición después de clase.",
+      "options": {
+        "A": "haber",
+        "B": "aver",
+        "C": "a ver"
+      },
+      "expected_answer": "C",
+      "hints": [
+        "Identifica qué acción realizará el grupo en la exposición.",
+        "Distingue el infinitivo haber de la expresión formada por una preposición y el verbo ver."
+      ],
+      "answer_explanation": "A ver expresa la acción de observar. Haber es otro verbo y aver no es la escritura de esa expresión."
+    },
+    {
+      "id": "orto_006",
+      "difficulty": 2,
+      "type": "multiple_choice",
+      "competency": "homofonos_contexto",
+      "question": "Completa con el sentido de encuentra: Cada día Luis ___ la salida del laberinto.",
+      "options": {
+        "A": "halla",
+        "B": "haya",
+        "C": "aya"
+      },
+      "expected_answer": "A",
+      "hints": [
+        "El enunciado pide una forma del verbo hallar.",
+        "Revisa qué opción corresponde a encontrar, no a una forma de haber ni a un sustantivo."
+      ],
+      "answer_explanation": "Halla es presente de hallar. Haya puede ser forma de haber o nombre de un árbol; aya nombra a una cuidadora."
+    },
+    {
+      "id": "orto_007",
+      "difficulty": 3,
+      "type": "multiple_choice",
+      "competency": "revision_texto",
+      "question": "Corrige todos los errores sin cambiar el sentido: El grupo a preparado un cartel para la esposición.",
+      "options": {
+        "A": "El grupo ha preparado un cartel para la esposición.",
+        "B": "El grupo ha preparado un cartel para la exposición.",
+        "C": "El grupo a preparado un cartel para la exposición."
+      },
+      "expected_answer": "B",
+      "hints": [
+        "Revisa por separado la construcción verbal y la palabra que nombra el evento.",
+        "El auxiliar que acompaña al participio no es una preposición; comprueba además la consonante interior del sustantivo."
+      ],
+      "answer_explanation": "La construcción ha preparado requiere haber con h, y exposición se escribe con x. A deja el error esposición y C deja a por ha."
+    },
+    {
+      "id": "orto_008",
+      "difficulty": 3,
+      "type": "multiple_choice",
+      "competency": "revision_texto",
+      "question": "Corrige ambos errores: La brigada enbolvió el regalo y lo puso en una volsa.",
+      "options": {
+        "A": "La brigada envolvió el regalo y lo puso en una volsa.",
+        "B": "La brigada enbolvió el regalo y lo puso en una bolsa.",
+        "C": "La brigada envolvió el regalo y lo puso en una bolsa."
+      },
+      "expected_answer": "C",
+      "hints": [
+        "Hay un error en el verbo y otro en el nombre del recipiente.",
+        "Comprueba la escritura de envolver y bolsa por separado; una opción puede corregir solo la mitad."
+      ],
+      "answer_explanation": "Envolvió conserva nv de envolver, y bolsa se escribe con b. A mantiene volsa y B mantiene enbolvió."
+    },
+    {
+      "id": "orto_009",
+      "difficulty": 3,
+      "type": "multiple_choice",
+      "competency": "revision_contextual",
+      "question": "Completa los dos espacios: Ayer Rosa ___ una idea y después ___ la ventana.",
+      "options": {
+        "A": "tuvo / abrió",
+        "B": "tubo / abrió",
+        "C": "tuvo / habrió"
+      },
+      "expected_answer": "A",
+      "hints": [
+        "Las dos acciones necesitan formas verbales en pasado.",
+        "Distingue tener de un objeto cilíndrico y revisa la escritura del verbo abrir, que no lleva h inicial."
+      ],
+      "answer_explanation": "Tuvo es pasado de tener y abrió es pasado de abrir. Tubo es sustantivo y habrió agrega una h indebida."
+    }
+  ]
+}

@@ -1,13 +1,32 @@
 
 import re
 from copy import deepcopy
+from pathlib import Path
+
+from exercises.services.exercise_selector import ExerciseSelector
+from exercises.services.hint_service import HintService
+
 
 from exercises.services.exercise_evaluator import (
-    evaluate_fraction_answer,
+    evaluate_exercise_answer,
+    normalize_choice,
 )
+
 from progress.services.adaptive_learning_service import (
     AdaptiveLearningService,
 )
+
+import unicodedata
+
+
+def normalize_context_text(message: str) -> str:
+    text = unicodedata.normalize("NFD", message.casefold())
+    text = "".join(
+        char for char in text
+        if unicodedata.category(char) != "Mn"
+    )
+    text = re.sub(r"[^\w\s]", " ", text)
+    return " ".join(text.split())
 
 
 ANSWER_PATTERN = re.compile(
@@ -19,10 +38,16 @@ ANSWER_PATTERN = re.compile(
 
 
 class TutorService:
-    def __init__(self, analyzer, knowledge, hints, adaptive=None):
+    def __init__(self, analyzer, knowledge, hints, adaptive=None, selector=None):
         self.analyzer = analyzer
         self.knowledge = knowledge
-        self.hints = hints
+        self.selector = selector or hints.selector or ExerciseSelector(
+            Path(__file__).resolve().parents[3] / "content" / "exercises"
+        )
+        self.hints = (
+            hints if hints.selector is self.selector
+            else HintService(knowledge, self.selector)
+        )
         self.adaptive = adaptive or AdaptiveLearningService()
 
         self.available_topics = {
@@ -35,18 +60,48 @@ class TutorService:
             "current_topic": None,
             "active_exercise_id": None,
             "hints_used": 0,
+            "hints_by_exercise": {},
             "completed_exercises": [],
             "progress_by_topic": {},
+            "last_response_type": None,
+            "awaiting_reflection": False,
+            "active_exercise_type": None,
         }
 
     @staticmethod
     def _response(message, state, response_type, **extra):
+        state["last_response_type"] = response_type
+
         return {
             "type": response_type,
             "message": message,
             "state": state,
             **extra,
         }
+
+    def _give_hint(self, state):
+        if not state["active_exercise_id"]:
+            return self._response(
+                "Primero necesitas comenzar un ejercicio.",
+                state,
+                "exercise_required",
+            )
+
+        result = self.hints.get_next_hint(
+            state["current_topic"],
+            state["hints_used"],
+            exercise_id=state["active_exercise_id"],
+        )
+
+        state["hints_used"] = result["hints_used"]
+        state.setdefault("hints_by_exercise", {})[state["active_exercise_id"]] = result["hints_used"]
+
+        return self._response(
+            result["message"],
+            state,
+            "hint",
+            strategy=result["strategy"],
+        )
 
     def process_message(self, message, state=None):
         if not isinstance(message, str) or not message.strip():
@@ -57,12 +112,82 @@ class TutorService:
         )
 
         # Si hay un ejercicio activo, primero detectamos respuestas.
-        answer_match = ANSWER_PATTERN.fullmatch(message)
+        active_id = state.get("active_exercise_id")
+        exercise_type = (
+            self.selector.get_public_exercise(state["current_topic"], active_id)["type"]
+            if active_id else None
+        )
 
-        if answer_match and state["active_exercise_id"]:
-            return self._evaluate_answer(
-                answer_match.group(1),
+        if active_id:
+            if exercise_type == "fraction":
+                answer_match = ANSWER_PATTERN.fullmatch(message)
+
+                if answer_match:
+                    return self._evaluate_answer(
+                        answer_match.group(1),
+                        state,
+                    )
+
+            elif exercise_type == "multiple_choice":
+                if normalize_choice(message) is not None:
+                    return self._evaluate_answer(message, state)
+
+            elif exercise_type in {"numeric", "percentage"}:
+                # Also route malformed numeric attempts to format feedback, not NLP.
+                if re.match(r"\s*(?:x\s*=|[+-]?[0-9])", message, re.IGNORECASE):
+                    return self._evaluate_answer(message, state)
+
+
+        normalized = normalize_context_text(message)
+
+        if not active_id and state["current_topic"] and normalized in {
+            "otra", "otro", "otra por favor", "dame otra", "uno mas",
+        }:
+            message = "Ponme otro ejercicio"
+
+        # El alumno no sabe resolver el ejercicio activo.
+        if state["active_exercise_id"] and normalized in {
+            "no se",
+            "la verdad no se",
+            "no tengo idea",
+            "ni idea",
+            "no puedo",
+            "no entiendo",
+        }:
+            return self._give_hint(state)
+
+        # El alumno solicita continuar con las pistas.
+        if (
+                state["active_exercise_id"]
+                and state.get("last_response_type") == "hint"
+                and normalized in {
+            "otra",
+            "otra pista",
+            "otra por favor",
+            "dame otra",
+            "una mas",
+            "siguiente",
+        }
+        ):
+            return self._give_hint(state)
+
+        # El alumno responde a la reflexión posterior al ejercicio.
+        if state.get("awaiting_reflection") and normalized in {
+            "solo llegue",
+            "no se",
+            "no sabria explicar",
+            "le atine",
+            "fue suerte",
+            "al azar",
+            "porque si",
+        }:
+            state["awaiting_reflection"] = False
+
+            return self._response(
+                "Está bien. Vamos a revisar tu procedimiento. "
+                "¿Qué paso podrías explicar primero?",
                 state,
+                "reflection",
             )
 
         analysis = self.analyzer.analyze_message(
@@ -89,8 +214,10 @@ class TutorService:
             )
 
         if detected_topic and detected_topic != state["current_topic"]:
+            state["awaiting_reflection"] = False
             state["current_topic"] = detected_topic
             state["active_exercise_id"] = None
+            state["active_exercise_type"] = None
             state["hints_used"] = 0
 
         if intent == "saludar":
@@ -157,12 +284,28 @@ class TutorService:
             )
 
         if intent in {"solicitar_reto", "repetir_ejercicio"}:
-            exercise = self.knowledge.get_public_exercise(topic_id)
+            progress = state["progress_by_topic"].get(
+                topic_id,
+                self.adaptive.initial_state(),
+            )
 
-            if exercise["id"] in state["completed_exercises"]:
+            try:
+                exercise = self.selector.select(
+                    topic_id=topic_id,
+                    difficulty=progress["difficulty"],
+                    excluded_ids=state["completed_exercises"],
+                )
+            except KeyError:
                 return self._response(
-                    "Ya completaste este ejercicio. "
-                    "Necesitamos incorporar otro diferente "
+                    "Todavía no tengo ejercicios preparados para este tema.",
+                    state,
+                    "exercise_unavailable",
+                )
+
+            if exercise is None:
+                return self._response(
+                    "Ya completaste los ejercicios disponibles "
+                    "de este nivel. Necesitamos más actividades "
                     "para continuar practicando.",
                     state,
                     "exercise_unavailable",
@@ -170,44 +313,41 @@ class TutorService:
 
             if state["active_exercise_id"] != exercise["id"]:
                 state["active_exercise_id"] = exercise["id"]
-                state["hints_used"] = 0
+                state["active_exercise_type"] = exercise["type"]
+                state["hints_used"] = state.get("hints_by_exercise", {}).get(exercise["id"], 0)
+
+            state["awaiting_reflection"] = False
+
+            parts = []
+            if exercise.get("reading_text"):
+                parts.append(f"Lee: {exercise['reading_text']}")
+            parts.append(exercise["question"])
+            if exercise.get("options"):
+                parts.extend(
+                    f"{label}) {text}" for label, text in exercise["options"].items()
+                )
 
             return self._response(
-                exercise["question"],
+                "\n\n".join(parts),
                 state,
                 "exercise",
                 exercise=exercise,
             )
 
         if intent == "solicitar_pista":
-            if not state["active_exercise_id"]:
-                return self._response(
-                    "Primero necesitas comenzar un ejercicio.",
-                    state,
-                    "exercise_required",
-                )
-
-            result = self.hints.get_next_hint(
-                topic_id,
-                state["hints_used"],
-            )
-
-            state["hints_used"] = result["hints_used"]
-
-            return self._response(
-                result["message"],
-                state,
-                "hint",
-                strategy=result["strategy"],
-            )
+            return self._give_hint(state)
 
         if intent in {
             "verificar_respuesta",
             "solicitar_retroalimentacion",
         }:
+            answer_format = {
+                "numeric": "un número entero o x = entero",
+                "percentage": "el porcentaje como número, con o sin %",
+                "multiple_choice": "la letra de la opción que elegiste",
+            }.get(exercise_type, "tu resultado, por ejemplo: 3/4")
             return self._response(
-                "Si tienes un ejercicio activo, escribe "
-                "tu resultado, por ejemplo: 3/4.",
+                f"Si tienes un ejercicio activo, escribe {answer_format}.",
                 state,
                 "answer_required",
             )
@@ -222,20 +362,21 @@ class TutorService:
     def _evaluate_answer(self, answer, state):
         topic_id = state["current_topic"]
 
-        exercise = self.knowledge.get_public_exercise(topic_id)
-
-        if exercise["id"] != state["active_exercise_id"]:
+        exercise_id = state["active_exercise_id"]
+        if not exercise_id or exercise_id in state["completed_exercises"]:
             return self._response(
                 "No hay un ejercicio valido para evaluar.",
                 state,
                 "exercise_required",
             )
 
-        expected = self.knowledge.get_expected_answer(topic_id)
+        exercise = self.selector.get_public_exercise(topic_id, exercise_id)
+        expected = self.selector.get_expected_answer(topic_id, exercise_id)
 
-        evaluation = evaluate_fraction_answer(
+        evaluation = evaluate_exercise_answer(
             answer,
             expected,
+            exercise["type"],
         )
 
         progress = state["progress_by_topic"].get(
@@ -252,9 +393,11 @@ class TutorService:
 
         state["progress_by_topic"][topic_id] = result["progress"]
 
+        state["awaiting_reflection"] = evaluation["correct"]
         if evaluation["correct"]:
             state["completed_exercises"].append(exercise["id"])
             state["active_exercise_id"] = None
+            state["active_exercise_type"] = None
             state["hints_used"] = 0
 
         return self._response(
