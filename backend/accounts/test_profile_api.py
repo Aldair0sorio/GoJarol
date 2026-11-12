@@ -203,6 +203,27 @@ def test_google_links_existing_unlinked_account_and_protects_admin(client, googl
     assert not GoogleIdentity.objects.filter(subject='admin-link-attempt').exists()
 
 
+def test_google_require_role_prompts_new_users_without_creating_them_and_logs_in_existing_teachers(google_keys):
+    claims = google_claims('new-teacher-sub', 'new-teacher@example.test')
+    before_users = User.objects.count()
+    prompt = google_post(claims, google_keys, {'require_role': True})
+    assert prompt.status_code == 200
+    assert prompt.data['needs_role'] is True
+    assert prompt.data['profile']['email'] == 'new-teacher@example.test'
+    assert 'token' not in prompt.data
+    assert User.objects.count() == before_users
+    assert not GoogleIdentity.objects.filter(subject='new-teacher-sub').exists()
+
+    created = google_post(claims, google_keys, {'role': 'docente'})
+    assert created.status_code == 200 and 'token' in created.data
+    assert created.data['user']['rol'] == 'docente'
+
+    relogin = google_post(claims, google_keys, {'require_role': True})
+    assert relogin.status_code == 200 and 'token' in relogin.data
+    assert relogin.data['user']['rol'] == 'docente'
+    assert 'needs_role' not in relogin.data
+
+
 def test_google_inactive_linked_account_cannot_login(google_keys):
     user=User.objects.create_user(username='google_disabled',email='disabled@example.test',is_active=False)
     GoogleIdentity.objects.create(subject='disabled-sub',email=user.email,user=user)

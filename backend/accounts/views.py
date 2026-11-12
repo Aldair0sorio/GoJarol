@@ -133,6 +133,17 @@ class GoogleLoginView(PublicAuthView):
                         GoogleIdentity.objects.create(subject=subject, email=email, user=existing_user)
                         user = existing_user
                     else:
+                        if request.data.get('require_role') is True:
+                            return Response(
+                                {
+                                    'needs_role': True,
+                                    'profile': {
+                                        'email': email,
+                                        'name': str(claims.get('name') or '')[:50],
+                                    },
+                                },
+                                status=200,
+                            )
                         role = request.data.get('role', User.Rol.ESTUDIANTE)
                         if not isinstance(role, str) or role not in {User.Rol.ESTUDIANTE, User.Rol.DOCENTE}:
                             return error('invalid_role', 'Selecciona un tipo de cuenta permitido.', 400)

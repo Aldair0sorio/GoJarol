@@ -82,6 +82,23 @@ test('Verified backend response alone supplies identity and token', async () => 
   assert.equal(result.success,true); assert.equal(result.user.name,'Ana Pérez'); assert.equal(result.user.role,'teacher');
   assert.equal(result.user.email,'server@example.test');
 });
+
+test('Google requireRole asks new users for student or teacher role without creating session', async () => {
+  storage.clear();
+  mockFetch(async (url, options) => {
+    assert.equal(url, '/api/v1/auth/google/');
+    const body = JSON.parse(options.body);
+    assert.equal(body.require_role, true);
+    assert.equal(body.role, undefined);
+    return new Response(JSON.stringify({ needs_role: true, profile: { email: 'prof@example.test', name: 'Prof. Luis' } }));
+  });
+  const result = await apiService.loginWithGoogle({ credential: payload.credential, requireRole: true });
+  assert.equal(result.success, false);
+  assert.equal(result.needsRole, true);
+  assert.equal(result.pendingProfile.email, 'prof@example.test');
+  assert.equal(result.token, undefined);
+  assert.equal(storage.size, 0);
+});
 test('Simulated or missing tokens cannot be accepted by AuthContext login guard', () => {
   for (const token of [undefined, '', 'jarol_demo_123','jarol_gtoken_123','jarol_token_123']) assert.equal(isBackendToken(token),false);
   assert.equal(isBackendToken('b'.repeat(40)),true);

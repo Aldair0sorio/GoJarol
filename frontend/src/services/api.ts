@@ -167,18 +167,46 @@ export const apiService = {
    */
   async loginWithGoogle(payload: {
     credential: string;
-    role: 'student' | 'teacher';
+    role?: 'student' | 'teacher';
     nivel?: 'secundaria' | 'bachillerato';
     grado?: number;
-  }): Promise<{ success: boolean; token?: string; user?: User; error?: string }> {
+    requireRole?: boolean;
+  }): Promise<{
+    success: boolean;
+    needsRole?: boolean;
+    pendingProfile?: { email?: string; name?: string };
+    token?: string;
+    user?: User;
+    error?: string;
+  }> {
     try {
       await getAuthConfig();
+      const bodyPayload: Record<string, unknown> = { credential: payload.credential };
+      if (payload.requireRole) {
+        bodyPayload.require_role = true;
+      } else {
+        bodyPayload.role = payload.role === 'teacher' ? 'docente' : 'estudiante';
+        if (payload.nivel !== undefined) bodyPayload.nivel = payload.nivel;
+        if (payload.grado !== undefined) bodyPayload.grado = payload.grado;
+      }
       const res = await fetch(`${API_BASE}/auth/google/`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ credential: payload.credential,
-          role: payload.role === 'teacher' ? 'docente' : 'estudiante', nivel: payload.nivel, grado: payload.grado }),
+        body: JSON.stringify(bodyPayload),
       });
       const data = await res.json();
+      if (res.ok && isObject(data) && data.needs_role === true && !('token' in data)) {
+        const profileObj = isObject(data.profile) ? data.profile : null;
+        return {
+          success: false,
+          needsRole: true,
+          pendingProfile: profileObj
+            ? {
+                email: typeof profileObj.email === 'string' ? profileObj.email : undefined,
+                name: typeof profileObj.name === 'string' ? profileObj.name : undefined,
+              }
+            : undefined,
+        };
+      }
       if (!res.ok || !isBackendToken(data.token) || !data.user?.id || !['estudiante', 'docente', 'admin'].includes(data.user.rol)) {
         return { success: false, error: authError(data, 'Google no pudo verificar tu cuenta. Usa tu contraseña o intenta de nuevo.') };
       }

@@ -28,7 +28,7 @@ export function LoginPage() {
         <button className={primaryClass}>{busy ? 'Iniciando sesión…' : 'Iniciar sesión'}</button>
       </fieldset>
     </form>
-    <GoogleSignInButton/>
+    <GoogleSignInButton askRoleIfNew/>
     <p className="mt-6 text-sm text-muted">¿Primera vez por aquí? <Link to="/registro" className={linkClass}>Crear cuenta</Link></p>
   </AuthLayout>;
 }
