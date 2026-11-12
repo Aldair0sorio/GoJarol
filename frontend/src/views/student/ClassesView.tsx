@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { ClassGroup } from '../../types/curriculum';
 import { apiService } from '../../services/api';
 import { ClassDetailModal } from './ClassDetailModal';
-import { Users2, Plus, CheckCircle2, AlertCircle, ChevronRight, School, Bell } from 'lucide-react';
+import { Users2, Plus, CheckCircle2, AlertCircle, ChevronRight, School } from 'lucide-react';
 
 interface ClassesViewProps {
   onStartExercise?: (topic: string) => void;
@@ -111,7 +111,6 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ onStartExercise }) => 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {classes.map((cls) => {
             const pendingCount = (cls.challenges || []).filter((c) => !c.isCompleted).length;
-            const annCount = (cls.announcements || []).length;
             return (
               <button
                 key={cls.id}
@@ -150,11 +149,6 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ onStartExercise }) => 
                   <span className="flex items-center gap-1">
                     <Users2 className="w-3.5 h-3.5" />
                     {cls.studentCount} {cls.studentCount === 1 ? 'alumno' : 'alumnos'}
-                    {annCount > 0 && (
-                      <span className="ml-2 flex items-center gap-1 text-[#E76D55] font-semibold">
-                        <Bell className="w-3 h-3" /> {annCount}
-                      </span>
-                    )}
                   </span>
                   <span className="font-display font-semibold text-[#126B73]">
                     {cls.averageMastery}% precisión grupal

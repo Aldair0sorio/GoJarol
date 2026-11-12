@@ -17,7 +17,6 @@ import {
   Trash2,
   Edit3,
   Search,
-  Bell,
   Target,
   BarChart3,
   Send,
@@ -71,16 +70,12 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({
   const [studentSort, setStudentSort] = useState<'priority' | 'xp' | 'completed' | 'name'>('priority');
   const [scopeAllClasses, setScopeAllClasses] = useState(false);
 
-  // Formularios de Reto Grupal y Avisos (pestaña Mis Clases)
+  // Formulario de Reto Grupal (pestaña Mis Clases)
   const [chalTopicId, setChalTopicId] = useState('mat_fracciones');
   const [chalTitle, setChalTitle] = useState('');
   const [chalInstructions, setChalInstructions] = useState('');
   const [chalTarget, setChalTarget] = useState(2);
   const [chalSubmitting, setChalSubmitting] = useState(false);
-
-  const [annTitle, setAnnTitle] = useState('');
-  const [annMessage, setAnnMessage] = useState('');
-  const [annSubmitting, setAnnSubmitting] = useState(false);
 
   const [confirmDeleteClassId, setConfirmDeleteClassId] = useState<string | null>(null);
 
@@ -278,34 +273,6 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({
     }
   };
 
-  const handlePostAnnouncement = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!activeClass || !annMessage.trim()) return;
-    setAnnSubmitting(true);
-    const res = await apiService.createClassAnnouncement(activeClass.id, {
-      title: annTitle.trim() || 'Aviso importante',
-      message: annMessage.trim(),
-    });
-    setAnnSubmitting(false);
-    if (res.success && res.classGroup) {
-      syncClassInState(res.classGroup);
-      setAnnTitle('');
-      setAnnMessage('');
-      showTempMessage(true, 'Aviso publicado en el grupo.');
-    } else {
-      showTempMessage(false, res.error || 'No se pudo publicar el aviso.');
-    }
-  };
-
-  const handleDeleteAnnouncement = async (annId: string) => {
-    if (!activeClass) return;
-    const res = await apiService.deleteClassAnnouncement(activeClass.id, annId);
-    if (res.success && res.classGroup) {
-      syncClassInState(res.classGroup);
-      showTempMessage(true, 'Aviso eliminado.');
-    }
-  };
-
   const openStudentModal = (st: StudentMastery, classRef?: ClassGroup) => {
     const cls = classRef || activeClass;
     const detail: DetailedStudent = {
@@ -380,7 +347,7 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({
     },
     clases: {
       title: 'Mis Clases y Códigos',
-      subtitle: 'Administra códigos de acceso, asigna retos grupales y publica avisos.',
+      subtitle: 'Administra códigos de acceso y asigna retos grupales.',
     },
     alumnos: {
       title: 'Diagnóstico de Alumnos',
@@ -711,7 +678,7 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({
           )}
 
           {/* ================================================================= */}
-          {/* PESTAÑA 2: MIS CLASES (Gestión, Códigos, Retos grupales, Avisos)  */}
+          {/* PESTAÑA 2: MIS CLASES (Gestión, Códigos, Retos grupales)          */}
           {/* ================================================================= */}
           {activeTab === 'clases' && activeClass && (
             <div className="flex flex-col gap-4">
@@ -821,8 +788,8 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
-                {/* Columna 1: Asignar y ver Retos del Grupo */}
+              <div className="grid grid-cols-1 gap-4">
+                {/* Asignar y ver Retos del Grupo */}
                 <div className="p-4 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_3px_0_#D2E5F9] flex flex-col gap-3">
                   <div className="flex items-center gap-2">
                     <Target className="w-4 h-4 text-[#126B73]" />
@@ -921,79 +888,6 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({
                           <button
                             onClick={() => handleDeleteChallenge(ch.id)}
                             title="Eliminar reto"
-                            className="p-1.5 text-[#596B72] hover:text-rose-600 cursor-pointer shrink-0"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Columna 2: Avisos del Grupo */}
-                <div className="p-4 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_3px_0_#D2E5F9] flex flex-col gap-3">
-                  <div className="flex items-center gap-2">
-                    <Bell className="w-4 h-4 text-[#E76D55]" />
-                    <h3 className="font-display font-bold text-sm text-[#0A1D2C]">
-                      Avisos para el Grupo ({(activeClass.announcements || []).length})
-                    </h3>
-                  </div>
-
-                  <form
-                    onSubmit={handlePostAnnouncement}
-                    className="p-3 rounded-xl bg-[#F7F5EF] border border-[#E8E5DC] flex flex-col gap-2"
-                  >
-                    <input
-                      type="text"
-                      value={annTitle}
-                      onChange={(e) => setAnnTitle(e.target.value)}
-                      placeholder="Título del aviso (ej. Recordatorio de examen)"
-                      className="text-xs p-2 rounded-lg border border-[#E8E5DC] bg-white focus:border-[#126B73] focus:outline-none"
-                    />
-                    <textarea
-                      value={annMessage}
-                      onChange={(e) => setAnnMessage(e.target.value)}
-                      rows={2}
-                      required
-                      placeholder="Escribe el mensaje que verán tus alumnos en Mis Clases..."
-                      className="text-xs p-2 rounded-lg border border-[#E8E5DC] bg-white focus:border-[#126B73] focus:outline-none"
-                    />
-                    <button
-                      type="submit"
-                      disabled={annSubmitting}
-                      className="py-2 rounded-full bg-[#E76D55] text-white text-xs font-display font-bold flex items-center justify-center gap-1.5 shadow-[0_2px_0_#711707] cursor-pointer disabled:opacity-50"
-                    >
-                      <Bell className="w-3.5 h-3.5" />
-                      <span>{annSubmitting ? 'Publicando...' : 'Publicar Aviso'}</span>
-                    </button>
-                  </form>
-
-                  {(activeClass.announcements || []).length === 0 ? (
-                    <p className="text-xs text-[#596B72] text-center py-3">
-                      No has publicado avisos en este grupo todavía.
-                    </p>
-                  ) : (
-                    <div className="flex flex-col gap-2">
-                      {(activeClass.announcements || []).map((ann) => (
-                        <div
-                          key={ann.id}
-                          className="p-3 rounded-xl bg-[#F7F5EF] border border-[#E8E5DC] flex items-start justify-between gap-2"
-                        >
-                          <div className="min-w-0">
-                            <span className="font-display font-bold text-xs text-[#0A1D2C] block">
-                              {ann.title}
-                            </span>
-                            <p className="text-[11px] text-[#3F484A] mt-0.5 leading-relaxed">
-                              {ann.message}
-                            </p>
-                            <span className="text-[10px] text-[#596B72] block mt-1">
-                              Publicado: {ann.createdAt}
-                            </span>
-                          </div>
-                          <button
-                            onClick={() => handleDeleteAnnouncement(ann.id)}
-                            title="Eliminar aviso"
                             className="p-1.5 text-[#596B72] hover:text-rose-600 cursor-pointer shrink-0"
                           >
                             <Trash2 className="w-3.5 h-3.5" />

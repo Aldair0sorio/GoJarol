@@ -5,9 +5,7 @@ import {
   X,
   Users2,
   BookOpen,
-  Bell,
   ArrowRight,
-  CheckCircle2,
   LogOut,
   Sparkles,
 } from 'lucide-react';
@@ -25,13 +23,12 @@ export const ClassDetailModal: React.FC<ClassDetailModalProps> = ({
   onStartExercise,
   onLeftClass,
 }) => {
-  const [activeTab, setActiveTab] = useState<'retos' | 'alumnos' | 'avisos'>('retos');
+  const [activeTab, setActiveTab] = useState<'retos' | 'alumnos'>('retos');
   const [leaving, setLeaving] = useState(false);
   const [confirmLeave, setConfirmLeave] = useState(false);
 
   const classmates = cls.studentsDetail || [];
   const challenges = cls.challenges || [];
-  const announcements = cls.announcements || [];
 
   const handleLeave = async () => {
     setLeaving(true);
@@ -93,18 +90,6 @@ export const ClassDetailModal: React.FC<ClassDetailModalProps> = ({
           >
             <Users2 className="w-3.5 h-3.5" />
             <span>Compañeros ({classmates.length})</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('avisos')}
-            className={`flex-1 py-2 text-xs font-display font-bold flex items-center justify-center gap-1.5 border-b-2 transition-all cursor-pointer ${
-              activeTab === 'avisos'
-                ? 'border-[#126B73] text-[#126B73]'
-                : 'border-transparent text-[#596B72] hover:text-[#0A1D2C]'
-            }`}
-          >
-            <Bell className="w-3.5 h-3.5" />
-            <span>Avisos ({announcements.length})</span>
           </button>
         </div>
 
@@ -232,42 +217,6 @@ export const ClassDetailModal: React.FC<ClassDetailModalProps> = ({
 
                     <span className="text-xs font-display font-semibold text-[#126B73]">
                       {mate.xp || 0} XP
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          )}
-
-          {activeTab === 'avisos' && (
-            <div className="flex flex-col gap-2.5">
-              {announcements.length === 0 ? (
-                <div className="p-3.5 rounded-xl bg-white border border-[#E8E5DC] flex flex-col gap-1.5">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-[#126B73]" />
-                    <span className="font-display font-bold text-xs text-[#0A1D2C]">
-                      Bienvenida de {cls.teacherName}
-                    </span>
-                  </div>
-                  <p className="text-xs text-[#3F484A] leading-relaxed">
-                    ¡Bienvenido al grupo {cls.name}! Usa el tutor Jarol para practicar y pedir pistas paso a paso. Tu avance se comparte automáticamente con tu docente.
-                  </p>
-                </div>
-              ) : (
-                announcements.map((ann) => (
-                  <div
-                    key={ann.id}
-                    className="p-3.5 rounded-xl bg-white border border-[#E8E5DC] flex flex-col gap-1"
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-display font-bold text-xs text-[#0A1D2C]">
-                        {ann.title}
-                      </span>
-                      <span className="text-[10px] text-[#596B72]">{ann.createdAt}</span>
-                    </div>
-                    <p className="text-xs text-[#3F484A] leading-relaxed">{ann.message}</p>
-                    <span className="text-[10px] text-[#126B73] font-medium">
-                      Por {ann.authorName}
                     </span>
                   </div>
                 ))
