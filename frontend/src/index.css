@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: #F7F5EF;
+  --color-surface: #FFFFFF;
+  --color-primary: #126B73;
+  --color-primary-dark: #005158;
+  --color-primary-container: #126B73;
+  --color-primary-light: #DCEFEB;
+  --color-secondary: #E76D55;
+  --color-secondary-dark: #711707;
+  --color-secondary-light: #FFDAD3;
+  --color-accent: #E4AA50;
+  --color-accent-dark: #845800;
+  --color-ink: #0A1D2C;
+  --color-muted: #596B72;
+  --color-subtle: #E8E5DC;
+  --color-subtle-blue: #D2E5F9;
+
+  --font-display: 'Sora', sans-serif;
+  --font-body: 'Atkinson Hyperlegible Next', sans-serif;
+}
+
+/* Reglas base para Mobile-First y comportamiento seguro */
+html, body {
+  font-family: var(--font-body);
+  background-color: #F7F5EF;
+  color: #0A1D2C;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: var(--font-display);
+}
+
+/* Ocultar barra de scroll pero mantener funcionalidad */
+::-webkit-scrollbar {
+  display: none;
+}
+* {
+  scrollbar-width: none;
+}
+
+/* Efectos táctiles físicos (Tactile drop-lip) */
+.tactile-primary {
+  background-color: #126B73;
+  color: #FFFFFF;
+  box-shadow: 0 4px 0 #005158;
+  transition: all 0.1s ease-in-out;
+}
+.tactile-primary:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #005158;
+}
+
+.tactile-coral {
+  background-color: #E76D55;
+  color: #FFFFFF;
+  box-shadow: 0 4px 0 #711707;
+  transition: all 0.1s ease-in-out;
+}
+.tactile-coral:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #711707;
+}
+
+.tactile-card {
+  background-color: #FFFFFF;
+  border: 1.5px solid #E8E5DC;
+  box-shadow: 0 3px 0 #D2E5F9;
+  transition: all 0.15s ease-in-out;
+}
+.tactile-card:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 #D2E5F9;
+}
