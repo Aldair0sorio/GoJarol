@@ -174,7 +174,11 @@ export const ChatView: React.FC<ChatViewProps> = ({ initialPrompt, onPromptConsu
       </div>
 
       {/* Barra de entrada de texto flotante */}
-      <FloatingInput onSendMessage={handleSendMessage} isLoading={isLoading} />
+      <FloatingInput
+        onSendMessage={handleSendMessage}
+        isLoading={isLoading}
+        notice="Tu docente puede ver cuántas veces pides la respuesta directa."
+      />
     </div>
   );
 };

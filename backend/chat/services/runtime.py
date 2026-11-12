@@ -70,9 +70,10 @@ DIFFICULTY_LABELS = {
 
 INSTRUCTION_BY_TYPE = {
     "multiple_choice": "Lee con calma y selecciona la opción correcta o pide una pista paso a paso.",
-    "fraction": "Calcula y escribe tu resultado como fracción o entero (por ejemplo: 3/4).",
-    "numeric": "Resuelve paso a paso y escribe el valor numérico (por ejemplo: 7 o x = 7).",
-    "percentage": "Calcula el porcentaje y escribe el valor numérico (por ejemplo: 25 o 25%).",
+    # Los ejemplos de formato NO coinciden con ninguna respuesta del banco (lo verifica test_anticopia_matrix).
+    "fraction": "Calcula y escribe tu resultado como fracción o entero (por ejemplo: 5/7).",
+    "numeric": "Resuelve paso a paso y escribe el valor numérico (por ejemplo: 11 o x = 11).",
+    "percentage": "Calcula el porcentaje y escribe el valor numérico (por ejemplo: 45 o 45%).",
 }
 
 

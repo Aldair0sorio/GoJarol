@@ -76,9 +76,10 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, onNextExer
   };
 
   const placeholderByType = () => {
-    if (exercise.exerciseType === 'fraction') return 'Ej. 3/4 o 5/6';
-    if (exercise.exerciseType === 'percentage') return 'Ej. 25 o 25%';
-    return 'Ej. 7 o x = 7';
+    // Ejemplos de formato que no coinciden con ninguna respuesta del banco (lo verifica el backend).
+    if (exercise.exerciseType === 'fraction') return 'Ej. 5/7 o 2/9';
+    if (exercise.exerciseType === 'percentage') return 'Ej. 45 o 45%';
+    return 'Ej. 11 o x = 11';
   };
 
   return (

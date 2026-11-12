@@ -4,6 +4,7 @@ from gojarol_ml.nlp.topic_retriever import normalize_text
 
 from chat.services.guided_problems import (
     GUIDED_KINDS,
+    emit_event,
     handle_guided_message,
     start_division_problem,
     start_fraction_problem,
@@ -59,9 +60,9 @@ SPECIFIC_GUIDES = [
         (
             "Para **sumar fracciones** revisa primero si los denominadores (los números de abajo) son iguales o distintos:\n\n"
             "1. **Igual denominador**: Conserva el mismo denominador y suma los numeradores.\n"
-            "   • Ejemplo: 1/4 + 2/4 = (1 + 2)/4 = **3/4**.\n"
+            "   • Ejemplo: 2/9 + 4/9 = (2 + 4)/9 = **6/9**.\n"
             "2. **Distinto denominador**: Convierte a fracciones equivalentes con un denominador común (como el mínimo común múltiplo) y luego suma los numeradores.\n"
-            "   • Ejemplo: 1/2 + 1/4 → como 1/2 = 2/4, sumamos 2/4 + 1/4 = **3/4**.\n\n"
+            "   • Ejemplo: 1/2 + 1/5 → como 1/2 = 5/10 y 1/5 = 2/10, sumamos 5/10 + 2/10 = **7/10**.\n\n"
             "¿Le entramos a un reto? Escríbeme **«Ponme un ejercicio de fracciones»**."
         ),
     ),
@@ -110,7 +111,7 @@ SPECIFIC_GUIDES = [
             "2. **Resta con números negativos (Secundaria)**:\n"
             "   • Si restas un número mayor a uno menor (ej. 4 - 7), resta el menor al mayor (7 - 4 = 3) y conserva el signo del número con mayor valor absoluto: **-3**.\n"
             "3. **Resta de fracciones**:\n"
-            "   • Si tienen igual denominador, resta solo los numeradores (4/5 - 1/5 = 3/5). Si tienen distinto denominador, conviértelas primero a fracciones equivalentes.\n\n"
+            "   • Si tienen igual denominador, resta solo los numeradores (6/7 - 2/7 = 4/7). Si tienen distinto denominador, conviértelas primero a fracciones equivalentes.\n\n"
             "¿Quieres practicar con **fracciones** o con **ecuaciones con números negativos**?"
         ),
     ),
@@ -126,7 +127,7 @@ SPECIFIC_GUIDES = [
             "   • Si ambos tienen el mismo signo, suma sus valores y conserva el signo (ej. -4 + (-3) = -7).\n"
             "   • Si tienen signos distintos, resta el menor del mayor y deja el signo del mayor (ej. -8 + 5 = -3).\n"
             "3. **Suma de fracciones**:\n"
-            "   • Con igual denominador: suma los numeradores y conserva el denominador (1/4 + 2/4 = 3/4).\n\n"
+            "   • Con igual denominador: suma los numeradores y conserva el denominador (2/9 + 4/9 = 6/9).\n\n"
             "Si quieres resolver retos interactivos de suma de fracciones, escríbeme: **«Ponme un ejercicio de fracciones»**."
         ),
     ),
@@ -160,6 +161,44 @@ NUMERIC_REPLY_RE = re.compile(
 )
 
 
+PERCENT_TASK_RE = re.compile(r"(\d+(?:[.,]\d+)?)\s*(?:%|por ?ciento)\s*de\s*(\d+(?:[.,]\d+)?)")
+EQUATION_TASK_RE = re.compile(
+    r"(?<![\w/])(-?\d*)\s*x(?:\s*/\s*(\d+))?(?:\s*([+-])\s*(\d+))?\s*=\s*(-?\d+)(?![\w/])"
+)
+
+
+def build_first_step_prompt(message: str) -> str | None:
+    """Tarea pegada de porcentajes o ecuaciones sin guía por pasos: pide el primer paso, sin resultado."""
+    norm = normalize_text(message)
+    percent = PERCENT_TASK_RE.search(norm)
+    if percent:
+        rate, total = percent.groups()
+        return (
+            f"Resolvámoslo por partes: **{rate}% de {total}**.\n\n"
+            f"**Primer paso:** {rate}% significa «{rate} de cada 100». ¿Cómo lo escribirías como una fracción "
+            f"con denominador 100? Después multiplica esa fracción por **{total}**.\n\n"
+            "Si quieres practicar con ejercicios que reviso contigo, escríbeme «Ponme un ejercicio de porcentajes»."
+        )
+    equation = EQUATION_TASK_RE.search(norm)
+    if equation:
+        coefficient, divisor, sign, term, _ = equation.groups()
+        if not (coefficient.strip("-") or divisor or term):
+            return None  # "x = 7" ya es una respuesta, no una tarea.
+        if term:
+            first = f"deshaz primero el **{sign} {term}**: haz la operación contraria en ambos lados de la igualdad."
+        elif divisor:
+            first = f"la x está dividida entre **{divisor}**: ¿qué operación contraria harías en ambos lados?"
+        else:
+            first = f"la x está multiplicada por **{coefficient}**: ¿qué operación contraria harías en ambos lados?"
+        return (
+            f"Resolvámoslo por partes: **{equation.group(0).strip()}**.\n\n"
+            f"**Primer paso:** {first}\n\n"
+            "Cuando tengas un valor, sustitúyelo en la ecuación original para comprobarlo tú mismo. "
+            "Si quieres practicar con ejercicios que reviso contigo, escríbeme «Ponme un ejercicio de ecuaciones»."
+        )
+    return None
+
+
 def evaluate_pending_custom_problem(message: str, state: dict) -> str | None:
     custom = state.get("custom_problem")
     if not custom or state.get("active_exercise_id"):
@@ -179,6 +218,8 @@ def evaluate_pending_custom_problem(message: str, state: dict) -> str | None:
         expected_val = sympify(custom["expected"])
         if user_val == expected_val or abs(float(user_val) - float(expected_val)) < 1e-6:
             state.pop("custom_problem", None)
+            state.pop("answer_request_counter", None)
+            emit_event(state, "step_solved")
             return (
                 f"¡Exacto! 🎉 El resultado de **{custom['expr']}** es **{raw_val}**.\n\n"
                 f"{custom.get('closing', '¡Lo razonaste paso a paso por tu cuenta!')}"
@@ -295,6 +336,11 @@ def match_specific_operation_guide(message: str, state: dict) -> tuple[str, str 
     custom_eval = evaluate_pending_custom_problem(message, state)
     if custom_eval is not None:
         return custom_eval, state.get("current_topic")
+
+    # 2a. Tarea pegada de porcentajes o ecuaciones: se pide el primer paso, nunca el resultado.
+    first_step = build_first_step_prompt(message)
+    if first_step is not None:
+        return first_step, state.get("current_topic")
 
     # 2. ¿Está preguntando cuánto es una operación numérica concreta (ej. "y cuanto seria 5/2")?
     socratic_math = build_socratic_math_guide(message, state)

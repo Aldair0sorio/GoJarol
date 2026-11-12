@@ -558,6 +558,7 @@ class TutorService:
 
         state["awaiting_reflection"] = evaluation["correct"]
         if evaluation["correct"]:
+            state.pop("answer_request_counter", None)  # Resuelto: el contador anticopia vuelve a cero.
             state["completed_exercises"].append(exercise["id"])
             state["active_exercise_id"] = None
             state["active_exercise_type"] = None

@@ -8,6 +8,7 @@ import type { Subject, ClassGroup, StudentMastery, GroupTopicAnalytics, ClassCha
 import type { DetailedStudent, StudentExerciseAttempt } from '../types/leagues';
 import type { User, BackendProfile, ProfileChanges } from '../types/auth';
 import type { BackendLeagueRank } from '../data/leagues';
+import type { CopySignalsReport } from '../types/copySignals';
 
 const API_BASE = '/api/v1';
 
@@ -811,6 +812,28 @@ export const apiService = {
       // ignore
     }
     return null;
+  },
+
+  /**
+   * Señales de copia del grupo (solo el docente dueño). Nunca lanza: devuelve un error para mostrar.
+   */
+  async getCopySignals(
+    classId: string
+  ): Promise<{ ok: true; report: CopySignalsReport } | { ok: false; error: string }> {
+    const fallback = 'No pudimos cargar las señales de copia. El resto del panel sigue disponible.';
+    try {
+      const res = await fetch(`${API_BASE}/classes/${classId}/copy-signals/`, {
+        headers: getAuthHeaders(false),
+      });
+      if (!res.ok) return { ok: false, error: fallback };
+      const data: unknown = await res.json();
+      if (!isObject(data) || !Array.isArray(data.students) || !isObject(data.totals)) {
+        return { ok: false, error: fallback };
+      }
+      return { ok: true, report: data as unknown as CopySignalsReport };
+    } catch {
+      return { ok: false, error: fallback };
+    }
   },
 
   /**

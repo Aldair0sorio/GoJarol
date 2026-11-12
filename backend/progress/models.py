@@ -40,3 +40,29 @@ class ExerciseAttempt(models.Model):
     def __str__(self):
         status = "OK" if self.is_correct else "ERR"
         return f"{self.user.username} · {self.exercise_id} [{status}]"
+
+
+class TutorEvent(models.Model):
+    """Evento del tutor para las señales de copia. NO guarda el texto de los mensajes del alumno."""
+
+    class Kind(models.TextChoices):
+        ANSWER_REQUEST = "answer_request", "Pidió la respuesta directa"
+        BYPASS_ATTEMPT = "bypass_attempt", "Intentó saltarse las reglas"
+        STEP_SOLVED = "step_solved", "Resolvió un paso o ejercicio por su cuenta"
+        HINT_USED = "hint_used", "Pidió una pista o ayuda"
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="tutor_events",
+    )
+    topic_id = models.CharField(max_length=64, blank=True, default="")
+    kind = models.CharField(max_length=32, choices=Kind.choices)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created"]
+        indexes = [models.Index(fields=["user", "created"])]
+
+    def __str__(self):
+        return f"{self.user_id} · {self.kind}"

@@ -2,8 +2,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from chat.services.integrity import classify_integrity, integrity_reply
 from chat.services.operation_guides import match_specific_operation_guide
 from chat.services.runtime import get_runtime
+from exercises.services.exercise_evaluator import canonical_answer
+from progress.events import record_event, record_events
 from progress.models import StudentProgress
 from progress.views import record_exercise_attempt, resolve_progress_for_request
 
@@ -43,11 +46,37 @@ class ChatMessageView(APIView):
         base_state = runtime.tutor.initial_state()
         base_state.update(state if isinstance(state, dict) else {})
         state = base_state
+        state.pop("pending_events", None)  # Lista temporal: nunca se guarda en tutor_state.
 
         previous_topic = state.get("current_topic")
         previous_type = state.get("last_response_type")
         previous_exercise_id = state.get("active_exercise_id")
         hints_before = state.get("hints_used", 0)
+
+        # 0. Anticopia: pedido explícito de la respuesta o intento de saltarse las reglas.
+        # Rechazo amable + la siguiente ayuda; nunca el resultado.
+        integrity_kind = classify_integrity(message)
+        if integrity_kind is not None:
+            reply_text = integrity_reply(integrity_kind, message, state, runtime.tutor)
+            state["last_response_type"] = integrity_kind
+            state.pop("pending_events", None)
+            record_event(request.user, integrity_kind, state.get("current_topic"))
+            if progress_obj is not None:
+                progress_obj.tutor_state = state
+                progress_obj.save()
+            return Response(
+                {
+                    "reply": reply_text,
+                    "type": integrity_kind,
+                    "exercise": None,
+                    "evaluation": None,
+                    "nextAction": None,
+                    "xpEarned": 0,
+                    "totalXp": progress_obj.xp if progress_obj else 0,
+                    "streakDays": progress_obj.streak_days if progress_obj else 1,
+                    "currentTopic": state.get("current_topic"),
+                }
+            )
 
         # 1. Revisar si el alumno pregunta por una operación específica (ej. "y cuanto seria 5/2", dividir, multiplicar, restar, sumar).
         # Si Jarol espera la respuesta a su menú de diagnóstico, el TutorService la interpreta primero.
@@ -60,6 +89,8 @@ class ChatMessageView(APIView):
             if mapped_topic:
                 state["current_topic"] = mapped_topic
             state["last_response_type"] = "explanation"
+            # Pasos resueltos y ayudas de la guía por pasos (sin texto del alumno).
+            record_events(request.user, state.pop("pending_events", []), state.get("current_topic"))
             if progress_obj is not None:
                 progress_obj.tutor_state = state
                 progress_obj.save()
@@ -117,8 +148,15 @@ class ChatMessageView(APIView):
 
         xp_earned = 0
         evaluation = result.get("evaluation")
-        if response_type == "evaluation" and evaluation and evaluation.get("correct"):
+        solved_by_student = bool(response_type == "evaluation" and evaluation and evaluation.get("correct"))
+        if solved_by_student:
             xp_earned = 30 if hints_before == 0 else 20
+
+        new_state.pop("pending_events", None)
+        if response_type == "hint":
+            record_event(request.user, "hint_used", topic_id)
+        if solved_by_student:
+            record_event(request.user, "step_solved", previous_topic or topic_id)
 
         if progress_obj is not None:
             if xp_earned > 0:
@@ -138,7 +176,8 @@ class ChatMessageView(APIView):
                     user=progress_obj.user,
                     topic_id=eval_topic,
                     raw_ex=raw_eval_ex,
-                    submitted_answer=message,
+                    # Solo la respuesta extraída (ej. "3/4", "x = 7", "B"), nunca el mensaje completo.
+                    submitted_answer=canonical_answer(message, raw_eval_ex.get("type", "")),
                     is_correct=bool(evaluation.get("correct")),
                     hints_used=hints_before,
                     feedback=reply_text,

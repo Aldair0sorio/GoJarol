@@ -1,4 +1,8 @@
+from datetime import timedelta
+
+from django.db.models import Count
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,7 +11,8 @@ from accounts.models import User
 from chat.services.runtime import TOPIC_METADATA
 from curriculum.models import Subject
 from curriculum.views import _ensure_catalog_seeded
-from progress.models import StudentProgress
+from progress.copy_signals import RECOMMENDATIONS, RULE_TEXT, WINDOW_DAYS, copy_signal
+from progress.models import StudentProgress, TutorEvent
 from progress.views import compute_user_diagnostics, format_relative_activity
 
 from .models import ClassAnnouncement, ClassChallenge, Classroom, Enrollment
@@ -250,6 +255,64 @@ class StudentAnalysisDetailView(APIView):
                 "recentAttempts": diag["recentAttempts"],
                 "recommendations": build_student_recommendations(diag),
                 "assignedChallenges": assigned_challenges,
+            }
+        )
+
+
+class ClassroomCopySignalsView(APIView):
+    """Señales de copia del grupo (solo el docente dueño). Solo conteos: nunca texto de mensajes."""
+
+    def get(self, request, class_id: int):
+        classroom = _get_teacher_classroom_or_403(request.user, class_id)
+        since = timezone.now() - timedelta(days=WINDOW_DAYS)
+        students = [enr.student for enr in classroom.enrollments.select_related("student").order_by("unido")]
+        counts = {
+            (row["user_id"], row["kind"]): row["n"]
+            for row in TutorEvent.objects.filter(user__in=students, created__gte=since)
+            .values("user_id", "kind")
+            .annotate(n=Count("id"))
+        }
+
+        rows = []
+        for student in students:
+            answer_requests = counts.get((student.id, TutorEvent.Kind.ANSWER_REQUEST), 0)
+            bypass_attempts = counts.get((student.id, TutorEvent.Kind.BYPASS_ATTEMPT), 0)
+            steps_solved = counts.get((student.id, TutorEvent.Kind.STEP_SOLVED), 0)
+            signal, reason = copy_signal(answer_requests, bypass_attempts, steps_solved)
+            rows.append(
+                {
+                    "id": str(student.id),
+                    "name": student.alias or student.username,  # La misma etiqueta del panel; nunca el correo.
+                    "answerRequests": answer_requests,
+                    "bypassAttempts": bypass_attempts,
+                    "stepsSolved": steps_solved,
+                    "hintsUsed": counts.get((student.id, TutorEvent.Kind.HINT_USED), 0),
+                    "copySignal": signal,
+                    "reason": reason,
+                }
+            )
+        rows.sort(key=lambda r: (r["copySignal"] != "revisar", -(r["answerRequests"] + r["bypassAttempts"])))
+
+        def total(field):
+            return sum(row[field] for row in rows)
+
+        return Response(
+            {
+                "classId": str(classroom.id),
+                "className": classroom.nombre,
+                "windowDays": WINDOW_DAYS,
+                "rule": RULE_TEXT,
+                "privacyNote": "Solo se cuentan eventos (tipo, tema y fecha). No se guarda el texto de los mensajes.",
+                "totals": {
+                    "students": len(rows),
+                    "studentsToReview": sum(1 for row in rows if row["copySignal"] == "revisar"),
+                    "answerRequests": total("answerRequests"),
+                    "bypassAttempts": total("bypassAttempts"),
+                    "stepsSolved": total("stepsSolved"),
+                    "hintsUsed": total("hintsUsed"),
+                },
+                "students": rows,
+                "recommendations": RECOMMENDATIONS,
             }
         )
 
