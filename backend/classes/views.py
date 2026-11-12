@@ -278,7 +278,7 @@ class ClassroomCopySignalsView(APIView):
             answer_requests = counts.get((student.id, TutorEvent.Kind.ANSWER_REQUEST), 0)
             bypass_attempts = counts.get((student.id, TutorEvent.Kind.BYPASS_ATTEMPT), 0)
             steps_solved = counts.get((student.id, TutorEvent.Kind.STEP_SOLVED), 0)
-            signal, reason = copy_signal(answer_requests + bypass_attempts, steps_solved)
+            signal, reason = copy_signal(answer_requests, bypass_attempts, steps_solved)
             rows.append(
                 {
                     "id": str(student.id),

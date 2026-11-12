@@ -25,12 +25,24 @@ RECOMMENDATIONS = [
 ]
 
 
-def copy_signal(requests, own_successes):
-    """Devuelve ("ok" | "revisar", motivo en texto)."""
+def _requests_text(answer_requests, bypass_attempts):
+    """Desglosa los pedidos tal como los muestra la tarjeta del docente."""
+    bypass = f"{bypass_attempts} intento{'s' if bypass_attempts != 1 else ''} de saltarse las reglas"
+    if bypass_attempts == 0:
+        return f"{answer_requests} pedido{'s' if answer_requests != 1 else ''} de respuesta directa"
+    if answer_requests == 0:
+        return bypass
+    total = answer_requests + bypass_attempts
+    return f"{total} pedidos ({answer_requests} de respuesta directa y {bypass})"
+
+
+def copy_signal(answer_requests, bypass_attempts, own_successes):
+    """Devuelve ("ok" | "revisar", motivo en texto). Pedidos = respuesta directa + saltarse las reglas."""
+    requests = answer_requests + bypass_attempts
+    detail = _requests_text(answer_requests, bypass_attempts)
     if requests >= MIN_REQUESTS_WITHOUT_SUCCESS and own_successes == 0:
-        return "revisar", f"{requests} pedidos de respuesta directa y ningún acierto propio en {WINDOW_DAYS} días."
+        return "revisar", f"{detail} y ningún acierto propio en {WINDOW_DAYS} días."
     if requests >= MIN_REQUESTS_WITH_RATIO and requests >= RATIO * own_successes:
-        return "revisar", (f"{requests} pedidos de respuesta directa y solo {own_successes} "
-                           f"acierto{'s' if own_successes != 1 else ''} propio{'s' if own_successes != 1 else ''} "
-                           f"en {WINDOW_DAYS} días.")
+        successes = f"{own_successes} acierto{'s' if own_successes != 1 else ''} propio{'s' if own_successes != 1 else ''}"
+        return "revisar", f"{detail} y solo {successes} en {WINDOW_DAYS} días."
     return "ok", ""

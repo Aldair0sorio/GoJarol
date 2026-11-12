@@ -53,7 +53,7 @@ BYPASS_PATTERNS = [re.compile(pattern) for pattern in (
 BYPASS_NOTE = "Mis reglas no cambian: estoy aquí para ayudarte a aprender, no para resolver por ti."
 ASK_WHAT_TRIED = (
     "¿Qué intentaste hasta ahora? Cuéntame tu primer paso o en qué parte te atoraste y lo revisamos juntos. "
-    "También puedes escribirme tu problema (por ejemplo «¿cuánto es 1/2 + 3/4?») o pedir «Ponme un ejercicio de fracciones»."
+    "También puedes escribirme tu problema (por ejemplo «¿cuánto es 2/3 + 1/6?») o pedir «Ponme un ejercicio de fracciones»."
 )
 EXAMPLE_EVERY = 3
 CONCEPT_WORDS = {"aguda", "grave", "esdrujula"}
