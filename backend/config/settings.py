@@ -22,6 +22,8 @@ elif (BASE_DIR.parent / '.env').exists():
 # --- Seguridad y entorno (vienen del .env) ---
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env.bool('DEBUG', default=False)
+# Public OAuth audience; empty disables Google sign-in until configured.
+GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID', default='')
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 if not ALLOWED_HOSTS or ALLOWED_HOSTS == ['']:
     ALLOWED_HOSTS = ['*']
@@ -120,7 +122,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # --- API REST ---
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+        'accounts.authentication.VerifiedTokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -142,9 +144,30 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # donde collectstatic los junta para ngi
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
-# --- Email (generado por Django; se deja igual) ---
+# --- Email: Django 6.1 MAILERS, STARTTLS, no implicit SSL ---
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='Go Jarol <no.reply.trees.25@gmail.com>')
+FRONTEND_URL = env('FRONTEND_URL', default='http://localhost:5173')
+MAIL_HOST = env('MAIL_HOST', default='')
+MAIL_PORT = env.int('MAIL_PORT', default=587)
+MAIL_USERNAME = env('MAIL_USERNAME', default='')
+MAIL_PASSWORD = env('MAIL_PASSWORD', default='')
+MAIL_USE_TLS = env.bool('MAIL_USE_TLS', default=True)
+# Development can explicitly use filebased or locmem. Missing SMTP configuration
+# never silently substitutes a fake delivery in production.
 MAILERS = {
     'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+        'BACKEND': env('MAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend'),
+        'OPTIONS': {
+            'host': MAIL_HOST, 'port': MAIL_PORT, 'username': MAIL_USERNAME,
+            'password': MAIL_PASSWORD, 'use_tls': MAIL_USE_TLS, 'use_ssl': False,
+            'timeout': 10,
+        },
     },
 }
+if MAILERS['default']['BACKEND'] != 'django.core.mail.backends.smtp.EmailBackend':
+    if not DEBUG:
+        from django.core.exceptions import ImproperlyConfigured
+        raise ImproperlyConfigured('Non-SMTP mail backends require DEBUG=True.')
+    MAILERS['default']['OPTIONS'] = {}
+    if MAILERS['default']['BACKEND'] == 'django.core.mail.backends.filebased.EmailBackend':
+        MAILERS['default']['OPTIONS'] = {'file_path': str(BASE_DIR / 'dev-emails')}

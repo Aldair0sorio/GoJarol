@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getProfile, profileToUser, endSession, ProfileApiError, isBackendToken, getAuthToken } from '../services/api';
 import type { User, UserRole } from '../types/auth';
 
 export const GUEST_USER: User = {
@@ -17,11 +18,10 @@ interface AuthContextType {
   user: User;
   role: UserRole;
   isAuthenticated: boolean;
+  isLoading: boolean;
   isGoogleUser: boolean;
   login: (user: User, token?: string) => void;
-  loginWithGoogle: (googleUser: Partial<User>) => void;
-  logout: () => void;
-  switchRole: (newRole: UserRole) => void;
+  logout: () => Promise<void>;
   addXP: (amount: number) => void;
   updateUser: (fields: Partial<User>) => void;
 }
@@ -29,47 +29,11 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    const savedUser = localStorage.getItem('jarol_current_user');
-    const savedToken = localStorage.getItem('jarol_token');
-    return Boolean(savedUser && savedToken);
-  });
-
-  const [currentUser, setCurrentUser] = useState<User>(() => {
-    const savedUser = localStorage.getItem('jarol_current_user');
-    const savedToken = localStorage.getItem('jarol_token');
-    if (savedUser && savedToken) {
-      try {
-        return JSON.parse(savedUser);
-      } catch {
-        // fallback a guest
-      }
-    }
-    return GUEST_USER;
-  });
-
-  const [role, setRole] = useState<UserRole>(() => {
-    return currentUser.role || 'student';
-  });
-
-  const [isGoogleUser, setIsGoogleUser] = useState<boolean>(() => {
-    return Boolean(
-      currentUser.email &&
-        (currentUser.email.endsWith('@gmail.com') ||
-          localStorage.getItem('jarol_is_google') === 'true')
-    );
-  });
-
-  const switchRole = (newRole: UserRole) => {
-    setRole(newRole);
-    setCurrentUser((prev) => {
-      const updated = { ...prev, role: newRole };
-      if (isAuthenticated) {
-        localStorage.setItem('jarol_current_user', JSON.stringify(updated));
-      }
-      return updated;
-    });
-  };
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<User>(GUEST_USER);
+  const [role, setRole] = useState<UserRole>('student');
+  const [isGoogleUser, setIsGoogleUser] = useState(false);
 
   const addXP = (amount: number) => {
     if (role === 'student') {
@@ -97,6 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const login = (newUser: User, token?: string) => {
+    if (!isBackendToken(token)) throw new Error('No se recibió una sesión válida del servidor.');
     setCurrentUser(newUser);
     setRole(newUser.role);
     setIsAuthenticated(true);
@@ -107,28 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const loginWithGoogle = (googleUser: Partial<User>) => {
-    const updatedUser: User = {
-      id: googleUser.id || `guser_${Date.now()}`,
-      name: googleUser.name || 'Estudiante Google',
-      email: googleUser.email || '',
-      role: googleUser.role || role,
-      grade: googleUser.grade || '3° de Secundaria',
-      school: googleUser.school || 'Secundaria Técnica #26 · Veracruz',
-      avatarUrl: googleUser.avatarUrl || '/mascot/jarol-crab.png',
-      xp: googleUser.xp ?? 320,
-      streakDays: googleUser.streakDays ?? 4,
-    };
-
-    setCurrentUser(updatedUser);
-    setRole(updatedUser.role);
-    setIsAuthenticated(true);
-    setIsGoogleUser(true);
-    localStorage.setItem('jarol_is_google', 'true');
-    localStorage.setItem('jarol_current_user', JSON.stringify(updatedUser));
-  };
-
-  const logout = () => {
+  const clearSession = () => {
     localStorage.removeItem('jarol_current_user');
     localStorage.removeItem('jarol_token');
     localStorage.removeItem('jarol_is_google');
@@ -140,17 +84,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsGoogleUser(false);
   };
 
+  const logout = async () => {
+    try { await endSession(); }
+    catch (error) { if (!(error instanceof ProfileApiError && error.status === 401)) throw error; }
+    clearSession();
+  };
+
+  useEffect(() => {
+    const token = getAuthToken();
+    if (!token) { setIsLoading(false); return; }
+    if (!isBackendToken(token)) { clearSession(); setIsLoading(false); return; }
+    let active = true;
+    getProfile().then(profile => {
+      if (!active || getAuthToken() !== token) return;
+      const realUser = profileToUser(profile);
+      setCurrentUser(realUser); setRole(realUser.role); setIsAuthenticated(true);
+      localStorage.setItem('jarol_current_user', JSON.stringify(realUser));
+      setIsGoogleUser(localStorage.getItem('jarol_is_google') === 'true');
+    }).catch(error => {
+      if (active && getAuthToken() === token && error instanceof ProfileApiError && error.status === 401) clearSession();
+    }).finally(() => { if (active) setIsLoading(false); });
+    return () => { active = false; };
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
         user: currentUser,
         role,
         isAuthenticated,
+        isLoading,
         isGoogleUser,
         login,
-        loginWithGoogle,
         logout,
-        switchRole,
         addXP,
         updateUser,
       }}

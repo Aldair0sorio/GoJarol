@@ -9,31 +9,20 @@ import { LeaguesView } from './views/student/LeaguesView';
 import { ClassesView } from './views/student/ClassesView';
 import { ProgressView } from './views/student/ProgressView';
 import { TeacherDashboardView } from './views/teacher/TeacherDashboardView';
-import { AuthModal } from './components/auth/AuthModal';
-import { ProfileModal } from './components/profile/ProfileModal';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { LoginPage } from './views/auth/LoginPage';
+import { RegisterPage } from './views/auth/RegisterPage';
+import { VerificationPendingPage, VerifyEmailPage, VerificationSuccessPage, VerificationInvalidPage, RecoveryPlaceholderPage } from './views/auth/VerificationPages';
+import { routeRedirect, tabPaths } from './routing';
+import { ProfileView } from './views/ProfileView';
 
 const MainShell: React.FC = () => {
-  const { role, isAuthenticated } = useAuth();
-  const [currentTab, setCurrentTab] = useState('chat');
-  const [showAuthModal, setShowAuthModal] = useState(!isAuthenticated);
-  const [showProfileModal, setShowProfileModal] = useState(false);
+  const { user, role } = useAuth();
+  const navigate = useNavigate(); const { pathname } = useLocation();
+  const currentTab = Object.entries(tabPaths).find(([, path]) => path === pathname)?.[0] || 'chat';
+  const setCurrentTab = (tab: string) => navigate(tabPaths[tab] || '/chat');
+  const openProfile = () => navigate('/perfil');
   const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
-
-  // Al montar o si no está autenticado, abrir el modal de autenticación
-  React.useEffect(() => {
-    if (!isAuthenticated) {
-      setShowAuthModal(true);
-    }
-  }, [isAuthenticated]);
-
-  // Sincronizar tab al cambiar de rol
-  React.useEffect(() => {
-    if (role === 'teacher') {
-      setCurrentTab('panel');
-    } else {
-      setCurrentTab('chat');
-    }
-  }, [role]);
 
   const handleStartTopic = (topicOrPrompt?: string) => {
     if (topicOrPrompt) {
@@ -48,28 +37,27 @@ const MainShell: React.FC = () => {
       <DesktopSidebar
         currentTab={currentTab}
         onTabChange={setCurrentTab}
-        onOpenProfile={() => setShowProfileModal(true)}
-        onOpenAuth={() => setShowAuthModal(true)}
+        onOpenProfile={openProfile}
       />
 
       {/* Área de Contenido Principal Responsiva */}
-      <div className="flex-1 flex flex-col min-h-screen w-full relative">
+      <div className="flex-1 flex flex-col min-h-screen w-full min-w-0 relative">
         {/* Cabecera Móvil (se oculta en Desktop donde el Sidebar ya provee el branding) */}
         <AppHeader
-          onOpenAuth={() => setShowAuthModal(true)}
-          onOpenProfile={() => setShowProfileModal(true)}
+            onOpenProfile={openProfile}
         />
 
         {/* Vistas Principales */}
         <main className="flex-1 flex flex-col overflow-y-auto">
+          {currentTab === 'profile' && <ProfileView onBack={() => setCurrentTab('chat')}/>}
           {role === 'student' ? (
             <>
-              {currentTab === 'chat' && (
-                <ChatView
+              <div hidden={currentTab !== 'chat'} className="flex-1">
+                <ChatView key={user.id}
                   initialPrompt={pendingPrompt}
                   onPromptConsumed={() => setPendingPrompt(null)}
                 />
-              )}
+              </div>
               {currentTab === 'retos' && <ChallengesView onStartTopic={handleStartTopic} />}
               {currentTab === 'ligas' && <LeaguesView onGoPractice={() => setCurrentTab('chat')} />}
               {currentTab === 'clases' && (
@@ -78,36 +66,38 @@ const MainShell: React.FC = () => {
               {currentTab === 'progreso' && <ProgressView onPracticeTopic={handleStartTopic} />}
             </>
           ) : (
-            <TeacherDashboardView />
+            <><div hidden={currentTab !== 'chat'} className="flex-1"><ChatView key={user.id} initialPrompt={pendingPrompt} onPromptConsumed={() => setPendingPrompt(null)}/></div><div hidden={['profile', 'chat'].includes(currentTab)}><TeacherDashboardView /></div></>
           )}
         </main>
 
         {/* Navegación Inferior (se oculta en Desktop md:hidden) */}
         <BottomNav currentTab={currentTab} onTabChange={setCurrentTab} />
 
-        {/* Modal de Autenticación / Registro */}
-        <AuthModal
-          isOpen={showAuthModal}
-          onClose={() => setShowAuthModal(false)}
-        />
 
-        {/* Modal de Perfil y Logros */}
-        <ProfileModal
-          isOpen={showProfileModal}
-          onClose={() => setShowProfileModal(false)}
-          onOpenAuth={() => setShowAuthModal(true)}
-        />
+
       </div>
     </div>
   );
 };
 
-export function App() {
-  return (
-    <AuthProvider>
-      <MainShell />
-    </AuthProvider>
-  );
+function AppRoutes() {
+  const { isAuthenticated, isLoading, role } = useAuth(); const { pathname } = useLocation();
+  if (isLoading) return <main className="flex min-h-dvh items-center justify-center bg-canvas p-6"><p role="status">Recuperando tu sesión…</p></main>;
+  const redirect = routeRedirect(pathname, isAuthenticated, role);
+  if (redirect) return <Navigate to={redirect} replace/>;
+  return <Routes>
+    <Route path="/login" element={<LoginPage/>}/>
+    <Route path="/registro" element={<RegisterPage/>}/>
+    <Route path="/verificacion-pendiente" element={<VerificationPendingPage/>}/>
+    <Route path="/verificar-correo/:uid/:token" element={<VerifyEmailPage/>}/>
+    <Route path="/verificacion-exitosa" element={<VerificationSuccessPage/>}/>
+    <Route path="/verificacion-invalida" element={<VerificationInvalidPage/>}/>
+    <Route path="/recuperar-contrasena" element={<RecoveryPlaceholderPage/>}/>
+    <Route path="/*" element={<MainShell/>}/>
+  </Routes>;
 }
 
+export function App() {
+  return <BrowserRouter><AuthProvider><AppRoutes/></AuthProvider></BrowserRouter>;
+}
 export default App;

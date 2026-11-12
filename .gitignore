@@ -62,6 +62,7 @@ dist/
 *.sqlite3-journal
 staticfiles/
 media/
+backend/dev-emails/
 
 # Logs and temporary files
 *.log
