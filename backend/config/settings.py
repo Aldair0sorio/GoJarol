@@ -14,7 +14,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(str(BASE_DIR.parent))
 
 env = environ.Env()
-environ.Env.read_env(BASE_DIR / '.env')
+if (BASE_DIR / '.env').exists():
+    environ.Env.read_env(BASE_DIR / '.env')
+elif (BASE_DIR.parent / '.env').exists():
+    environ.Env.read_env(BASE_DIR.parent / '.env')
 
 # --- Seguridad y entorno (vienen del .env) ---
 SECRET_KEY = env('SECRET_KEY')
