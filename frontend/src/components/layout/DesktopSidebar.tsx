@@ -58,7 +58,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
         <div className="flex items-center gap-3 px-2 py-1">
           <div className="relative">
             <img
-              src="/mascot/jarol-crab.png"
+              src="/mascot/jarol-crab.webp"
               alt="Jarol el Profe Cangrejo"
               className="w-11 h-11 object-contain rounded-full bg-[#126B73]/10 ring-2 ring-[#126B73]/20 shadow-xs"
             />
@@ -91,6 +91,10 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
                 src={leagueStatus.tier.imageUrl}
                 alt={`Liga ${leagueStatus.tier.name}`}
                 title={`Liga ${leagueStatus.tier.name}`}
+                width={20}
+                height={20}
+                loading="lazy"
+                decoding="async"
                 className="w-5 h-5 object-contain"
               />
               <div className="flex items-center gap-1 text-xs font-display font-extrabold text-[#126B73] bg-[#DCEFEB] px-2 py-0.5 rounded-full">

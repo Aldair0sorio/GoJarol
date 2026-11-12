@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { apiService, type StudentProgressSummary } from '../../services/api';
 import { getLeagueForXp } from '../../data/leagues';
+import { ConnectionNotice } from '../../components/common/ConnectionNotice';
+import { LOAD_FAILED } from '../../services/netMessages';
 import { Flame, Sparkles, Award, Target, CheckCircle2, ArrowRight, BookOpen } from 'lucide-react';
 
 interface ProgressViewProps {
@@ -12,17 +14,24 @@ export const ProgressView: React.FC<ProgressViewProps> = ({ onPracticeTopic }) =
   const { user, updateUser } = useAuth();
   const [summary, setSummary] = useState<StudentProgressSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
 
-  useEffect(() => {
+  // Si falla, se avisa y se ofrece reintentar; ya no se muestra un progreso en cero como si fuera real.
+  const loadProgress = () =>
     apiService
       .getProgress()
       .then((data) => {
+        setLoadFailed(data === null);
+        if (!data) return;
         setSummary(data);
         if (data.xp !== undefined && data.xp !== user.xp) {
           updateUser({ xp: data.xp, streakDays: data.streakDays });
         }
       })
       .finally(() => setIsLoading(false));
+
+  useEffect(() => {
+    loadProgress();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -34,11 +43,22 @@ export const ProgressView: React.FC<ProgressViewProps> = ({ onPracticeTopic }) =
 
   return (
     <div className="flex flex-col flex-1 px-4 md:px-8 py-4 pb-24 md:pb-8 max-w-md md:max-w-3xl lg:max-w-4xl mx-auto w-full">
+      {loadFailed && (
+        <ConnectionNotice
+          className="mb-4"
+          text={LOAD_FAILED('tu progreso')}
+          onRetry={() => {
+            setLoadFailed(false);
+            loadProgress();
+          }}
+        />
+      )}
+
       {/* Perfil del Alumno Card */}
       <div className="p-4 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_3px_0_#D2E5F9] flex items-center gap-3 mb-4">
         <div className="relative">
           <img
-            src={user.avatarUrl || '/mascot/jarol-crab.png'}
+            src={user.avatarUrl || '/mascot/jarol-crab.webp'}
             alt={user.name}
             className="w-14 h-14 rounded-full object-cover ring-2 ring-[#126B73]/20"
           />
@@ -62,6 +82,10 @@ export const ProgressView: React.FC<ProgressViewProps> = ({ onPracticeTopic }) =
             <img
               src={leagueStatus.tier.imageUrl}
               alt={`Liga ${leagueStatus.tier.name}`}
+              width={32}
+              height={32}
+              loading="lazy"
+              decoding="async"
               className="w-8 h-8 object-contain"
             />
             <div className="leading-tight">
@@ -136,6 +160,10 @@ export const ProgressView: React.FC<ProgressViewProps> = ({ onPracticeTopic }) =
             <img
               src={leagueStatus.tier.imageUrl}
               alt={`Liga ${leagueStatus.tier.name}`}
+              width={28}
+              height={28}
+              loading="lazy"
+              decoding="async"
               className="w-7 h-7 object-contain shrink-0"
             />
             <span className="text-xs font-display font-bold text-[#0A1D2C] truncate">

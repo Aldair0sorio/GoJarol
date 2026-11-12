@@ -8,6 +8,9 @@ import { FloatingInput } from '../../components/chat/FloatingInput';
 import { PromptSuggestions } from '../../components/chat/PromptSuggestions';
 import { ExerciseCard } from '../../components/exercise/ExerciseCard';
 import { RotateCcw } from 'lucide-react';
+import { ConnectionNotice, OfflineBadge } from '../../components/common/ConnectionNotice';
+import { useOnlineStatus } from '../../hooks/useOnlineStatus';
+import { failureNotice } from '../../services/netMessages';
 
 interface ChatViewProps {
   initialPrompt?: string | null;
@@ -16,6 +19,7 @@ interface ChatViewProps {
 
 export const ChatView: React.FC<ChatViewProps> = ({ initialPrompt, onPromptConsumed }) => {
   const { user, isAuthenticated, updateUser, addXP } = useAuth();
+  const isOnline = useOnlineStatus();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -28,23 +32,34 @@ export const ChatView: React.FC<ChatViewProps> = ({ initialPrompt, onPromptConsu
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = async (text: string) => {
-    const userMsg: ChatMessage = {
-      id: `msg_u_${Date.now()}`,
-      sender: 'user',
-      text,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    };
+  const now = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    setMessages((prev) => [...prev, userMsg]);
+  /** Envía un mensaje. Al reintentar no se repite la burbuja del alumno (su texto ya está visible). */
+  const handleSendMessage = async (text: string, isRetry = false) => {
+    if (!isRetry) {
+      const userMsg: ChatMessage = { id: `msg_u_${Date.now()}`, sender: 'user', text, timestamp: now() };
+      setMessages((prev) => [...prev, userMsg]);
+    }
     setIsLoading(true);
 
     try {
-      const { replyText, exercise, xpEarned, totalXp } = await apiService.sendChatMessage(
-        text,
-        messages
-      );
+      const result = await apiService.sendChatMessage(text);
 
+      if (!result.ok) {
+        // Sin respuesta del servidor: aviso del sistema, nunca una respuesta inventada del tutor.
+        const notice = failureNotice(result.reason, 'mensaje');
+        const systemMsg: ChatMessage = {
+          id: `msg_s_${Date.now()}`,
+          sender: 'system',
+          text: notice.text,
+          timestamp: now(),
+          retryText: notice.canRetry ? text : undefined,
+        };
+        setMessages((prev) => [...prev, systemMsg]);
+        return;
+      }
+
+      const { replyText, exercise, xpEarned, totalXp } = result;
       if (totalXp !== undefined) {
         updateUser({ xp: totalXp });
       } else if (xpEarned && xpEarned > 0) {
@@ -55,7 +70,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ initialPrompt, onPromptConsu
         id: `msg_j_${Date.now()}`,
         sender: 'jarol',
         text: replyText,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        timestamp: now(),
         exercise,
       };
 
@@ -63,6 +78,12 @@ export const ChatView: React.FC<ChatViewProps> = ({ initialPrompt, onPromptConsu
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleRetry = (noticeId: string, text: string) => {
+    if (isLoading) return;
+    setMessages((prev) => prev.filter((m) => m.id !== noticeId));
+    handleSendMessage(text, true);
   };
 
   useEffect(() => {
@@ -95,6 +116,13 @@ export const ChatView: React.FC<ChatViewProps> = ({ initialPrompt, onPromptConsu
 
   return (
     <div className="flex flex-col flex-1 pb-20 md:pb-6 max-w-md md:max-w-2xl lg:max-w-3xl mx-auto w-full">
+      {/* Indicador discreto: el navegador reporta que no hay conexión */}
+      {!isOnline && (
+        <div className="sticky top-0 z-20 flex justify-center px-4 pt-2">
+          <OfflineBadge />
+        </div>
+      )}
+
       {/* Botón de limpiar chat si hay mensajes */}
       {messages.length > 0 && (
         <div className="flex justify-end px-4 pt-2">
@@ -115,7 +143,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ initialPrompt, onPromptConsu
           <div className="relative w-36 h-36 mb-2 flex items-center justify-center">
             <div className="absolute inset-0 bg-[#DCEFEB]/60 rounded-full blur-md"></div>
             <img
-              src="/mascot/jarol-crab.png"
+              src="/mascot/jarol-crab.webp"
               alt="Jarol el Profe Cangrejo"
               className="relative w-32 h-32 object-contain drop-shadow-[0_8px_16px_rgba(10,29,44,0.1)] hover:scale-105 transition-transform"
             />
@@ -144,7 +172,14 @@ export const ChatView: React.FC<ChatViewProps> = ({ initialPrompt, onPromptConsu
       <div className="flex flex-col px-3 py-2 space-y-2">
         {messages.map((msg) => (
           <React.Fragment key={msg.id}>
-            {msg.sender === 'jarol' ? (
+            {msg.sender === 'system' ? (
+              <div className="w-full max-w-[92%] my-1">
+                <ConnectionNotice
+                  text={msg.text}
+                  onRetry={msg.retryText ? () => handleRetry(msg.id, msg.retryText as string) : undefined}
+                />
+              </div>
+            ) : msg.sender === 'jarol' ? (
               msg.exercise ? (
                 <div className="w-full max-w-[96%] my-1">
                   <ExerciseCard

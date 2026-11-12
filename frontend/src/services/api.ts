@@ -1,9 +1,4 @@
-import {
-  MOCK_FEEDBACK_DB,
-  MOCK_EXERCISE_FRACTIONS_1,
-  MOCK_EXERCISE_FRACTIONS_2,
-} from './mockData';
-import type { AnswerFeedback, ChatMessage, ExerciseCardData } from '../types/chat';
+import type { AnswerFeedback, ExerciseCardData } from '../types/chat';
 import type { Subject, ClassGroup, StudentMastery, GroupTopicAnalytics, ClassChallengeItem, ClassAnnouncementItem, StudentTopicMetric } from '../types/curriculum';
 import type { DetailedStudent, StudentExerciseAttempt } from '../types/leagues';
 import type { User, BackendProfile, ProfileChanges } from '../types/auth';
@@ -25,6 +20,36 @@ function getAuthHeaders(includeJson = true): Record<string, string> {
   const token = getAuthToken();
   if (isBackendToken(token)) headers['Authorization'] = `Token ${token}`;
   return headers;
+}
+
+// --- Conexión lenta o caída -------------------------------------------------------------
+// Si el servidor no responde, NUNCA se inventa una respuesta del tutor ni un resultado:
+// se devuelve el motivo y la interfaz ofrece reintentar.
+
+/** Tiempo máximo de espera por petición (redes 3G lentas). */
+export const REQUEST_TIMEOUT_MS = 30_000;
+
+/** offline: fetch falló por red · timeout: no hubo respuesta a tiempo (pudo haber llegado)
+ *  auth: 401/403 (sesión) · server: otra respuesta no-ok (5xx, 429…). */
+export type NetFailure = 'offline' | 'timeout' | 'auth' | 'server';
+export type NetResult<T> = ({ ok: true } & T) | { ok: false; reason: NetFailure };
+
+async function fetchWithTimeout(url: string, init: RequestInit = {}, timeoutMs = REQUEST_TIMEOUT_MS): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function failureFromError(error: unknown): NetFailure {
+  return error instanceof DOMException && error.name === 'AbortError' ? 'timeout' : 'offline';
+}
+
+function failureFromStatus(status: number): NetFailure {
+  return status === 401 || status === 403 ? 'auth' : 'server';
 }
 
 const TOPIC_DESCRIPTIONS: Record<string, { description: string; prompt: string }> = {
@@ -292,9 +317,13 @@ export const apiService = {
   /**
    * Envía la respuesta de un ejercicio interactivo (opción múltiple o respuesta abierta evaluada con SymPy).
    */
-  async submitExerciseAnswer(exerciseId: string, answerOrOptionId: string): Promise<AnswerFeedback> {
+  async submitExerciseAnswer(
+    exerciseId: string,
+    answerOrOptionId: string
+  ): Promise<NetResult<{ feedback: AnswerFeedback }>> {
+    // Sin respuesta del servidor no hay evaluación: nunca se inventa correcto/incorrecto ni XP.
     try {
-      const res = await fetch(`${API_BASE}/exercises/${exerciseId}/answer/`, {
+      const res = await fetchWithTimeout(`${API_BASE}/exercises/${exerciseId}/answer/`, {
         method: 'POST',
         headers: getAuthHeaders(true),
         body: JSON.stringify({
@@ -302,10 +331,11 @@ export const apiService = {
           option_id: answerOrOptionId,
         }),
       });
-
-      if (res.ok) {
-        const data = await res.json();
-        return {
+      if (!res.ok) return { ok: false, reason: failureFromStatus(res.status) };
+      const data = await res.json();
+      return {
+        ok: true,
+        feedback: {
           isCorrect: Boolean(data.isCorrect ?? data.is_correct),
           title:
             data.title ||
@@ -319,23 +349,11 @@ export const apiService = {
               ? Number(data.totalXp)
               : undefined,
           nextExercise: data.nextExercise || undefined,
-        };
-      }
-    } catch {
-      // Fallback local si el backend no está corriendo
+        },
+      };
+    } catch (error) {
+      return { ok: false, reason: failureFromError(error) };
     }
-
-    const exerciseFeedback = MOCK_FEEDBACK_DB[exerciseId];
-    if (exerciseFeedback && exerciseFeedback[answerOrOptionId]) {
-      return exerciseFeedback[answerOrOptionId];
-    }
-
-    return {
-      isCorrect: false,
-      title: '¡Revisemos este paso! 💡',
-      explanation: 'Sigue analizando el problema con las pistas de Jarol.',
-      xpEarned: 0,
-    };
   },
 
   /**
@@ -344,28 +362,25 @@ export const apiService = {
   async requestExerciseHint(
     exerciseId: string,
     hintsUsed = 0
-  ): Promise<{ hint: string; strategy?: string; hintsUsed: number }> {
+  ): Promise<NetResult<{ hint: string; strategy?: string; hintsUsed: number }>> {
+    // Sin respuesta del servidor no se inventa una pista.
     try {
-      const res = await fetch(`${API_BASE}/exercises/${exerciseId}/hint/`, {
+      const res = await fetchWithTimeout(`${API_BASE}/exercises/${exerciseId}/hint/`, {
         method: 'POST',
         headers: getAuthHeaders(true),
         body: JSON.stringify({ hints_used: hintsUsed }),
       });
-      if (res.ok) {
-        const data = await res.json();
-        return {
-          hint: data.hint || 'Revisa los datos principales del enunciado e identifica qué operación relaciona las cantidades.',
-          strategy: data.strategy,
-          hintsUsed: Number(data.hintsUsed ?? hintsUsed + 1),
-        };
-      }
-    } catch {
-      // fallback
+      if (!res.ok) return { ok: false, reason: failureFromStatus(res.status) };
+      const data = await res.json();
+      return {
+        ok: true,
+        hint: String(data.hint || ''),
+        strategy: data.strategy,
+        hintsUsed: Number(data.hintsUsed ?? hintsUsed + 1),
+      };
+    } catch (error) {
+      return { ok: false, reason: failureFromError(error) };
     }
-    return {
-      hint: 'Analiza primero qué datos te da el problema y qué operación te permite despejar o simplificar el resultado.',
-      hintsUsed: hintsUsed + 1,
-    };
   },
 
   /**
@@ -386,60 +401,36 @@ export const apiService = {
   /**
    * Envía un mensaje en la conversación con el tutor IA Jarol.
    */
-  async sendChatMessage(
-    text: string,
-    history: ChatMessage[] = []
-  ): Promise<{
-    replyText: string;
-    exercise?: ExerciseCardData;
-    xpEarned?: number;
-    totalXp?: number;
-  }> {
+  async sendChatMessage(text: string): Promise<
+    NetResult<{
+      replyText: string;
+      exercise?: ExerciseCardData;
+      xpEarned?: number;
+      totalXp?: number;
+    }>
+  > {
+    // Sin respuesta del servidor no se inventa la respuesta del tutor: la interfaz ofrece reintentar.
     try {
-      const res = await fetch(`${API_BASE}/chat/messages/`, {
+      const res = await fetchWithTimeout(`${API_BASE}/chat/messages/`, {
         method: 'POST',
         headers: getAuthHeaders(true),
         body: JSON.stringify({ message: text }),
       });
-
-      if (res.ok) {
-        const data = await res.json();
-        return {
-          replyText: data.reply || data.message,
-          exercise: data.exercise || undefined,
-          xpEarned: Number(data.xpEarned || 0),
-          totalXp:
-            data.totalXp !== undefined && data.totalXp !== null
-              ? Number(data.totalXp)
-              : undefined,
-        };
-      }
-    } catch {
-      // Fallback local si el contenedor backend no responde
-    }
-
-    const lower = text.toLowerCase();
-    if (
-      lower.includes('fraccion') ||
-      lower.includes('quebrado') ||
-      lower.includes('practicar') ||
-      lower.includes('suma')
-    ) {
-      const hasFirstExercise = history.some((m) => m.exercise?.id === 'ex_frac_01');
-      const nextExercise = hasFirstExercise ? MOCK_EXERCISE_FRACTIONS_2 : MOCK_EXERCISE_FRACTIONS_1;
-
+      if (!res.ok) return { ok: false, reason: failureFromStatus(res.status) };
+      const data = await res.json();
       return {
-        replyText: hasFirstExercise
-          ? '¡Vientos! Aquí va otro reto para afianzar lo aprendido. Recuerda fijarte si los denominadores son iguales:'
-          : 'Para sumar fracciones con el mismo denominador, sumas los numeradores y conservas el denominador. Si tienen distinto denominador, primero conviértelas a fracciones equivalentes.',
-        exercise: nextExercise,
+        ok: true,
+        replyText: data.reply || data.message,
+        exercise: data.exercise || undefined,
+        xpEarned: Number(data.xpEarned || 0),
+        totalXp:
+          data.totalXp !== undefined && data.totalXp !== null
+            ? Number(data.totalXp)
+            : undefined,
       };
+    } catch (error) {
+      return { ok: false, reason: failureFromError(error) };
     }
-
-    return {
-      replyText:
-        'Puedo explicarte paso a paso temas de **Fracciones**, **Porcentajes**, **Ecuaciones Lineales**, **Comprensión Lectora**, **Ortografía** o **Acentuación**, o ponerte un reto interactivo. ¿Con cuál empezamos?',
-    };
   },
 
   /**
@@ -542,38 +533,19 @@ export const apiService = {
   /**
    * Obtiene el progreso real del estudiante autenticado.
    */
-  async getProgress(): Promise<StudentProgressSummary> {
+  async getProgress(): Promise<StudentProgressSummary | null> {
+    // null = no se pudo cargar. Antes devolvía un progreso en cero que parecía real.
     try {
-      const res = await fetch(`${API_BASE}/progress/me/`, {
+      const res = await fetchWithTimeout(`${API_BASE}/progress/me/`, {
         headers: getAuthHeaders(false),
       });
       if (res.ok) {
         return await res.json();
       }
     } catch {
-      // fallback
+      // Se informa como error en la vista.
     }
-    return {
-      xp: 0,
-      streakDays: 1,
-      completedCount: 0,
-      totalAttempts: 0,
-      accuracy: 0,
-      needsHelpWith: [],
-      topics: Object.entries(TOPIC_DESCRIPTIONS).map(([topicId, info]) => ({
-        topicId,
-        name: topicId,
-        subject: topicId.startsWith('mat_') ? 'Matemáticas' : 'Español',
-        mastery: 0,
-        completedExercises: 0,
-        totalExercises: 9,
-        attempts: 0,
-        correctAttempts: 0,
-        difficulty: 1,
-        status: 'Por iniciar',
-        prompt: info.prompt,
-      })),
-    };
+    return null;
   },
 
   /**
@@ -599,9 +571,10 @@ export const apiService = {
   /**
    * Obtiene las clases del docente o en las que está inscrito el alumno.
    */
-  async getClasses(): Promise<ClassGroup[]> {
+  async getClasses(): Promise<ClassGroup[] | null> {
+    // null = no se pudo cargar. Antes devolvía [] y parecía que no había clases.
     try {
-      const res = await fetch(`${API_BASE}/classes/`, {
+      const res = await fetchWithTimeout(`${API_BASE}/classes/`, {
         headers: getAuthHeaders(false),
       });
       if (res.ok) {
@@ -611,9 +584,9 @@ export const apiService = {
         }
       }
     } catch {
-      // ignore network error
+      // Se informa como error en la vista.
     }
-    return [];
+    return null;
   },
 
   /**
@@ -784,7 +757,7 @@ export const apiService = {
           email: d.email ? String(d.email) : undefined,
           grade: String(d.grade || 'Estudiante'),
           school: String(d.className || 'Veracruz'),
-          avatarUrl: '/mascot/jarol-crab.png',
+          avatarUrl: '/mascot/jarol-crab.webp',
           joinedAt: d.joinedAt ? String(d.joinedAt) : undefined,
           lastActive: d.lastActive ? String(d.lastActive) : undefined,
           totalXP: Number(d.totalXP ?? 0),

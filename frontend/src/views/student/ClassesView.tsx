@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import type { ClassGroup } from '../../types/curriculum';
 import { apiService } from '../../services/api';
 import { ClassDetailModal } from './ClassDetailModal';
+import { ConnectionNotice } from '../../components/common/ConnectionNotice';
+import { LOAD_FAILED } from '../../services/netMessages';
 import { Users2, Plus, CheckCircle2, AlertCircle, ChevronRight, School } from 'lucide-react';
 
 interface ClassesViewProps {
@@ -16,11 +18,17 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ onStartExercise }) => 
   const [showModal, setShowModal] = useState(false);
   const [selectedClass, setSelectedClass] = useState<ClassGroup | null>(null);
 
+  const [loadFailed, setLoadFailed] = useState(false);
+
+  // Si falla, se avisa: un error de red no debe parecer "no estás inscrito en ninguna clase".
   const loadClasses = () => {
     setIsLoading(true);
     apiService
       .getClasses()
-      .then(setClasses)
+      .then((list) => {
+        setLoadFailed(list === null);
+        if (list) setClasses(list);
+      })
       .finally(() => setIsLoading(false));
   };
 
@@ -84,6 +92,8 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ onStartExercise }) => 
         <div className="p-8 text-center text-xs text-[#596B72]">
           Cargando tus clases inscritas...
         </div>
+      ) : loadFailed ? (
+        <ConnectionNotice text={LOAD_FAILED('tus clases')} onRetry={loadClasses} />
       ) : classes.length === 0 ? (
         <div className="p-8 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_3px_0_#D2E5F9] flex flex-col items-center text-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-[#DCEFEB] text-[#126B73] flex items-center justify-center">

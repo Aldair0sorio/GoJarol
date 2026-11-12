@@ -33,8 +33,11 @@ export interface AnswerFeedback {
 
 export interface ChatMessage {
   id: string;
-  sender: 'jarol' | 'user';
+  /** 'system': aviso de conexión (no es una respuesta del tutor). */
+  sender: 'jarol' | 'user' | 'system';
   text: string;
+  /** Solo en avisos 'system': texto del alumno que se reenvía al reintentar. */
+  retryText?: string;
   timestamp: string;
   exercise?: ExerciseCardData;
   feedback?: AnswerFeedback;

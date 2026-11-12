@@ -9,7 +9,7 @@ export const GUEST_USER: User = {
   role: 'student',
   grade: '3° de Secundaria',
   school: 'Secundaria Técnica #26 · Veracruz',
-  avatarUrl: '/mascot/jarol-crab.png',
+  avatarUrl: '/mascot/jarol-crab.webp',
   xp: 0,
   streakDays: 0,
 };

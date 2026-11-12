@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { apiService } from '../../services/api';
 import { StudentDetailModal } from './StudentDetailModal';
 import { CopySignalsCard } from '../../components/teacher/CopySignalsCard';
+import { ConnectionNotice } from '../../components/common/ConnectionNotice';
+import { LOAD_FAILED } from '../../services/netMessages';
 import type { DetailedStudent } from '../../types/leagues';
 import type { ClassGroup, StudentMastery } from '../../types/curriculum';
 import {
@@ -80,11 +82,16 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({
 
   const [confirmDeleteClassId, setConfirmDeleteClassId] = useState<string | null>(null);
 
+  const [loadFailed, setLoadFailed] = useState(false);
+
+  // Si falla, se avisa: un error de red no debe parecer "aún no has creado ningún grupo".
   const loadTeacherClasses = () => {
     setIsLoading(true);
     apiService
       .getClasses()
       .then((list) => {
+        setLoadFailed(list === null);
+        if (!list) return;
         setClasses(list);
         if (list.length > 0 && (!selectedClassId || !list.some((c) => c.id === selectedClassId))) {
           setSelectedClassId(list[0].id);
@@ -281,7 +288,7 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({
       classId: cls?.id,
       name: st.studentName,
       email: st.email,
-      avatarUrl: '/mascot/jarol-crab.png',
+      avatarUrl: '/mascot/jarol-crab.webp',
       grade: st.gradeLabel || 'Estudiante inscrito',
       school: cls?.name || 'Veracruz',
       joinedAt: st.joinedAt,
@@ -395,6 +402,8 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({
         <div className="p-8 text-center text-sm text-[#596B72]">
           Cargando tus grupos y analíticas desde PostgreSQL...
         </div>
+      ) : loadFailed && classes.length === 0 ? (
+        <ConnectionNotice text={LOAD_FAILED('tus grupos')} onRetry={loadTeacherClasses} />
       ) : classes.length === 0 ? (
         <div className="p-8 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_3px_0_#D2E5F9] flex flex-col items-center text-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-[#DCEFEB] text-[#126B73] flex items-center justify-center">
