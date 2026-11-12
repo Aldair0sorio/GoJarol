@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { X, Award, Sparkles, LogOut, CheckCircle2 } from 'lucide-react';
+import { X, Award, Sparkles, LogOut, CheckCircle2, UserCheck } from 'lucide-react';
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -9,7 +9,7 @@ interface ProfileModalProps {
 }
 
 export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onOpenAuth }) => {
-  const { user, role, switchRole } = useAuth();
+  const { user, role, switchRole, logout, isAuthenticated } = useAuth();
   const [highContrast, setHighContrast] = useState(false);
 
   if (!isOpen) return null;
@@ -156,7 +156,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onO
                 onClose();
                 onOpenAuth();
               }}
-              className="w-full py-2.5 rounded-full border border-[#126B73] text-[#126B73] font-display font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-[#DCEFEB]/40 transition-colors"
+              className="w-full py-2.5 rounded-full border border-[#126B73] text-[#126B73] font-display font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-[#DCEFEB]/40 transition-colors cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>Cambiar o registrar otra cuenta</span>
@@ -167,11 +167,25 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, onO
                 switchRole(role === 'student' ? 'teacher' : 'student');
                 onClose();
               }}
-              className="w-full py-2.5 rounded-full bg-[#F7F5EF] text-[#596B72] hover:text-[#0A1D2C] font-display font-semibold text-xs flex items-center justify-center gap-1.5 border border-[#E8E5DC]"
+              className="w-full py-2.5 rounded-full bg-[#F7F5EF] text-[#596B72] hover:text-[#0A1D2C] font-display font-semibold text-xs flex items-center justify-center gap-1.5 border border-[#E8E5DC] cursor-pointer"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <UserCheck className="w-3.5 h-3.5" />
               <span>Cambiar a rol {role === 'student' ? 'Docente' : 'Estudiante'}</span>
             </button>
+
+            {isAuthenticated && (
+              <button
+                onClick={() => {
+                  logout();
+                  onClose();
+                  onOpenAuth();
+                }}
+                className="w-full py-2.5 rounded-full bg-red-50 hover:bg-red-100 text-red-600 font-display font-bold text-xs flex items-center justify-center gap-1.5 border border-red-200 transition-colors cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Cerrar sesión</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

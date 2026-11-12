@@ -27,7 +27,7 @@ interface AuthModalProps {
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
-  const { switchRole, updateUser, loginWithGoogle } = useAuth();
+  const { loginWithGoogle, login } = useAuth();
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [selectedRole, setSelectedRole] = useState<'student' | 'teacher'>('student');
   const [name, setName] = useState('');
@@ -140,15 +140,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     e.preventDefault();
     setSubmitted(true);
 
-    if (name.trim()) {
-      updateUser({
-        name: name.trim(),
-        grade: selectedRole === 'student' ? grade : undefined,
-        school: school.trim(),
-      });
-    }
+    const userName = name.trim() || (selectedRole === 'student' ? 'Estudiante Veracruzano' : 'Docente Veracruzano');
+    const userEmail = `${userName.toLowerCase().replace(/[^a-z0-9]/g, '.')}@${selectedRole === 'student' ? 'estudiantes' : 'docentes'}.sev.gob.mx`;
 
-    switchRole(selectedRole);
+    const newUser = {
+      id: `usr_${Date.now()}`,
+      name: userName,
+      email: userEmail,
+      role: selectedRole,
+      grade: selectedRole === 'student' ? grade : undefined,
+      school: school.trim() || 'Secundaria Técnica #26 · Veracruz',
+      avatarUrl:
+        selectedRole === 'teacher'
+          ? 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=150&auto=format&fit=crop&q=80'
+          : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+      xp: selectedRole === 'student' ? 120 : 0,
+      streakDays: selectedRole === 'student' ? 1 : 0,
+    };
+
+    login(newUser, `jarol_local_${Date.now()}`);
 
     setTimeout(() => {
       setSubmitted(false);
@@ -177,14 +187,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         school: account.school,
       });
 
-      loginWithGoogle({
+      const demoUser = {
+        id: `demo_${Date.now()}`,
         name: account.name,
         email: account.email,
         role: account.role,
         grade: account.grade,
         school: account.school,
         avatarUrl: account.picture,
-      });
+        xp: account.role === 'student' ? 320 : 0,
+        streakDays: account.role === 'student' ? 4 : 0,
+      };
+
+      login(demoUser, `jarol_demo_${Date.now()}`);
 
       setGoogleLoading(false);
       setSubmitted(true);

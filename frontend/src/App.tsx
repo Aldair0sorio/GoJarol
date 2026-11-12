@@ -13,10 +13,17 @@ import { AuthModal } from './components/auth/AuthModal';
 import { ProfileModal } from './components/profile/ProfileModal';
 
 const MainShell: React.FC = () => {
-  const { role } = useAuth();
+  const { role, isAuthenticated } = useAuth();
   const [currentTab, setCurrentTab] = useState('chat');
-  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(!isAuthenticated);
   const [showProfileModal, setShowProfileModal] = useState(false);
+
+  // Al montar o si no está autenticado, abrir el modal de autenticación
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+    }
+  }, [isAuthenticated]);
 
   // Sincronizar tab al cambiar de rol
   React.useEffect(() => {

@@ -401,3 +401,28 @@ Para cada sesión o iteración se documenta:
 
 - **Archivos creados / modificados**:
   - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 19 · 11 de Noviembre de 2026 (22:12 - 22:16)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Implementación de barrera de autenticación inicial reactiva, eliminación de usuarios estáticos por defecto y soporte de cierre de sesión (`logout`).
+
+- **Para qué se usaron**:
+  - Reemplazo de los usuarios mock precargados por un estado inicial no autenticado (`isAuthenticated = false`) y perfil de invitado neutral (`GUEST_USER`).
+  - Activación automática del modal de inicio de sesión / registro (`AuthModal`) al entrar a la plataforma si no existe una sesión previa guardada en `localStorage`.
+  - Integración del método `logout()` en [`AuthContext.tsx`](frontend/src/context/AuthContext.tsx) para limpiar credenciales y tokens almacenados, restableciendo el estado de invitado.
+  - Actualización de [`DesktopSidebar.tsx`](frontend/src/components/layout/DesktopSidebar.tsx) y [`AppHeader.tsx`](frontend/src/components/layout/AppHeader.tsx) para ocultar nombres estáticos de usuarios ficticios y mostrar botones prominentes de "Iniciar Sesión / Registro" cuando el visitante no ha ingresado.
+  - Adición de botón "Cerrar sesión" en [`ProfileModal.tsx`](frontend/src/components/profile/ProfileModal.tsx).
+  - Verificación de compilación limpia con Vite y TypeScript sin errores.
+
+- **Decisiones clave tomadas**:
+  - Forzar que cada usuario interactúe con el flujo de login real (Google o cuenta institucional/formulario) para evitar que aparezcan datos de prueba impersonales al inicio.
+
+- **Archivos creados / modificados**:
+  - `frontend/src/context/AuthContext.tsx`
+  - `frontend/src/App.tsx`
+  - `frontend/src/components/auth/AuthModal.tsx`
+  - `frontend/src/components/layout/DesktopSidebar.tsx`
+  - `frontend/src/components/layout/AppHeader.tsx`
+  - `frontend/src/components/profile/ProfileModal.tsx`
+  - `docs/bitacora/hugo_frontend.md`

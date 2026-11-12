@@ -8,7 +8,7 @@ interface AppHeaderProps {
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({ onOpenAuth, onOpenProfile }) => {
-  const { user, role, switchRole } = useAuth();
+  const { user, role, switchRole, isAuthenticated } = useAuth();
 
   return (
     <header className="md:hidden sticky top-0 inset-x-0 z-40 bg-[#F7F5EF]/90 backdrop-blur-md border-b border-[#E8E5DC] px-4 py-2.5">
@@ -38,9 +38,17 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ onOpenAuth, onOpenProfile 
           </div>
         </div>
 
-        {/* Right Action: XP Badge or Role Switcher */}
+        {/* Right Action: XP Badge or Login */}
         <div className="flex items-center gap-2">
-          {role === 'student' ? (
+          {!isAuthenticated ? (
+            <button
+              onClick={onOpenAuth}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#126B73] text-white font-display font-bold text-xs shadow-xs hover:bg-[#005158] transition-all cursor-pointer active:scale-95"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Acceder</span>
+            </button>
+          ) : role === 'student' ? (
             <button
               onClick={onOpenProfile}
               title="Ver mi perfil y logros"
@@ -64,22 +72,11 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ onOpenAuth, onOpenProfile 
             </button>
           )}
 
-          {/* Login / Switch Account Button */}
-          {onOpenAuth && (
-            <button
-              onClick={onOpenAuth}
-              title="Iniciar sesión o registrar usuario"
-              className="flex items-center justify-center p-1.5 rounded-lg bg-white border border-[#E8E5DC] text-[#596B72] hover:text-[#126B73] hover:border-[#126B73] transition-colors shadow-xs active:scale-95"
-            >
-              <LogIn className="w-4 h-4" />
-            </button>
-          )}
-
           {/* Quick Demo Switcher Button */}
           <button
             onClick={() => switchRole(role === 'student' ? 'teacher' : 'student')}
             title="Cambiar perspectiva para demostración"
-            className="flex items-center justify-center p-1.5 rounded-lg bg-white border border-[#E8E5DC] text-[#596B72] hover:text-[#126B73] hover:border-[#126B73] transition-colors shadow-xs active:scale-95"
+            className="flex items-center justify-center p-1.5 rounded-lg bg-white border border-[#E8E5DC] text-[#596B72] hover:text-[#126B73] hover:border-[#126B73] transition-colors shadow-xs active:scale-95 cursor-pointer"
           >
             <UserCheck className="w-4 h-4" />
           </button>
