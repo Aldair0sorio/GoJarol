@@ -490,3 +490,50 @@ Para cada sesión o iteración se documenta:
 - **Archivos creados / modificados**:
   - `frontend/src/components/auth/AuthModal.tsx`
   - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 23 · 11 de Noviembre de 2026 (22:41 - 22:57)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Integración end-to-end del Frontend (React 19 + TypeScript) con el Backend (Django 5 + PostgreSQL) y el Motor de IA/Tutor Pedagógico (`intent_classifier.joblib` + SymPy + `TutorService`), eliminando datos estáticos de las vistas.
+
+- **Para qué se usaron**:
+  - Configuración de `docker-compose.yml` para montar en modo solo lectura `./ml:/ml:ro` y `./content:/content:ro` en el contenedor `backend` y exponer `PYTHONPATH: /app:/ml/src`, preservando el caché de dependencias en el VPS.
+  - Creación del modelo `StudentProgress` y su migración `0001_initial.py` en `backend/progress/` para persistir en PostgreSQL los puntos de experiencia (`xp`), racha (`streak_days`) y el estado adaptativo del tutor (`tutor_state`) por cada usuario.
+  - Creación de `backend/chat/services/runtime.py`, `backend/chat/views.py` (`POST /api/v1/chat/messages/`), `backend/exercises/views.py` (`POST /api/v1/exercises/<id>/answer/` y `POST /api/v1/exercises/<id>/hint/`) y `backend/progress/views.py` (`GET /api/v1/progress/me/` y `GET /api/v1/progress/leaderboard/`).
+  - Actualización del catálogo curricular (`backend/curriculum/fixtures/catalogo.json` y `backend/curriculum/views.py`) con auto-sembrado de los 6 temas activos con IA (`mat_fracciones`, `mat_porcentajes`, `mat_ecuaciones`, `esp_comprension`, `esp_ortografia`, `esp_acentuacion`).
+  - Conexión completa de `ExerciseCard.tsx` (soportando opción múltiple, lecturas de comprensión, respuestas abiertas evaluadas simbólicamente con SymPy y pistas graduales), `ChatView.tsx`, `ChallengesView.tsx`, `ProgressView.tsx`, `LeaguesView.tsx`, `ClassesView.tsx` y `TeacherDashboardView.tsx` a la base de datos real.
+
+- **Decisiones clave tomadas**:
+  - Garantizar que `expected_answer` jamás salga del servidor; las respuestas incorrectas activan pistas progresivas del `HintService` y las respuestas correctas otorgan XP persistido en PostgreSQL y desbloquean el siguiente ejercicio adaptativo.
+
+- **Archivos creados / modificados**:
+  - `docker-compose.yml`
+  - `backend/config/urls.py`
+  - `backend/accounts/serializers.py`
+  - `backend/chat/services/runtime.py`
+  - `backend/chat/views.py`
+  - `backend/chat/urls.py`
+  - `backend/exercises/views.py`
+  - `backend/exercises/urls.py`
+  - `backend/progress/models.py`
+  - `backend/progress/migrations/0001_initial.py`
+  - `backend/progress/views.py`
+  - `backend/progress/urls.py`
+  - `backend/classes/serializers.py`
+  - `backend/classes/views.py`
+  - `backend/curriculum/fixtures/catalogo.json`
+  - `backend/curriculum/views.py`
+  - `frontend/src/types/chat.ts`
+  - `frontend/src/types/curriculum.ts`
+  - `frontend/src/services/api.ts`
+  - `frontend/src/components/exercise/ExerciseCard.tsx`
+  - `frontend/src/components/chat/PromptSuggestions.tsx`
+  - `frontend/src/App.tsx`
+  - `frontend/src/views/student/ChatView.tsx`
+  - `frontend/src/views/student/ChallengesView.tsx`
+  - `frontend/src/views/student/ProgressView.tsx`
+  - `frontend/src/views/student/LeaguesView.tsx`
+  - `frontend/src/views/student/ClassesView.tsx`
+  - `frontend/src/views/student/ClassDetailModal.tsx`
+  - `frontend/src/views/teacher/TeacherDashboardView.tsx`
+  - `docs/bitacora/hugo_frontend.md`

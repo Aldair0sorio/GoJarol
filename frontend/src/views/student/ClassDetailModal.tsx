@@ -5,7 +5,7 @@ import { X, Users2, BookOpen, Bell, ArrowRight, CheckCircle2 } from 'lucide-reac
 interface ClassDetailModalProps {
   cls: ClassGroup;
   onClose: () => void;
-  onStartExercise?: (topic: string) => void;
+  onStartExercise?: (topicPrompt: string) => void;
 }
 
 export const ClassDetailModal: React.FC<ClassDetailModalProps> = ({
@@ -14,13 +14,27 @@ export const ClassDetailModal: React.FC<ClassDetailModalProps> = ({
   onStartExercise,
 }) => {
   const [activeTab, setActiveTab] = useState<'retos' | 'alumnos' | 'avisos'>('retos');
+  const classmates = cls.studentsDetail || [];
 
-  const mockClassmates = [
-    { name: 'Mateo Hernández', xp: 450, status: 'Al corriente' },
-    { name: 'Sofía Morales', xp: 380, status: 'Al corriente' },
-    { name: 'Emiliano Valdés (Tú)', xp: 320, status: 'Al corriente' },
-    { name: 'Carlos Yépez', xp: 340, status: 'Practicando' },
-    { name: 'Valeria Cruz', xp: 290, status: 'Al corriente' },
+  const assignedChallenges = [
+    {
+      title: 'Fracciones Equivalentes y Suma',
+      desc: 'Ejercicios adaptativos evaluados simbólicamente con SymPy.',
+      prompt: 'Explícame cómo sumar fracciones y ponme un ejercicio',
+      xp: '+30 XP',
+    },
+    {
+      title: 'Ecuaciones Lineales de Primer Grado',
+      desc: 'Despeje de la incógnita x paso a paso con pistas graduales.',
+      prompt: 'Ponme un ejercicio de ecuaciones de primer grado',
+      xp: '+30 XP',
+    },
+    {
+      title: 'Comprensión Lectora y Acentuación',
+      desc: 'Lecturas originales con identificación de idea principal e inferencias.',
+      prompt: 'Dame un reto de comprensión lectora',
+      xp: '+30 XP',
+    },
   ];
 
   return (
@@ -36,14 +50,14 @@ export const ClassDetailModal: React.FC<ClassDetailModalProps> = ({
               {cls.name}
             </h2>
             <p className="text-xs text-[#596B72]">
-              Titular: <strong className="text-[#0A1D2C]">{cls.teacherName}</strong> · Código:{' '}
+              Docente: <strong className="text-[#0A1D2C]">{cls.teacherName}</strong> · Código:{' '}
               <span className="font-mono font-bold text-[#126B73]">{cls.code}</span>
             </p>
           </div>
 
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white border border-[#E8E5DC] flex items-center justify-center text-[#596B72] hover:text-[#0A1D2C] active:scale-95"
+            className="w-8 h-8 rounded-full bg-white border border-[#E8E5DC] flex items-center justify-center text-[#596B72] hover:text-[#0A1D2C] active:scale-95 cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -53,38 +67,38 @@ export const ClassDetailModal: React.FC<ClassDetailModalProps> = ({
         <div className="flex border-b border-[#E8E5DC] bg-white px-3 pt-2">
           <button
             onClick={() => setActiveTab('retos')}
-            className={`flex-1 py-2 text-xs font-display font-bold flex items-center justify-center gap-1.5 border-b-2 transition-all ${
+            className={`flex-1 py-2 text-xs font-display font-bold flex items-center justify-center gap-1.5 border-b-2 transition-all cursor-pointer ${
               activeTab === 'retos'
                 ? 'border-[#126B73] text-[#126B73]'
                 : 'border-transparent text-[#596B72] hover:text-[#0A1D2C]'
             }`}
           >
             <BookOpen className="w-3.5 h-3.5" />
-            <span>Retos Asignados</span>
+            <span>Retos ({assignedChallenges.length})</span>
           </button>
 
           <button
             onClick={() => setActiveTab('alumnos')}
-            className={`flex-1 py-2 text-xs font-display font-bold flex items-center justify-center gap-1.5 border-b-2 transition-all ${
+            className={`flex-1 py-2 text-xs font-display font-bold flex items-center justify-center gap-1.5 border-b-2 transition-all cursor-pointer ${
               activeTab === 'alumnos'
                 ? 'border-[#126B73] text-[#126B73]'
                 : 'border-transparent text-[#596B72] hover:text-[#0A1D2C]'
             }`}
           >
             <Users2 className="w-3.5 h-3.5" />
-            <span>Compañeros ({cls.studentCount})</span>
+            <span>Compañeros ({classmates.length})</span>
           </button>
 
           <button
             onClick={() => setActiveTab('avisos')}
-            className={`flex-1 py-2 text-xs font-display font-bold flex items-center justify-center gap-1.5 border-b-2 transition-all ${
+            className={`flex-1 py-2 text-xs font-display font-bold flex items-center justify-center gap-1.5 border-b-2 transition-all cursor-pointer ${
               activeTab === 'avisos'
                 ? 'border-[#126B73] text-[#126B73]'
                 : 'border-transparent text-[#596B72] hover:text-[#0A1D2C]'
             }`}
           >
             <Bell className="w-3.5 h-3.5" />
-            <span>Avisos (1)</span>
+            <span>Avisos</span>
           </button>
         </div>
 
@@ -92,74 +106,73 @@ export const ClassDetailModal: React.FC<ClassDetailModalProps> = ({
         <div className="p-4 flex flex-col gap-3">
           {activeTab === 'retos' && (
             <div className="flex flex-col gap-2.5">
-              <div className="p-3.5 rounded-xl bg-white border border-[#E8E5DC] shadow-2xs flex flex-col gap-2">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <span className="text-[10px] font-bold text-[#E76D55] uppercase">
-                      Activo esta semana
-                    </span>
-                    <h3 className="font-display font-bold text-sm text-[#0A1D2C]">
-                      Suma y Resta de Fracciones con igual denominador
-                    </h3>
-                    <p className="text-xs text-[#596B72] mt-0.5">
-                      3 ejercicios interactivos con ejemplos guiados por Jarol.
-                    </p>
-                  </div>
-                  <span className="text-xs font-bold text-[#126B73] bg-[#DCEFEB] px-2 py-0.5 rounded-full">
-                    +60 XP
-                  </span>
-                </div>
-
-                <button
-                  onClick={() => {
-                    onClose();
-                    if (onStartExercise) onStartExercise('Fracciones');
-                  }}
-                  className="w-full mt-1 py-2 rounded-full bg-[#126B73] text-white font-display font-bold text-xs flex items-center justify-center gap-1.5 shadow-[0_2px_0_#005158] active:translate-y-0.5"
+              {assignedChallenges.map((ch, idx) => (
+                <div
+                  key={idx}
+                  className="p-3.5 rounded-xl bg-white border border-[#E8E5DC] shadow-2xs flex flex-col gap-2"
                 >
-                  <span>Resolver con Jarol</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <span className="text-[10px] font-bold text-[#E76D55] uppercase">
+                        Práctica activa
+                      </span>
+                      <h3 className="font-display font-bold text-sm text-[#0A1D2C]">
+                        {ch.title}
+                      </h3>
+                      <p className="text-xs text-[#596B72] mt-0.5">{ch.desc}</p>
+                    </div>
+                    <span className="text-xs font-bold text-[#126B73] bg-[#DCEFEB] px-2 py-0.5 rounded-full shrink-0">
+                      {ch.xp}
+                    </span>
+                  </div>
 
-              <div className="p-3.5 rounded-xl bg-white border border-[#E8E5DC] opacity-70 flex items-start justify-between">
-                <div>
-                  <span className="text-[10px] font-bold text-[#596B72] uppercase">
-                    Próxima semana
-                  </span>
-                  <h3 className="font-display font-bold text-sm text-[#0A1D2C]">
-                    Fracciones equivalentes y mínimo común múltiplo
-                  </h3>
+                  <button
+                    onClick={() => {
+                      onClose();
+                      if (onStartExercise) onStartExercise(ch.prompt);
+                    }}
+                    className="w-full mt-1 py-2 rounded-full bg-[#126B73] text-white font-display font-bold text-xs flex items-center justify-center gap-1.5 shadow-[0_2px_0_#005158] active:translate-y-0.5 cursor-pointer"
+                  >
+                    <span>Resolver con Jarol</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
                 </div>
-                <span className="text-[11px] text-[#596B72] font-medium">Bloqueado</span>
-              </div>
+              ))}
             </div>
           )}
 
           {activeTab === 'alumnos' && (
             <div className="flex flex-col gap-2">
-              {mockClassmates.map((mate, idx) => (
-                <div
-                  key={idx}
-                  className="p-2.5 rounded-xl bg-white border border-[#E8E5DC] flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-full bg-[#DCEFEB] text-[#126B73] font-display font-bold text-xs flex items-center justify-center">
-                      {mate.name[0]}
-                    </div>
-                    <div>
-                      <span className="font-display font-bold text-xs text-[#0A1D2C] block">
-                        {mate.name}
-                      </span>
-                      <span className="text-[10px] text-[#596B72]">{mate.status}</span>
-                    </div>
-                  </div>
-
-                  <span className="text-xs font-display font-semibold text-[#126B73]">
-                    {mate.xp} XP
-                  </span>
+              {classmates.length === 0 ? (
+                <div className="p-4 text-center text-xs text-[#596B72] bg-white rounded-xl border border-[#E8E5DC]">
+                  Sé el primero en completar ejercicios en este grupo.
                 </div>
-              ))}
+              ) : (
+                classmates.map((mate) => (
+                  <div
+                    key={mate.studentId}
+                    className="p-2.5 rounded-xl bg-white border border-[#E8E5DC] flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-full bg-[#DCEFEB] text-[#126B73] font-display font-bold text-xs flex items-center justify-center uppercase">
+                        {mate.studentName[0] || 'E'}
+                      </div>
+                      <div>
+                        <span className="font-display font-bold text-xs text-[#0A1D2C] block">
+                          {mate.studentName}
+                        </span>
+                        <span className="text-[10px] text-[#596B72]">
+                          {mate.completedExercises} retos resueltos · {mate.accuracy}% precisión
+                        </span>
+                      </div>
+                    </div>
+
+                    <span className="text-xs font-display font-semibold text-[#126B73]">
+                      {mate.xp || 0} XP
+                    </span>
+                  </div>
+                ))
+              )}
             </div>
           )}
 
@@ -168,13 +181,12 @@ export const ClassDetailModal: React.FC<ClassDetailModalProps> = ({
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-[#126B73]" />
                 <span className="font-display font-bold text-xs text-[#0A1D2C]">
-                  Aviso de la Prof. Laura Mendoza
+                  Bienvenida de {cls.teacherName}
                 </span>
               </div>
               <p className="text-xs text-[#3F484A] leading-relaxed">
-                "¡Hola muchachos! Recuerden practicar con Jarol el tema de fracciones. Fíjense bien en que cuando los denominadores son iguales, solo se suman los números de arriba. ¡Ánimo!"
+                "¡Bienvenidos al grupo {cls.name}! Utilicen el tutor Jarol para practicar y pedir pistas paso a paso. Todos los ejercicios que resuelvan se registrarán automáticamente en nuestro seguimiento grupal."
               </p>
-              <span className="text-[10px] text-[#596B72] mt-1">Publicado hoy, 9:00 AM</span>
             </div>
           )}
         </div>

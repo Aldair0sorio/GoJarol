@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { ClassGroup } from '../../types/curriculum';
 import { apiService } from '../../services/api';
 import { ClassDetailModal } from './ClassDetailModal';
-import { Users2, Plus, CheckCircle2, AlertCircle, ChevronRight } from 'lucide-react';
+import { Users2, Plus, CheckCircle2, AlertCircle, ChevronRight, School } from 'lucide-react';
 
 interface ClassesViewProps {
   onStartExercise?: (topic: string) => void;
@@ -10,13 +10,22 @@ interface ClassesViewProps {
 
 export const ClassesView: React.FC<ClassesViewProps> = ({ onStartExercise }) => {
   const [classes, setClasses] = useState<ClassGroup[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [joinCode, setJoinCode] = useState('');
   const [joinStatus, setJoinStatus] = useState<{ success: boolean; message: string } | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedClass, setSelectedClass] = useState<ClassGroup | null>(null);
 
+  const loadClasses = () => {
+    setIsLoading(true);
+    apiService
+      .getClasses()
+      .then(setClasses)
+      .finally(() => setIsLoading(false));
+  };
+
   useEffect(() => {
-    apiService.getClasses().then(setClasses);
+    loadClasses();
   }, []);
 
   const handleJoinClass = async (e: React.FormEvent) => {
@@ -27,11 +36,19 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ onStartExercise }) => 
     setJoinStatus(res);
 
     if (res.success) {
+      if (res.classGroup) {
+        setClasses((prev) => {
+          const exists = prev.some((c) => c.id === res.classGroup!.id);
+          return exists ? prev : [res.classGroup!, ...prev];
+        });
+      } else {
+        loadClasses();
+      }
       setTimeout(() => {
         setShowModal(false);
         setJoinCode('');
         setJoinStatus(null);
-      }, 1500);
+      }, 1400);
     }
   };
 
@@ -44,60 +61,87 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ onStartExercise }) => 
             Mis Clases
           </h1>
           <p className="text-xs md:text-sm text-[#596B72]">
-            Grupos escolares donde tu maestro sigue tu avance con Jarol.
+            Grupos escolares donde tu docente sigue tu avance real con Jarol.
           </p>
         </div>
 
         <button
-          onClick={() => setShowModal(true)}
+          onClick={() => {
+            setJoinStatus(null);
+            setShowModal(true);
+          }}
           className="shrink-0 flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-full bg-[#126B73] text-white font-display font-bold text-xs md:text-sm shadow-[0_3px_0_#005158] active:translate-y-0.5 active:shadow-[0_1px_0_#005158] transition-all cursor-pointer"
         >
           <Plus className="w-3.5 h-3.5 stroke-[3px]" />
-          <span>Unirse</span>
+          <span>Unirse con código</span>
         </button>
       </div>
 
       {/* Lista de Clases */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {classes.map((cls) => (
+      {isLoading ? (
+        <div className="p-8 text-center text-xs text-[#596B72]">
+          Cargando tus clases inscritas...
+        </div>
+      ) : classes.length === 0 ? (
+        <div className="p-8 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_3px_0_#D2E5F9] flex flex-col items-center text-center gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-[#DCEFEB] text-[#126B73] flex items-center justify-center">
+            <School className="w-6 h-6" />
+          </div>
+          <h3 className="font-display font-bold text-base text-[#0A1D2C]">
+            Aún no estás inscrito en ninguna clase
+          </h3>
+          <p className="text-xs text-[#596B72] max-w-sm">
+            Pídele a tu docente el código de invitación de su grupo (por ejemplo <strong className="font-mono text-[#126B73]">JAROL-XXXXX</strong>) y únete para compartir tu progreso.
+          </p>
           <button
-            key={cls.id}
-            onClick={() => setSelectedClass(cls)}
-            className="w-full text-left p-4 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_3px_0_#D2E5F9] hover:border-[#126B73] transition-all flex flex-col gap-2.5 active:translate-y-0.5 cursor-pointer"
+            onClick={() => setShowModal(true)}
+            className="mt-1 px-4 py-2 rounded-full bg-[#126B73] text-white font-display font-bold text-xs shadow-[0_2px_0_#005158] cursor-pointer"
           >
-            <div className="flex items-start justify-between w-full">
-              <div>
-                <span className="text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#DCEFEB] text-[#126B73]">
-                  {cls.subject}
-                </span>
-                <h3 className="font-display font-bold text-base text-[#0A1D2C] mt-1">
-                  {cls.name}
-                </h3>
-                <p className="text-xs text-[#596B72] mt-0.5">
-                  Titular: <strong className="text-[#0A1D2C]">{cls.teacherName}</strong>
-                </p>
-              </div>
-
-              <div className="flex items-center gap-1.5">
-                <span className="text-[11px] font-mono font-bold bg-[#F7F5EF] px-2 py-1 rounded-md border border-[#E8E5DC] text-[#126B73]">
-                  {cls.code}
-                </span>
-                <ChevronRight className="w-4 h-4 text-[#596B72]" />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between pt-2 border-t border-[#E8E5DC] text-xs text-[#596B72] w-full">
-              <span className="flex items-center gap-1">
-                <Users2 className="w-3.5 h-3.5" />
-                {cls.studentCount} compañeros
-              </span>
-              <span className="font-display font-semibold text-[#126B73]">
-                {cls.averageMastery}% de avance grupal
-              </span>
-            </div>
+            Ingresar código de clase
           </button>
-        ))}
-      </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {classes.map((cls) => (
+            <button
+              key={cls.id}
+              onClick={() => setSelectedClass(cls)}
+              className="w-full text-left p-4 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_3px_0_#D2E5F9] hover:border-[#126B73] transition-all flex flex-col gap-2.5 active:translate-y-0.5 cursor-pointer"
+            >
+              <div className="flex items-start justify-between w-full">
+                <div>
+                  <span className="text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#DCEFEB] text-[#126B73]">
+                    {cls.subject}
+                  </span>
+                  <h3 className="font-display font-bold text-base text-[#0A1D2C] mt-1">
+                    {cls.name}
+                  </h3>
+                  <p className="text-xs text-[#596B72] mt-0.5">
+                    Docente: <strong className="text-[#0A1D2C]">{cls.teacherName}</strong>
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] font-mono font-bold bg-[#F7F5EF] px-2 py-1 rounded-md border border-[#E8E5DC] text-[#126B73]">
+                    {cls.code}
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-[#596B72]" />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 border-t border-[#E8E5DC] text-xs text-[#596B72] w-full">
+                <span className="flex items-center gap-1">
+                  <Users2 className="w-3.5 h-3.5" />
+                  {cls.studentCount} {cls.studentCount === 1 ? 'alumno' : 'alumnos'}
+                </span>
+                <span className="font-display font-semibold text-[#126B73]">
+                  {cls.averageMastery}% precisión grupal
+                </span>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Modal Detalle de Clase */}
       {selectedClass && (
@@ -116,7 +160,7 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ onStartExercise }) => 
               Unirte a una clase
             </h3>
             <p className="text-xs text-[#596B72]">
-              Ingresa el código que te proporcionó tu maestro (ejemplo: <strong className="font-mono text-[#126B73]">JAROL-3B</strong>).
+              Ingresa el código que generó tu docente en su panel (formato: <strong className="font-mono text-[#126B73]">JAROL-XXXXX</strong>).
             </p>
 
             <form onSubmit={handleJoinClass} className="flex flex-col gap-3">
@@ -124,8 +168,8 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ onStartExercise }) => 
                 type="text"
                 value={joinCode}
                 onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-                placeholder="Código (ej. JAROL-3B)"
-                maxLength={10}
+                placeholder="JAROL-XXXXX"
+                maxLength={14}
                 className="w-full text-center uppercase tracking-widest font-mono font-bold text-lg p-2.5 rounded-xl border-2 border-[#E8E5DC] focus:border-[#126B73] focus:outline-none"
               />
 
@@ -150,13 +194,13 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ onStartExercise }) => 
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 py-2 rounded-full border border-[#E8E5DC] text-xs font-display font-semibold text-[#596B72] hover:bg-[#F7F5EF]"
+                  className="flex-1 py-2 rounded-full border border-[#E8E5DC] text-xs font-display font-semibold text-[#596B72] hover:bg-[#F7F5EF] cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 rounded-full bg-[#126B73] text-white text-xs font-display font-bold shadow-[0_3px_0_#005158] active:translate-y-0.5 active:shadow-[0_1px_0_#005158]"
+                  className="flex-1 py-2 rounded-full bg-[#126B73] text-white text-xs font-display font-bold shadow-[0_3px_0_#005158] active:translate-y-0.5 active:shadow-[0_1px_0_#005158] cursor-pointer"
                 >
                   Unirme
                 </button>

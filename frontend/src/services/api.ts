@@ -7,7 +7,7 @@ import {
   MOCK_STUDENT,
 } from './mockData';
 import type { AnswerFeedback, ChatMessage, ExerciseCardData } from '../types/chat';
-import type { Subject, ClassGroup } from '../types/curriculum';
+import type { Subject, ClassGroup, StudentMastery } from '../types/curriculum';
 import type { User } from '../types/auth';
 
 const API_BASE = '/api/v1';
@@ -16,6 +16,130 @@ const API_BASE = '/api/v1';
 export const getAuthToken = () => localStorage.getItem('jarol_token');
 export const setAuthToken = (token: string) => localStorage.setItem('jarol_token', token);
 export const removeAuthToken = () => localStorage.removeItem('jarol_token');
+
+function getAuthHeaders(includeJson = true): Record<string, string> {
+  const headers: Record<string, string> = {};
+  if (includeJson) {
+    headers['Content-Type'] = 'application/json';
+  }
+  const token = getAuthToken();
+  if (
+    token &&
+    !token.startsWith('jarol_demo_') &&
+    !token.startsWith('jarol_gtoken_') &&
+    !token.startsWith('jarol_token_')
+  ) {
+    headers['Authorization'] = `Token ${token}`;
+  }
+  return headers;
+}
+
+const SUBJECT_META: Record<string, { iconName: string; color: string }> = {
+  aritmetica: { iconName: 'Calculator', color: 'teal' },
+  algebra: { iconName: 'Variable', color: 'indigo' },
+  espanol: { iconName: 'BookOpen', color: 'amber' },
+  matematicas: { iconName: 'Compass', color: 'blue' },
+  historia: { iconName: 'Landmark', color: 'rose' },
+  geografia: { iconName: 'Globe', color: 'emerald' },
+  fisica: { iconName: 'Atom', color: 'purple' },
+  quimica: { iconName: 'FlaskConical', color: 'cyan' },
+  biologia: { iconName: 'Dna', color: 'green' },
+};
+
+const TOPIC_DESCRIPTIONS: Record<string, { description: string; prompt: string }> = {
+  mat_fracciones: {
+    description: 'Suma, resta, simplificación y comparación de fracciones con pistas paso a paso.',
+    prompt: 'Explícame cómo sumar fracciones y ponme un ejercicio',
+  },
+  mat_porcentajes: {
+    description: 'Cálculo de descuentos, incrementos y proporciones en situaciones cotidianas.',
+    prompt: 'Explícame cómo calcular porcentajes y ponme un ejercicio',
+  },
+  mat_ecuaciones: {
+    description: 'Despeje de la incógnita x en ecuaciones lineales de primer grado con una o dos operaciones.',
+    prompt: 'Explícame las ecuaciones de primer grado y ponme un ejercicio',
+  },
+  esp_comprension: {
+    description: 'Identificación de idea principal, información explícita e inferencias a partir de textos.',
+    prompt: 'Dame un reto de comprensión lectora',
+  },
+  esp_ortografia: {
+    description: 'Uso correcto de grafías (b/v, c/s/z, g/j) y signos de puntuación en contexto.',
+    prompt: 'Ponme un ejercicio de ortografía',
+  },
+  esp_acentuacion: {
+    description: 'Clasificación y tildación de palabras agudas, graves, esdrújulas y acento diacrítico.',
+    prompt: 'Ayúdame a practicar reglas de acentuación',
+  },
+};
+
+export interface TopicProgressItem {
+  topicId: string;
+  name: string;
+  subject: string;
+  mastery: number;
+  completedExercises: number;
+  totalExercises: number;
+  attempts: number;
+  correctAttempts: number;
+  difficulty: number;
+  status: 'Dominado' | 'En curso' | 'Requiere refuerzo' | 'Por iniciar';
+  prompt: string;
+}
+
+export interface StudentProgressSummary {
+  xp: number;
+  streakDays: number;
+  completedCount: number;
+  totalAttempts: number;
+  accuracy: number;
+  needsHelpWith: string[];
+  topics: TopicProgressItem[];
+}
+
+export interface LeaderboardEntry {
+  id: string;
+  rank: number;
+  name: string;
+  username?: string;
+  grade: string;
+  xp: number;
+  streakDays: number;
+  isCurrentUser?: boolean;
+}
+
+function mapBackendClassToGroup(item: Record<string, unknown>): ClassGroup {
+  const rawStudents = Array.isArray(item.students_detail) ? item.students_detail : [];
+  const studentsDetail: StudentMastery[] = rawStudents.map((st: Record<string, unknown>) => ({
+    studentId: String(st.id || ''),
+    studentName: String(st.name || st.username || 'Estudiante'),
+    completedExercises: Number(st.completedExercises || 0),
+    accuracy: Number(st.accuracy || 0),
+    needsHelpWith: Array.isArray(st.needsHelpWith)
+      ? st.needsHelpWith.map(String)
+      : ['Sin alertas activas'],
+    lastActive: String(st.lastActive || 'Reciente'),
+    xp: Number(st.xp || 0),
+  }));
+
+  const avgMastery =
+    studentsDetail.length > 0
+      ? Math.round(
+          studentsDetail.reduce((acc, s) => acc + (s.accuracy || 0), 0) / studentsDetail.length
+        )
+      : 0;
+
+  return {
+    id: String(item.id || ''),
+    name: String(item.nombre || item.name || 'Grupo Escolar'),
+    teacherName: String(item.docente || item.teacherName || 'Docente'),
+    code: String(item.codigo || item.code || ''),
+    studentCount: Number(item.estudiantes ?? item.studentCount ?? studentsDetail.length),
+    subject: String(item.subject_nombre || item.subject || 'Matemáticas y Español'),
+    averageMastery: Number(item.averageMastery ?? avgMastery),
+    studentsDetail,
+  };
+}
 
 export const apiService = {
   /**
@@ -57,17 +181,14 @@ export const apiService = {
             id: String(data.user?.id || 'google-user'),
             name: data.user?.alias || payload.name,
             email: data.user?.email || payload.email,
-            role: payload.role,
+            role: data.user?.rol === 'docente' ? 'teacher' : payload.role,
             grade: payload.grade,
             school: payload.school,
-            avatarUrl: payload.picture || data.picture,
-            xp: 320,
-            streakDays: 4,
+            avatarUrl: payload.picture || data.picture || '/mascot/jarol-crab.png',
+            xp: Number(data.user?.xp ?? 0),
+            streakDays: Number(data.user?.streak_days ?? 1),
           },
         };
-      } else {
-        const errText = await res.text();
-        console.warn('Backend Google Auth respondió con error:', res.status, errText);
       }
     } catch (err) {
       console.warn('Error de red al conectar con Google Auth backend:', err);
@@ -85,9 +206,9 @@ export const apiService = {
         role: payload.role,
         grade: payload.grade,
         school: payload.school,
-        avatarUrl: payload.picture || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
-        xp: 320,
-        streakDays: 4,
+        avatarUrl: payload.picture || '/mascot/jarol-crab.png',
+        xp: 0,
+        streakDays: 1,
       },
     };
   },
@@ -114,6 +235,8 @@ export const apiService = {
         if (data.token) {
           setAuthToken(data.token);
         }
+        const isBachillerato = data.user?.nivel === 'bachillerato';
+        const gradoNum = data.user?.grado || 1;
         return {
           success: true,
           token: data.token,
@@ -122,11 +245,16 @@ export const apiService = {
             name: data.user?.alias || data.user?.username || credentials.username,
             email: data.user?.email || '',
             role: data.user?.rol === 'docente' ? 'teacher' : 'student',
-            grade: data.user?.grado ? `${data.user.grado}° de ${data.user.nivel || 'Secundaria'}` : undefined,
+            grade:
+              data.user?.rol === 'docente'
+                ? 'Docente Facilitador'
+                : isBachillerato
+                  ? `${gradoNum}° semestre de Bachillerato`
+                  : `${gradoNum}° año de Secundaria`,
             school: 'Veracruz',
             avatarUrl: '/mascot/jarol-crab.png',
-            xp: 150,
-            streakDays: 2,
+            xp: Number(data.user?.xp ?? 0),
+            streakDays: Number(data.user?.streak_days ?? 1),
           },
         };
       } else {
@@ -135,23 +263,9 @@ export const apiService = {
         return { success: false, error: msg };
       }
     } catch {
-      // Fallback local
-      const mockToken = `jarol_token_${Date.now()}`;
-      setAuthToken(mockToken);
       return {
-        success: true,
-        token: mockToken,
-        user: {
-          id: `usr_${Date.now()}`,
-          name: credentials.username,
-          email: `${credentials.username.toLowerCase()}@sev.gob.mx`,
-          role: 'student',
-          grade: '3° de Secundaria',
-          school: 'Secundaria Técnica #26 · Boca del Río',
-          avatarUrl: '/mascot/jarol-crab.png',
-          xp: 120,
-          streakDays: 1,
-        },
+        success: false,
+        error: 'No se pudo conectar con el servidor de autenticación.',
       };
     }
   },
@@ -180,7 +294,7 @@ export const apiService = {
           alias: payload.alias.trim(),
           rol: payload.role === 'teacher' ? 'docente' : 'estudiante',
           nivel: payload.nivel || 'secundaria',
-          grado: payload.grado || 3,
+          grado: payload.grado || 1,
         }),
       });
 
@@ -189,6 +303,8 @@ export const apiService = {
         if (data.token) {
           setAuthToken(data.token);
         }
+        const isBach = payload.nivel === 'bachillerato';
+        const gradoNum = payload.grado || 1;
         return {
           success: true,
           token: data.token,
@@ -197,11 +313,16 @@ export const apiService = {
             name: data.user?.alias || payload.alias,
             email: data.user?.email || payload.email,
             role: payload.role,
-            grade: `${payload.grado || 3}° de ${payload.nivel === 'bachillerato' ? 'Bachillerato' : 'Secundaria'}`,
+            grade:
+              payload.role === 'teacher'
+                ? 'Docente Facilitador'
+                : isBach
+                  ? `${gradoNum}° semestre de Bachillerato`
+                  : `${gradoNum}° año de Secundaria`,
             school: payload.school || 'Veracruz',
             avatarUrl: '/mascot/jarol-crab.png',
-            xp: 50,
-            streakDays: 1,
+            xp: Number(data.user?.xp ?? 0),
+            streakDays: Number(data.user?.streak_days ?? 1),
           },
         };
       } else {
@@ -216,85 +337,105 @@ export const apiService = {
         return { success: false, error: msg };
       }
     } catch {
-      // Fallback local
-      const mockToken = `jarol_token_${Date.now()}`;
-      setAuthToken(mockToken);
       return {
-        success: true,
-        token: mockToken,
-        user: {
-          id: `reg_${Date.now()}`,
-          name: payload.alias,
-          email: payload.email,
-          role: payload.role,
-          grade: `${payload.grado || 3}° de ${payload.nivel === 'bachillerato' ? 'Bachillerato' : 'Secundaria'}`,
-          school: payload.school || 'Veracruz',
-          avatarUrl: '/mascot/jarol-crab.png',
-          xp: 50,
-          streakDays: 1,
-        },
+        success: false,
+        error: 'No se pudo conectar con el servidor para crear la cuenta.',
       };
     }
   },
 
   /**
-   * Envía la respuesta de un ejercicio interactivo para su evaluación formativa.
-   * La evaluación ocurre en el backend (o mock); el cliente nunca posee la respuesta de antemano.
+   * Envía la respuesta de un ejercicio interactivo (opción múltiple o respuesta abierta evaluada con SymPy).
    */
-  async submitExerciseAnswer(exerciseId: string, optionId: string): Promise<AnswerFeedback> {
+  async submitExerciseAnswer(exerciseId: string, answerOrOptionId: string): Promise<AnswerFeedback> {
     try {
       const res = await fetch(`${API_BASE}/exercises/${exerciseId}/answer/`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Token ${getAuthToken() || ''}`,
-        },
-        body: JSON.stringify({ option_id: optionId }),
+        headers: getAuthHeaders(true),
+        body: JSON.stringify({
+          answer: answerOrOptionId,
+          option_id: answerOrOptionId,
+        }),
       });
 
       if (res.ok) {
         const data = await res.json();
         return {
-          isCorrect: data.is_correct,
-          title: data.feedback_title || (data.is_correct ? '¡Exacto! ¡Bien rifado! 🦀' : 'Vamos a repasar 💡'),
-          explanation: data.explanation || data.feedback,
-          hint: data.hint,
-          xpEarned: data.xp_earned || 25,
+          isCorrect: Boolean(data.isCorrect ?? data.is_correct),
+          title:
+            data.title ||
+            data.feedback_title ||
+            (data.isCorrect ? '¡Exacto! ¡Bien rifado! 🦀' : '¡Casi! Analicemos este paso 💡'),
+          explanation: data.explanation || data.feedback || '',
+          hint: data.hint || undefined,
+          xpEarned: Number(data.xpEarned ?? data.xp_earned ?? 0),
+          totalXp: data.totalXp !== undefined ? Number(data.totalXp) : undefined,
+          nextExercise: data.nextExercise || undefined,
         };
       }
     } catch {
-      // Fallback a mock en desarrollo
+      // Fallback local si el backend no está corriendo
     }
 
-    // Respuesta simulada determinista según la base de conocimiento pedagógica
     const exerciseFeedback = MOCK_FEEDBACK_DB[exerciseId];
-    if (exerciseFeedback && exerciseFeedback[optionId]) {
-      return exerciseFeedback[optionId];
+    if (exerciseFeedback && exerciseFeedback[answerOrOptionId]) {
+      return exerciseFeedback[answerOrOptionId];
     }
 
     return {
       isCorrect: false,
       title: '¡Revisemos este paso! 💡',
       explanation: 'Sigue analizando el problema con las pistas de Jarol.',
-      xpEarned: 5,
+      xpEarned: 0,
     };
   },
 
   /**
-   * Envía un mensaje en la conversación con Jarol.
-   * Devuelve la explicación de Jarol y opcionalmente un ejercicio interactivo anexo.
+   * Solicita una pista progresiva del motor pedagógico para el ejercicio activo.
+   */
+  async requestExerciseHint(
+    exerciseId: string,
+    hintsUsed = 0
+  ): Promise<{ hint: string; strategy?: string; hintsUsed: number }> {
+    try {
+      const res = await fetch(`${API_BASE}/exercises/${exerciseId}/hint/`, {
+        method: 'POST',
+        headers: getAuthHeaders(true),
+        body: JSON.stringify({ hints_used: hintsUsed }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return {
+          hint: data.hint || 'Revisa los datos principales del enunciado e identifica qué operación relaciona las cantidades.',
+          strategy: data.strategy,
+          hintsUsed: Number(data.hintsUsed ?? hintsUsed + 1),
+        };
+      }
+    } catch {
+      // fallback
+    }
+    return {
+      hint: 'Analiza primero qué datos te da el problema y qué operación te permite despejar o simplificar el resultado.',
+      hintsUsed: hintsUsed + 1,
+    };
+  },
+
+  /**
+   * Envía un mensaje en la conversación con el tutor IA Jarol.
    */
   async sendChatMessage(
     text: string,
     history: ChatMessage[] = []
-  ): Promise<{ replyText: string; exercise?: ExerciseCardData }> {
+  ): Promise<{
+    replyText: string;
+    exercise?: ExerciseCardData;
+    xpEarned?: number;
+    totalXp?: number;
+  }> {
     try {
       const res = await fetch(`${API_BASE}/chat/messages/`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Token ${getAuthToken() || ''}`,
-        },
+        headers: getAuthHeaders(true),
         body: JSON.stringify({ message: text }),
       });
 
@@ -302,60 +443,90 @@ export const apiService = {
         const data = await res.json();
         return {
           replyText: data.reply || data.message,
-          exercise: data.exercise,
+          exercise: data.exercise || undefined,
+          xpEarned: Number(data.xpEarned || 0),
+          totalXp: data.totalXp !== undefined ? Number(data.totalXp) : undefined,
         };
       }
     } catch {
-      // Fallback a motor pedagógico local
+      // Fallback local si el contenedor backend no responde
     }
 
     const lower = text.toLowerCase();
-
-    // Regla Pedagógica del Reto:
-    // Si el estudiante pide practicar o menciona fracciones:
-    if (lower.includes('fraccion') || lower.includes('quebrado') || lower.includes('practicar') || lower.includes('suma')) {
+    if (
+      lower.includes('fraccion') ||
+      lower.includes('quebrado') ||
+      lower.includes('practicar') ||
+      lower.includes('suma')
+    ) {
       const hasFirstExercise = history.some((m) => m.exercise?.id === 'ex_frac_01');
       const nextExercise = hasFirstExercise ? MOCK_EXERCISE_FRACTIONS_2 : MOCK_EXERCISE_FRACTIONS_1;
 
       return {
         replyText: hasFirstExercise
-          ? '¡Vientos! Aquí va otro reto con contexto jarocho para afianzar lo aprendido. Recuerda fijarte si los denominadores son iguales: 🦀'
-          : '¡Qué onda! Para sumar fracciones con el **mismo denominador** (el número de abajo), solo sumas los numeradores (los de arriba) y el de abajo se queda igualito. Imagina rebanadas de un mismo pastel: ¡todas miden lo mismo!\n\n¿Le entramos a este ejercicio de prueba?',
+          ? '¡Vientos! Aquí va otro reto para afianzar lo aprendido. Recuerda fijarte si los denominadores son iguales:'
+          : 'Para sumar fracciones con el mismo denominador, sumas los numeradores y conservas el denominador. Si tienen distinto denominador, primero conviértelas a fracciones equivalentes.',
         exercise: nextExercise,
       };
     }
 
-    if (lower.includes('ecuacion') || lower.includes('algebra') || lower.includes('incognita')) {
-      return {
-        replyText: '¡Álgebra está de lujo! Una ecuación de primer grado es como una balanza en equilibrio. Lo que le hagas a un lado del igual (=), se lo tienes que hacer al otro. ¿Qué parte te causa más ruido: despejar la x o los signos?',
-      };
-    }
-
-    if (lower.includes('pitagoras') || lower.includes('triangulo') || lower.includes('hipotenusa')) {
-      return {
-        replyText: '¡El Teorema de Pitágoras! Aplica únicamente en triángulos con un ángulo recto (90°). Dice que la hipotenusa al cuadrado es igual a la suma de los cuadrados de los catetos (a² + b² = c²). ¿Quieres que veamos un ejemplo con medidas?',
-      };
-    }
-
     return {
-      replyText: `¡Te escucho! Como tu tutor Jarol, dime qué tema de matemáticas o ciencias estás repasando y lo desmenuzamos paso a pasito sin prisas. 🦀✨`,
+      replyText:
+        'Puedo explicarte paso a paso temas de **Fracciones**, **Porcentajes**, **Ecuaciones Lineales**, **Comprensión Lectora**, **Ortografía** o **Acentuación**, o ponerte un reto interactivo. ¿Con cuál empezamos?',
     };
   },
 
   /**
-   * Obtiene las materias disponibles.
+   * Obtiene el catálogo de materias y temas desde el backend y lo cruza con el progreso real del alumno.
    */
   async getSubjects(): Promise<Subject[]> {
     try {
-      const token = getAuthToken();
-      const headers: Record<string, string> = {};
-      if (token && !token.startsWith('jarol_demo_') && !token.startsWith('jarol_gtoken_')) {
-        headers['Authorization'] = `Token ${token}`;
+      const [subjRes, progRes] = await Promise.all([
+        fetch(`${API_BASE}/subjects/`, { headers: getAuthHeaders(false) }),
+        fetch(`${API_BASE}/progress/me/`, { headers: getAuthHeaders(false) }),
+      ]);
+
+      const progressMap: Record<string, number> = {};
+      if (progRes.ok) {
+        const progData = await progRes.json();
+        if (Array.isArray(progData.topics)) {
+          for (const t of progData.topics) {
+            progressMap[t.topicId] = Number(t.mastery || 0);
+          }
+        }
       }
-      const res = await fetch(`${API_BASE}/subjects/`, { headers });
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) return data;
+
+      if (subjRes.ok) {
+        const data = await subjRes.json();
+        if (Array.isArray(data) && data.length > 0) {
+          return data.map((s: Record<string, unknown>) => {
+            const slug = String(s.slug || s.id || 'materia');
+            const meta = SUBJECT_META[slug] || { iconName: 'BookOpen', color: 'teal' };
+            const rawTopics = Array.isArray(s.topics) ? s.topics : [];
+            return {
+              id: slug,
+              name: String(s.nombre || s.name || slug),
+              iconName: meta.iconName,
+              color: meta.color,
+              isAvailable: Boolean(s.disponible ?? s.isAvailable),
+              topics: rawTopics.map((t: Record<string, unknown>) => {
+                const tSlug = String(t.slug || t.id || '');
+                const tInfo = TOPIC_DESCRIPTIONS[tSlug] || {
+                  description: 'Contenido curricular en preparación para próximas versiones.',
+                  prompt: `Explícame el tema de ${String(t.nombre || t.name || tSlug)}`,
+                };
+                return {
+                  id: tSlug,
+                  name: String(t.nombre || t.name || tSlug),
+                  description: tInfo.description,
+                  isAvailable: Boolean(t.disponible ?? t.isAvailable),
+                  progressPercent: progressMap[tSlug] ?? 0,
+                  prompt: tInfo.prompt,
+                };
+              }),
+            };
+          });
+        }
       }
     } catch {
       // fallback
@@ -364,19 +535,75 @@ export const apiService = {
   },
 
   /**
-   * Obtiene las clases disponibles.
+   * Obtiene el progreso real del estudiante autenticado.
+   */
+  async getProgress(): Promise<StudentProgressSummary> {
+    try {
+      const res = await fetch(`${API_BASE}/progress/me/`, {
+        headers: getAuthHeaders(false),
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch {
+      // fallback
+    }
+    return {
+      xp: 0,
+      streakDays: 1,
+      completedCount: 0,
+      totalAttempts: 0,
+      accuracy: 0,
+      needsHelpWith: [],
+      topics: Object.entries(TOPIC_DESCRIPTIONS).map(([topicId, info]) => ({
+        topicId,
+        name: topicId,
+        subject: topicId.startsWith('mat_') ? 'Matemáticas' : 'Español',
+        mastery: 0,
+        completedExercises: 0,
+        totalExercises: 9,
+        attempts: 0,
+        correctAttempts: 0,
+        difficulty: 1,
+        status: 'Por iniciar',
+        prompt: info.prompt,
+      })),
+    };
+  },
+
+  /**
+   * Obtiene la tabla de clasificación (Liga) con usuarios reales registrados en PostgreSQL.
+   */
+  async getLeaderboard(): Promise<LeaderboardEntry[]> {
+    try {
+      const res = await fetch(`${API_BASE}/progress/leaderboard/`, {
+        headers: getAuthHeaders(false),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          return data;
+        }
+      }
+    } catch {
+      // fallback
+    }
+    return [];
+  },
+
+  /**
+   * Obtiene las clases del docente o en las que está inscrito el alumno.
    */
   async getClasses(): Promise<ClassGroup[]> {
     try {
-      const token = getAuthToken();
-      const headers: Record<string, string> = {};
-      if (token && !token.startsWith('jarol_demo_') && !token.startsWith('jarol_gtoken_')) {
-        headers['Authorization'] = `Token ${token}`;
-      }
-      const res = await fetch(`${API_BASE}/classes/`, { headers });
+      const res = await fetch(`${API_BASE}/classes/`, {
+        headers: getAuthHeaders(false),
+      });
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) return data;
+        if (Array.isArray(data)) {
+          return data.map((item) => mapBackendClassToGroup(item));
+        }
       }
     } catch {
       // fallback
@@ -385,47 +612,112 @@ export const apiService = {
   },
 
   /**
-   * Unirse a una clase con código
+   * Crea una nueva clase (exclusivo para Docentes).
    */
-  async joinClassWithCode(code: string): Promise<{ success: boolean; message: string }> {
+  async createClass(payload: {
+    nombre: string;
+    subject?: string;
+    nivel?: 'secundaria' | 'bachillerato';
+    grado?: number;
+  }): Promise<{ success: boolean; classGroup?: ClassGroup; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE}/classes/`, {
+        method: 'POST',
+        headers: getAuthHeaders(true),
+        body: JSON.stringify({
+          nombre: payload.nombre.trim(),
+          subject: payload.subject || 'aritmetica',
+          nivel: payload.nivel || 'secundaria',
+          grado: payload.grado || 3,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return {
+          success: true,
+          classGroup: mapBackendClassToGroup(data),
+        };
+      } else {
+        const err = await res.json().catch(() => ({}));
+        return {
+          success: false,
+          error: err.detail || err.error?.message || 'No se pudo crear la clase.',
+        };
+      }
+    } catch {
+      return {
+        success: false,
+        error: 'Error de conexión al crear la clase.',
+      };
+    }
+  },
+
+  /**
+   * Unirse a una clase con código JAROL-XXXXX.
+   */
+  async joinClassWithCode(
+    code: string
+  ): Promise<{ success: boolean; message: string; classGroup?: ClassGroup }> {
     const cleanCode = code.trim().toUpperCase();
     try {
-      const token = getAuthToken();
-      if (token && !token.startsWith('jarol_demo_') && !token.startsWith('jarol_gtoken_')) {
-        const res = await fetch(`${API_BASE}/classes/join/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Token ${token}`,
-          },
-          body: JSON.stringify({ codigo: cleanCode }),
-        });
-        if (res.ok) {
-          const data = await res.json();
-          return {
-            success: true,
-            message: `¡Te uniste con éxito a la clase "${data.nombre || cleanCode}"!`,
-          };
-        } else {
-          const errData = await res.json().catch(() => ({}));
-          const errMsg = errData.error?.message || errData.detail || 'Código no válido o inactivo.';
-          return { success: false, message: errMsg };
-        }
+      const res = await fetch(`${API_BASE}/classes/join/`, {
+        method: 'POST',
+        headers: getAuthHeaders(true),
+        body: JSON.stringify({ codigo: cleanCode }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return {
+          success: true,
+          message: `¡Te uniste con éxito a la clase "${data.nombre || cleanCode}"!`,
+          classGroup: mapBackendClassToGroup(data),
+        };
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        const errMsg =
+          errData.error?.message ||
+          errData.detail ||
+          'El código no existe o no tienes una sesión de estudiante activa.';
+        return { success: false, message: errMsg };
+      }
+    } catch {
+      return {
+        success: false,
+        message: 'Error de red al verificar el código de clase.',
+      };
+    }
+  },
+
+  /**
+   * Obtener perfil del usuario activo desde el backend.
+   */
+  async getProfile(): Promise<User> {
+    try {
+      const res = await fetch(`${API_BASE}/auth/me/`, {
+        headers: getAuthHeaders(false),
+      });
+      if (res.ok) {
+        const u = await res.json();
+        return {
+          id: String(u.id),
+          name: u.alias || u.username,
+          email: u.email,
+          role: u.rol === 'docente' ? 'teacher' : 'student',
+          grade:
+            u.rol === 'docente'
+              ? 'Docente Facilitador'
+              : u.nivel === 'bachillerato'
+                ? `${u.grado || 1}° semestre de Bachillerato`
+                : `${u.grado || 1}° año de Secundaria`,
+          school: 'Veracruz',
+          avatarUrl: '/mascot/jarol-crab.png',
+          xp: Number(u.xp ?? 0),
+          streakDays: Number(u.streak_days ?? 1),
+        };
       }
     } catch {
       // fallback
     }
-
-    if (cleanCode === 'JAROL-3B' || cleanCode === 'JAROL-2A') {
-      return { success: true, message: '¡Te uniste con éxito a la clase del Prof. Laura!' };
-    }
-    return { success: false, message: 'Código no encontrado. Verifica con tu maestro.' };
-  },
-
-  /**
-   * Obtener perfil del usuario activo
-   */
-  async getProfile(): Promise<User> {
     return MOCK_STUDENT;
   },
 };
