@@ -42,18 +42,18 @@ export function ProfileView({ onBack }: { onBack: () => void }) {
           <label className="text-sm font-medium">Apellidos<input autoComplete="family-name" maxLength={150} value={profile.last_name} onChange={e => setProfile({ ...profile, last_name: e.target.value })} className={fieldClass}/></label>
           <label className="text-sm font-medium">Nombre para Jarol<input maxLength={50} value={profile.alias} onChange={e => setProfile({ ...profile, alias: e.target.value })} className={fieldClass}/></label>
           <label className="text-sm font-medium">Usuario<input value={profile.username} readOnly className={fieldClass}/></label>
-          <label className="text-sm font-medium sm:col-span-2">Correo electrónico<input type="email" value={profile.email} readOnly className={fieldClass}/><span className="mt-1 block text-xs text-[#596B72]">El usuario y el correo no se editan desde esta sección.</span></label>
+          <label className="text-sm font-medium sm:col-span-2">Correo electrónico<input type="email" value={profile.email} readOnly className={fieldClass}/></label>
           <label className="text-sm font-medium">Estado de residencia<select value={profile.estado} className={fieldClass} onChange={e => setProfile({ ...profile, estado: e.target.value })}><option value="">Sin registrar</option>{STATES.map(([code, name]) => <option key={code} value={code}>{name}</option>)}</select></label>
           <p className="text-sm"><span className="block text-[#596B72]">Rol</span><span>{{ estudiante: 'Estudiante', docente: 'Docente', admin: 'Administrador' }[profile.rol]}</span></p>
         </div>
       </fieldset>
-      <fieldset disabled={busy} className="mt-8 border-t border-[#E8E5DC] pt-5">
+      {profile.rol === 'estudiante' && <fieldset disabled={busy} className="mt-8 border-t border-[#E8E5DC] pt-5">
         <legend className="pr-4 font-display text-lg font-bold">Información académica</legend>
-        {profile.rol === 'estudiante' ? <div className="grid gap-5 sm:grid-cols-2">
+        <div className="grid gap-5 sm:grid-cols-2">
           <label className="text-sm font-medium">Nivel escolar<select required value={profile.nivel} className={fieldClass} onChange={e => setProfile({ ...profile, nivel: e.target.value as BackendProfile['nivel'], grado: null })}><option value="" disabled>Selecciona tu nivel</option><option value="secundaria">Secundaria</option><option value="bachillerato">Bachillerato</option></select></label>
           <label className="text-sm font-medium">{profile.nivel === 'bachillerato' ? 'Semestre' : 'Año escolar'}<select required value={profile.grado ?? ''} className={fieldClass} onChange={e => setProfile({ ...profile, grado: Number(e.target.value) })}><option value="" disabled>Selecciona una opción</option>{Array.from({ length: profile.nivel === 'bachillerato' ? 6 : 3 }, (_, i) => <option key={i} value={i+1}>{i+1}°</option>)}</select></label>
-        </div> : <p className="text-sm text-[#596B72]">Los datos de tu rol se administran desde la institución.</p>}
-      </fieldset>
+        </div>
+      </fieldset>}
       <div className="mt-6 flex flex-wrap items-center gap-4"><button disabled={busy} className="min-h-11 rounded-xl bg-[#126B73] px-5 font-semibold text-white hover:bg-[#005158] disabled:opacity-50">{busy ? 'Guardando…' : 'Guardar cambios'}</button><p role="status" className="text-sm text-[#126B73]">{notice}</p></div>
     </form>}
     <section className="mt-8 border-t border-[#E8E5DC] pt-5" aria-labelledby="security-heading"><h2 id="security-heading" className="font-display text-lg font-bold">Seguridad</h2><p className="mt-2 text-sm text-[#596B72]">El cambio y la recuperación de contraseña estarán disponibles en una próxima actualización.</p></section>
