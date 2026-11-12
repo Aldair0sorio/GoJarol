@@ -79,7 +79,7 @@ class GoogleLoginView(APIView):
                 status=400,
             )
 
-        # Buscar usuario existente o crear nuevo
+        user_role = User.Rol.DOCENTE if role in ["docente", "teacher"] else User.Rol.ESTUDIANTE
         user = User.objects.filter(email=email).first()
         if not user:
             base_username = email.split("@")[0][:25].lower()
@@ -98,10 +98,10 @@ class GoogleLoginView(APIView):
             user = User.objects.create_user(
                 username=username,
                 email=email,
-                rol=role if role in User.Rol.values else User.Rol.ESTUDIANTE,
+                rol=user_role,
                 alias=name if name else username,
-                nivel=User.Nivel.SECUNDARIA if role == User.Rol.ESTUDIANTE else "",
-                grado=grade_num if role == User.Rol.ESTUDIANTE else None,
+                nivel=User.Nivel.SECUNDARIA if user_role == User.Rol.ESTUDIANTE else "",
+                grado=grade_num if user_role == User.Rol.ESTUDIANTE else None,
             )
 
         token, _ = Token.objects.get_or_create(user=user)

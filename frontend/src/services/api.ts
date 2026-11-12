@@ -65,9 +65,12 @@ export const apiService = {
             streakDays: 4,
           },
         };
+      } else {
+        const errText = await res.text();
+        console.warn('Backend Google Auth respondió con error:', res.status, errText);
       }
-    } catch {
-      // Fallback a modo offline
+    } catch (err) {
+      console.warn('Error de red al conectar con Google Auth backend:', err);
     }
 
     const mockToken = `jarol_gtoken_${Date.now()}`;

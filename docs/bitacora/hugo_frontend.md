@@ -322,3 +322,23 @@ Para cada sesión o iteración se documenta:
   - `backend/accounts/views.py`
   - `frontend/src/components/auth/AuthModal.tsx`
   - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 15 · 11 de Noviembre de 2026 (21:26 - 21:30)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Desbloqueo de `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS` y `CORS` para el dominio de producción `gojarol.tecnodesarrollo.site` en Django.
+
+- **Para qué se usaron**:
+  - Corrección de `ALLOWED_HOSTS` en [`backend/config/settings.py`](backend/config/settings.py) asegurando la inclusión de `gojarol.tecnodesarrollo.site` para evitar rechazos `400 Bad Request: Invalid HTTP_HOST header` durante llamadas del navegador a la API.
+  - Habilitación de `CORS_ALLOW_ALL_ORIGINS = True` y registro explícito en `CSRF_TRUSTED_ORIGINS`.
+  - Normalización de mapeo de rol (`docente`/`teacher` vs `estudiante`/`student`) en [`backend/accounts/views.py`](backend/accounts/views.py).
+  - Trazabilidad y diagnósticos de red en [`frontend/src/services/api.ts`](frontend/src/services/api.ts).
+
+- **Decisiones clave tomadas**:
+  - Garantizar que las peticiones HTTPS que pasan por el proxy reverso del host hacia el contenedor backend sean aceptadas sin restricciones de cabecera de host.
+
+- **Archivos creados / modificados**:
+  - `backend/config/settings.py`
+  - `backend/accounts/views.py`
+  - `frontend/src/services/api.ts`
+  - `docs/bitacora/hugo_frontend.md`
