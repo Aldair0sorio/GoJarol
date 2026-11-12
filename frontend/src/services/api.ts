@@ -789,9 +789,20 @@ export const apiService = {
         };
       } else {
         const err = await res.json().catch(() => ({}));
+        const firstFieldErr =
+          err && typeof err === 'object'
+            ? Object.values(err).find((v) => Array.isArray(v) && v.length > 0)
+            : null;
+        const msg =
+          err.detail ||
+          err.error?.message ||
+          (Array.isArray(firstFieldErr) ? String(firstFieldErr[0]) : null) ||
+          (res.status >= 500
+            ? 'Error interno del servidor (posibles migraciones pendientes en PostgreSQL).'
+            : `No se pudo crear la clase (HTTP ${res.status}).`);
         return {
           success: false,
-          error: err.detail || err.error?.message || 'No se pudo crear la clase.',
+          error: msg,
         };
       }
     } catch {
