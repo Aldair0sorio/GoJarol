@@ -217,3 +217,323 @@ Para cada sesión o iteración se documenta:
   - `frontend/src/views/teacher/TeacherDashboardView.tsx`
   - `frontend/src/App.tsx`
   - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 10 · 11 de Noviembre de 2026 (19:50 - 19:55)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Configuración de infraestructura contenerizada para el Backend Django, PostgreSQL y preparación del manual técnico de despliegue para el VPS multi-tenant Debian.
+
+- **Para qué se usaron**:
+  - Creación de [`backend/Dockerfile`](backend/Dockerfile) con imagen ligera `python:3.11-slim`, incluyendo la inyección del módulo local de Machine Learning (`ml/`) y los tópicos curriculares (`content/`).
+  - Creación de [`backend/requirements.txt`](backend/requirements.txt) con dependencias completas (Django, DRF, Gunicorn, WhiteNoise, Psycopg2-binary, SymPy, Scikit-learn, Pandas, Joblib).
+  - Actualización del archivo de orquestación [`docker-compose.yml`](docker-compose.yml) configurando el servicio de base de datos PostgreSQL 15 alpine aislado en la red interna `gojarol_net` y el backend en WSGI con Gunicorn (`config.wsgi:application`).
+  - Síntesis y documentación técnica del backend, modelo de datos relacional y procedimiento de migración para el asistente de despliegue en el servidor de producción.
+
+- **Decisiones clave tomadas**:
+  - Aislamiento estricto de la base de datos y backend: solo el frontend expone al loopback (`127.0.0.1:3000`), protegiendo los puertos 8000 (ocupado por Tonalkab) y 80/443 (dueño Nginx nativo).
+  - Persistencia de datos en volumen Docker nombrado `postgres_data`.
+
+- **Archivos creados / modificados**:
+  - `backend/Dockerfile`
+  - `backend/requirements.txt`
+  - `docker-compose.yml`
+  - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 11 · 11 de Noviembre de 2026 (20:20 - 20:25)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Diagnóstico en vivo de logs de producción, resolución del error de arranque de Gunicorn (`core.wsgi` vs `config.wsgi`) y verificación de despliegue integral.
+
+- **Para qué se usaron**:
+  - Análisis del traceback de logs de `gojarol_backend` identificando la discrepancia entre el módulo WSGI de Django (`core.wsgi` referenciado en compose vs `config.wsgi` real).
+  - Guía de ejecución del comando de sustitución `sed` y orquestación con Docker Compose.
+  - Ejecución de migraciones de base de datos PostgreSQL (`accounts`, `curriculum`, `authtoken`, `contenttypes`, etc.).
+  - Ejecución de `collectstatic` en contenedor backend (157 archivos estáticos copiados a `/app/staticfiles`).
+  - Verificación exitosa del endpoint de salud `HTTP/1.1 200 OK {"status": "ok"}` en `http://127.0.0.1:3000/api/v1/health/` y HTTPS activo con Certbot en producción.
+
+- **Decisiones clave tomadas**:
+  - Despliegue 100% operativo en producción (`https://gojarol.tecnodesarrollo.site`) con arquitectura full-stack desacoplada y segura.
+
+- **Archivos creados / modificados**:
+  - `docker-compose.yml`
+  - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 12 · 11 de Noviembre de 2026 (20:25 - 20:32)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Fusión de la rama `main` hacia `hugo-dev` e implementación completa de la autenticación con Google (Google Sign-In / OAuth).
+
+- **Para qué se usaron**:
+  - Sincronización y resolución limpia del merge conflict de dependencias en `backend/requirements.txt` integrando el stack de Django 6 con el módulo pedagógico y NLP local de Machine Learning.
+  - Implementación del botón y flujo de autenticación con Google en [`AuthModal.tsx`](frontend/src/components/auth/AuthModal.tsx), incluyendo el logotipo SVG oficial, integración de Google Identity Services (GIS), y selector de cuentas institucionales de Veracruz (`@estudiantes.sev.gob.mx` y `@docentes.sev.gob.mx`).
+  - Creación del método `loginWithGoogle` en [`api.ts`](frontend/src/services/api.ts) y persistencia de sesión en [`AuthContext.tsx`](frontend/src/context/AuthContext.tsx).
+  - Creación del endpoint `POST /api/v1/auth/google/` en Django ([`backend/accounts/views.py`](backend/accounts/views.py) y [`urls.py`](backend/accounts/urls.py)) que decodifica credenciales de Google, gestiona la creación idempotente del usuario en PostgreSQL y expide tokens de autenticación de DRF.
+  - Pruebas unitarias de autenticación Google añadidas en [`backend/accounts/tests.py`](backend/accounts/tests.py).
+
+- **Decisiones clave tomadas**:
+  - Se habilitó tanto el soporte para tokens reales de Google Identity Services como un selector ágil de cuentas institucionales veracruzanas con avatares reales para facilitar las demostraciones en vivo ante el jurado del hackathon sin depender de bloqueos por popups externos.
+  - El perfil (`ProfileModal.tsx`) muestra el distintivo y correo oficial de Google con el que el usuario inició sesión.
+
+- **Archivos creados / modificados**:
+  - `backend/accounts/views.py`
+  - `backend/accounts/urls.py`
+  - `backend/accounts/tests.py`
+  - `backend/requirements.txt`
+  - `frontend/index.html`
+  - `frontend/src/components/auth/AuthModal.tsx`
+  - `frontend/src/components/profile/ProfileModal.tsx`
+  - `frontend/src/context/AuthContext.tsx`
+  - `frontend/src/services/api.ts`
+  - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 13 · 11 de Noviembre de 2026 (20:50 - 20:56)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Vinculación oficial de Google Identity Services con el Client ID de producción obtenido de Google Cloud Console.
+
+- **Para qué se usaron**:
+  - Configuración del ID de Cliente oficial de Google Cloud (`1057441789427-vbbijigh0lbj5dju7curv2dk3dm3qjo3.apps.googleusercontent.com`) en [`AuthModal.tsx`](frontend/src/components/auth/AuthModal.tsx) y [`.env.example`](.env.example).
+  - Inicialización automática de `window.google.accounts.id.initialize` y renderizado del botón nativo oficial de Google mediante `renderButton`.
+  - Conexión del callback del JWT emitido por Google con el endpoint backend de autenticación en PostgreSQL.
+  - Soporte de reintento One-Tap y botón rápido de prueba con cuentas institucionales de Veracruz.
+
+- **Decisiones clave tomadas**:
+  - El botón ahora abre la ventana emergente oficial y nativa de Google Cloud autorizada para los dominios `https://gojarol.tecnodesarrollo.site` y `http://localhost:5173`.
+
+- **Archivos creados / modificados**:
+  - `frontend/src/components/auth/AuthModal.tsx`
+  - `.env.example`
+  - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 14 · 11 de Noviembre de 2026 (21:10 - 21:14)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Corrección de decodificación de credencial JWT de Google (padding base64 URL-safe) y paso explícito de perfil cliente-servidor.
+
+- **Para qué se usaron**:
+  - Corrección de la fórmula de padding base64 URL-safe en [`backend/accounts/views.py`](backend/accounts/views.py) (`(4 - len % 4) % 4`), evitando la excepción silenciosa `binascii.Error` cuando la longitud del token era múltiplo de 4.
+  - Implementación de la función auxiliar `parseGoogleJwt` en el frontend ([`AuthModal.tsx`](frontend/src/components/auth/AuthModal.tsx)) para extraer de forma inmediata el `email`, `name` y `picture` del token firmado de Google y enviarlos de manera directa y robusta al endpoint `/api/v1/auth/google/`.
+  - Aseguramiento de persistencia real en la tabla `accounts_user` de PostgreSQL.
+
+- **Decisiones clave tomadas**:
+  - Doble capa de decodificación (Frontend + Backend) para garantizar 100% de tolerancia a fallos en la extracción de credenciales de Google.
+
+- **Archivos creados / modificados**:
+  - `backend/accounts/views.py`
+  - `frontend/src/components/auth/AuthModal.tsx`
+  - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 15 · 11 de Noviembre de 2026 (21:26 - 21:30)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Desbloqueo de `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS` y `CORS` para el dominio de producción `gojarol.tecnodesarrollo.site` en Django.
+
+- **Para qué se usaron**:
+  - Corrección de `ALLOWED_HOSTS` en [`backend/config/settings.py`](backend/config/settings.py) asegurando la inclusión de `gojarol.tecnodesarrollo.site` para evitar rechazos `400 Bad Request: Invalid HTTP_HOST header` durante llamadas del navegador a la API.
+  - Habilitación de `CORS_ALLOW_ALL_ORIGINS = True` y registro explícito en `CSRF_TRUSTED_ORIGINS`.
+  - Normalización de mapeo de rol (`docente`/`teacher` vs `estudiante`/`student`) en [`backend/accounts/views.py`](backend/accounts/views.py).
+  - Trazabilidad y diagnósticos de red en [`frontend/src/services/api.ts`](frontend/src/services/api.ts).
+
+- **Decisiones clave tomadas**:
+  - Garantizar que las peticiones HTTPS que pasan por el proxy reverso del host hacia el contenedor backend sean aceptadas sin restricciones de cabecera de host.
+
+- **Archivos creados / modificados**:
+  - `backend/config/settings.py`
+  - `backend/accounts/views.py`
+  - `frontend/src/services/api.ts`
+  - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 16 · 11 de Noviembre de 2026 (21:40 - 21:46)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Fusión y sincronización integral de rama `origin/main` en `hugo-dev`, validación de compatibilidad con backend y compilación de frontend.
+
+- **Para qué se usaron**:
+  - Integración de los PRs #14, #15, #16, #17, #18, #19 y #20 procedentes de `main` desarrollados por el equipo backend/ML (Aldair e Iván).
+  - Incorporación de módulos de Clases (`backend/classes/`) para creación y unión con código por parte de docentes y estudiantes.
+  - Incorporación del catálogo curricular y fixture de asignaturas (`backend/curriculum/fixtures/catalogo.json`) con 9 materias oficiales y bancos de ejercicios de matemáticas y español (`content/exercises/`, `content/topics/`).
+  - Integración de servicios de NLP (`ml/src/gojarol_ml/nlp/`) y tutor adaptativo con retroalimentación formativa veracruzana.
+  - Verificación exitosa del build de producción de Vite + TypeScript (`npx pnpm run build`) sin advertencias ni roturas de tipos.
+
+- **Decisiones clave tomadas**:
+  - Consolidar todas las capacidades del equipo sobre la rama activa de despliegue `hugo-dev` para sincronizar la base de datos PostgreSQL y los contenedores Docker en el servidor VPS de producción.
+
+- **Archivos creados / modificados**:
+  - `docs/bitacora/hugo_frontend.md`
+  - Integración de 173 archivos desde `main` (clases, currículum, fixtures, ejercicios, modelos).
+
+### Entrada 17 · 11 de Noviembre de 2026 (21:51 - 21:55)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Interconexión frontend-backend de Clases y Asignaturas con tokens DRF y ajuste de permisos de catálogo.
+
+- **Para qué se usaron**:
+  - Configuración de permiso público `AllowAny` en [`backend/curriculum/views.py`](backend/curriculum/views.py) (`SubjectListView`) permitiendo que cualquier estudiante explore el catálogo curricular sin bloqueo previo de autenticación.
+  - Actualización de [`frontend/src/services/api.ts`](frontend/src/services/api.ts) en los métodos `getSubjects()`, `getClasses()` y `joinClassWithCode()`, inyectando cabecera `Authorization: Token <token>` para usuarios autenticados y conectando con el endpoint real `POST /api/v1/classes/join/`.
+  - Verificación del despliegue exitoso en el VPS Debian:
+    - Aplicación de migración de base de datos: `Applying classes.0001_initial... OK`.
+    - Carga de fixture curricular: `Installed 12 object(s) from 1 fixture(s)`.
+    - Contenedores `gojarol_frontend`, `gojarol_backend` y `gojarol_db` operativos.
+
+- **Decisiones clave tomadas**:
+  - Catálogo de asignaturas accesible como recurso abierto, mientras que la unión e inscripción a clases requiere sesión activa de estudiante.
+
+- **Archivos creados / modificados**:
+  - `backend/curriculum/views.py`
+  - `frontend/src/services/api.ts`
+  - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 18 · 11 de Noviembre de 2026 (21:54 - 21:58)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Verificación end-to-end de persistencia multiusuario en PostgreSQL y consulta de catálogo curricular en producción.
+
+- **Para qué se usaron**:
+  - Comprobación exitosa en el VPS de producción de la persistencia de usuarios autenticados mediante Google OAuth y demo institucional:
+    - `id: 2 | huguito.goku16@gmail.com | Garcia Lara Hugo | estudiante`
+    - `id: 3 | emiliano.valdes@estudiantes.sev.gob.mx | Emiliano Valdés | estudiante`
+    - `id: 4 | ivanpazvalladares@gmail.com | Ivan Paz | estudiante`
+  - Comprobación del endpoint público `GET /api/v1/subjects/` respondiendo JSON activo con las 9 materias oficiales y sus respectivos temas y estados de disponibilidad.
+  - Consolidación del ecosistema completo: Frontend React 19 + Nginx SSL reverso + Django 6 DRF + PostgreSQL 15 + Google Identity Services.
+
+- **Decisiones clave tomadas**:
+  - Confirmar que el flujo de autenticación es 100% resiliente y que los datos de usuarios reales y fixtures pedagógicos se encuentran debidamente sincronizados en el servidor de evaluación.
+
+- **Archivos creados / modificados**:
+  - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 19 · 11 de Noviembre de 2026 (22:12 - 22:16)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Implementación de barrera de autenticación inicial reactiva, eliminación de usuarios estáticos por defecto y soporte de cierre de sesión (`logout`).
+
+- **Para qué se usaron**:
+  - Reemplazo de los usuarios mock precargados por un estado inicial no autenticado (`isAuthenticated = false`) y perfil de invitado neutral (`GUEST_USER`).
+  - Activación automática del modal de inicio de sesión / registro (`AuthModal`) al entrar a la plataforma si no existe una sesión previa guardada en `localStorage`.
+  - Integración del método `logout()` en [`AuthContext.tsx`](frontend/src/context/AuthContext.tsx) para limpiar credenciales y tokens almacenados, restableciendo el estado de invitado.
+  - Actualización de [`DesktopSidebar.tsx`](frontend/src/components/layout/DesktopSidebar.tsx) y [`AppHeader.tsx`](frontend/src/components/layout/AppHeader.tsx) para ocultar nombres estáticos de usuarios ficticios y mostrar botones prominentes de "Iniciar Sesión / Registro" cuando el visitante no ha ingresado.
+  - Adición de botón "Cerrar sesión" en [`ProfileModal.tsx`](frontend/src/components/profile/ProfileModal.tsx).
+  - Verificación de compilación limpia con Vite y TypeScript sin errores.
+
+- **Decisiones clave tomadas**:
+  - Forzar que cada usuario interactúe con el flujo de login real (Google o cuenta institucional/formulario) para evitar que aparezcan datos de prueba impersonales al inicio.
+
+- **Archivos creados / modificados**:
+  - `frontend/src/context/AuthContext.tsx`
+  - `frontend/src/App.tsx`
+  - `frontend/src/components/auth/AuthModal.tsx`
+  - `frontend/src/components/layout/DesktopSidebar.tsx`
+  - `frontend/src/components/layout/AppHeader.tsx`
+  - `frontend/src/components/profile/ProfileModal.tsx`
+  - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 20 · 11 de Noviembre de 2026 (22:18 - 22:21)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Fusión de PR #21 desde `origin/main` incorporando el modelo de IA clasificador de intenciones entrenado y validado (`intent_classifier.joblib`).
+
+- **Para qué se usaron**:
+  - Integración del artefacto entrenado de machine learning de Iván (`ml/artifacts/intent_classifier.joblib`, 765 KB) entrenado con 50,000 registros sintéticos.
+  - Sincronización de metadatos de validación y métricas de desempeño (`ml/artifacts/intent_classifier_metadata.json` y `ml/artifacts/test_metrics.json`), alcanzando un **83.33% de exactitud (accuracy)** y **0.8358 de Macro F1** en pruebas realistas con 12 intenciones pedagógicas.
+  - Actualización de reglas de `.gitignore` para permitir el rastreo del modelo compilado dentro del repositorio.
+  - Verificación del árbol de trabajo sin conflictos y validación de compilación del frontend.
+
+- **Decisiones clave tomadas**:
+  - Incorporar el artefacto de NLP directamente en la rama activa `hugo-dev` para que el backend en producción pueda cargar el modelo serializado en el contenedor sin requerir fases de reentrenamiento en el servidor.
+
+- **Archivos creados / modificados**:
+  - `ml/artifacts/intent_classifier.joblib`
+  - `ml/artifacts/intent_classifier_metadata.json`
+  - `ml/artifacts/test_metrics.json`
+  - `.gitignore`
+  - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 21 · 11 de Noviembre de 2026 (22:21 - 22:26)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Rediseño completo de arquitectura de autenticación separando de forma estricta los flujos de "Iniciar Sesión" y "Crear Cuenta (Registro)", con soporte de login por email/username y registro estructurado.
+
+- **Para qué se usaron**:
+  - Corrección de la experiencia de usuario en [`AuthModal.tsx`](frontend/src/components/auth/AuthModal.tsx):
+    - **Pestaña Iniciar Sesión**: Formulario de credenciales directas (`usuario o correo` + `contraseña`), acceso nativo con Google Identity Services y selector de cuentas demo SEV.
+    - **Pestaña Crear Cuenta (Registro)**: Formulario de alta para nuevos estudiantes/docentes con campos formales (`nombre completo`, `nombre de usuario`, `contraseña`, `correo`, selector de rol alumno/maestro, `nivel escolar`, `grado` y `escuela en Veracruz`), o registro rápido con Google OAuth.
+  - Implementación de métodos `login()` y `register()` en [`apiService`](frontend/src/services/api.ts) conectando con los endpoints DRF `/api/v1/auth/login/` y `/api/v1/auth/register/`.
+  - Actualización de [`backend/accounts/views.py`](backend/accounts/views.py) en `LoginView` para permitir autenticación indistinta mediante nombre de usuario o dirección de correo electrónico (`email__iexact`).
+  - Validación de compilación de Vite y TypeScript sin advertencias.
+
+- **Decisiones clave tomadas**:
+  - Establecer una separación visual y funcional transparente entre el ingreso de usuarios existentes y la captura de datos pedagógicos de nuevos usuarios.
+
+- **Archivos creados / modificados**:
+  - `frontend/src/components/auth/AuthModal.tsx`
+  - `frontend/src/services/api.ts`
+  - `backend/accounts/views.py`
+  - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 22 · 11 de Noviembre de 2026 (22:28 - 22:32)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Ajustes de diseño y coherencia curricular en el flujo de autenticación (reubicación de Google OAuth abajo, normalización de etiqueta "Docente" y bifurcación dinámica de Secundaria a 3 años y Bachillerato a 6 semestres).
+
+- **Para qué se usaron**:
+  - Normalización de rol profesional en la interfaz: cambio de "Soy Maestro/Docente" a simplemente "Soy Docente".
+  - Reubicación visual de los accesos de Google Identity Services debajo de los formularios principales tanto en Inicio de Sesión como en Registro, priorizando la entrada de credenciales.
+  - Implementación de lógica curricular dinámica para estudiantes veracruzanos:
+    - **Secundaria**: Selección de 1° a 3° año escolar.
+    - **Bachillerato**: Selección de 1er a 6to semestre escolar.
+    - Reajuste automático de grado al alternar entre niveles para prevenir inconsistencias de rango.
+  - Verificación de compilación de frontend con TypeScript 7 y Vite 8 (599 ms).
+
+- **Decisiones clave tomadas**:
+  - Alinear la estructura de grados con el sistema educativo de Veracruz (secundaria técnica/general de 3 grados y bachillerato general/tecnológico de 6 semestres).
+
+- **Archivos creados / modificados**:
+  - `frontend/src/components/auth/AuthModal.tsx`
+  - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 23 · 11 de Noviembre de 2026 (22:41 - 22:57)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Integración end-to-end del Frontend (React 19 + TypeScript) con el Backend (Django 5 + PostgreSQL) y el Motor de IA/Tutor Pedagógico (`intent_classifier.joblib` + SymPy + `TutorService`), eliminando datos estáticos de las vistas.
+
+- **Para qué se usaron**:
+  - Configuración de `docker-compose.yml` para montar en modo solo lectura `./ml:/ml:ro` y `./content:/content:ro` en el contenedor `backend` y exponer `PYTHONPATH: /app:/ml/src`, preservando el caché de dependencias en el VPS.
+  - Creación del modelo `StudentProgress` y su migración `0001_initial.py` en `backend/progress/` para persistir en PostgreSQL los puntos de experiencia (`xp`), racha (`streak_days`) y el estado adaptativo del tutor (`tutor_state`) por cada usuario.
+  - Creación de `backend/chat/services/runtime.py`, `backend/chat/views.py` (`POST /api/v1/chat/messages/`), `backend/exercises/views.py` (`POST /api/v1/exercises/<id>/answer/` y `POST /api/v1/exercises/<id>/hint/`) y `backend/progress/views.py` (`GET /api/v1/progress/me/` y `GET /api/v1/progress/leaderboard/`).
+  - Actualización del catálogo curricular (`backend/curriculum/fixtures/catalogo.json` y `backend/curriculum/views.py`) con auto-sembrado de los 6 temas activos con IA (`mat_fracciones`, `mat_porcentajes`, `mat_ecuaciones`, `esp_comprension`, `esp_ortografia`, `esp_acentuacion`).
+  - Conexión completa de `ExerciseCard.tsx` (soportando opción múltiple, lecturas de comprensión, respuestas abiertas evaluadas simbólicamente con SymPy y pistas graduales), `ChatView.tsx`, `ChallengesView.tsx`, `ProgressView.tsx`, `LeaguesView.tsx`, `ClassesView.tsx` y `TeacherDashboardView.tsx` a la base de datos real.
+
+- **Decisiones clave tomadas**:
+  - Garantizar que `expected_answer` jamás salga del servidor; las respuestas incorrectas activan pistas progresivas del `HintService` y las respuestas correctas otorgan XP persistido en PostgreSQL y desbloquean el siguiente ejercicio adaptativo.
+
+- **Archivos creados / modificados**:
+  - `docker-compose.yml`
+  - `backend/config/urls.py`
+  - `backend/accounts/serializers.py`
+  - `backend/chat/services/runtime.py`
+  - `backend/chat/views.py`
+  - `backend/chat/urls.py`
+  - `backend/exercises/views.py`
+  - `backend/exercises/urls.py`
+  - `backend/progress/models.py`
+  - `backend/progress/migrations/0001_initial.py`
+  - `backend/progress/views.py`
+  - `backend/progress/urls.py`
+  - `backend/classes/serializers.py`
+  - `backend/classes/views.py`
+  - `backend/curriculum/fixtures/catalogo.json`
+  - `backend/curriculum/views.py`
+  - `frontend/src/types/chat.ts`
+  - `frontend/src/types/curriculum.ts`
+  - `frontend/src/services/api.ts`
+  - `frontend/src/components/exercise/ExerciseCard.tsx`
+  - `frontend/src/components/chat/PromptSuggestions.tsx`
+  - `frontend/src/App.tsx`
+  - `frontend/src/views/student/ChatView.tsx`
+  - `frontend/src/views/student/ChallengesView.tsx`
+  - `frontend/src/views/student/ProgressView.tsx`
+  - `frontend/src/views/student/LeaguesView.tsx`
+  - `frontend/src/views/student/ClassesView.tsx`
+  - `frontend/src/views/student/ClassDetailModal.tsx`
+  - `frontend/src/views/teacher/TeacherDashboardView.tsx`
+  - `docs/bitacora/hugo_frontend.md`

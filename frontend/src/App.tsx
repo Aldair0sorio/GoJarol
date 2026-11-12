@@ -13,10 +13,18 @@ import { AuthModal } from './components/auth/AuthModal';
 import { ProfileModal } from './components/profile/ProfileModal';
 
 const MainShell: React.FC = () => {
-  const { role } = useAuth();
+  const { role, isAuthenticated } = useAuth();
   const [currentTab, setCurrentTab] = useState('chat');
-  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(!isAuthenticated);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
+
+  // Al montar o si no está autenticado, abrir el modal de autenticación
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+    }
+  }, [isAuthenticated]);
 
   // Sincronizar tab al cambiar de rol
   React.useEffect(() => {
@@ -27,7 +35,10 @@ const MainShell: React.FC = () => {
     }
   }, [role]);
 
-  const handleStartTopic = (_topicName?: string) => {
+  const handleStartTopic = (topicOrPrompt?: string) => {
+    if (topicOrPrompt) {
+      setPendingPrompt(topicOrPrompt);
+    }
     setCurrentTab('chat');
   };
 
@@ -53,7 +64,12 @@ const MainShell: React.FC = () => {
         <main className="flex-1 flex flex-col overflow-y-auto">
           {role === 'student' ? (
             <>
-              {currentTab === 'chat' && <ChatView />}
+              {currentTab === 'chat' && (
+                <ChatView
+                  initialPrompt={pendingPrompt}
+                  onPromptConsumed={() => setPendingPrompt(null)}
+                />
+              )}
               {currentTab === 'retos' && <ChallengesView onStartTopic={handleStartTopic} />}
               {currentTab === 'ligas' && <LeaguesView onGoPractice={() => setCurrentTab('chat')} />}
               {currentTab === 'clases' && (

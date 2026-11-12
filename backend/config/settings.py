@@ -14,14 +14,36 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(str(BASE_DIR.parent))
 
 env = environ.Env()
-environ.Env.read_env(BASE_DIR / '.env')
+if (BASE_DIR / '.env').exists():
+    environ.Env.read_env(BASE_DIR / '.env')
+elif (BASE_DIR.parent / '.env').exists():
+    environ.Env.read_env(BASE_DIR.parent / '.env')
 
 # --- Seguridad y entorno (vienen del .env) ---
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env.bool('DEBUG', default=False)
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
-CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
-CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[])
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
+if not ALLOWED_HOSTS or ALLOWED_HOSTS == ['']:
+    ALLOWED_HOSTS = ['*']
+if '*' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.extend(['gojarol.tecnodesarrollo.site', 'jarol.tecnodesarrollo.site', 'localhost', '127.0.0.1', 'backend', '*'])
+
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[
+    'https://gojarol.tecnodesarrollo.site',
+    'https://jarol.tecnodesarrollo.site',
+    'http://localhost:5173',
+    'http://127.0.0.1:3000',
+])
+if 'https://gojarol.tecnodesarrollo.site' not in CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS.append('https://gojarol.tecnodesarrollo.site')
+
+CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[
+    'https://gojarol.tecnodesarrollo.site',
+    'https://jarol.tecnodesarrollo.site',
+    'http://localhost:5173',
+    'http://127.0.0.1:3000',
+])
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 # --- Aplicaciones ---

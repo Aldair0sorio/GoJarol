@@ -1,27 +1,34 @@
 export interface ExerciseOption {
-  id: string; // ej. "A", "B", "C"
+  id: string; // ej. "A", "B", "C", "D"
+  label?: string;
   text: string;
 }
 
 export interface ExerciseCardData {
   id: string;
-  subjectName: string; // ej: "Aritmética"
-  topicName: string; // ej: "Fracciones"
-  step: number; // 1
-  totalSteps: number; // 3
-  question: string; // "¿Cuánto es 3/4 + 1/4?"
-  instruction: string; // "Elige la opción que represente el resultado simplificado:"
+  topicId?: string;
+  subjectName: string; // ej: "Aritmética · Matemáticas"
+  topicName: string; // ej: "Fracciones Equivalentes y Suma"
+  step?: number;
+  totalSteps?: number;
+  question: string;
+  readingText?: string;
+  instruction: string;
+  exerciseType?: 'multiple_choice' | 'fraction' | 'numeric' | 'percentage';
+  difficulty?: string;
   options: ExerciseOption[];
-  xpReward: number; // 25
+  xpReward?: number;
   // La respuesta correcta NUNCA viene en este objeto para cumplir la regla pedagógica del reto
 }
 
 export interface AnswerFeedback {
   isCorrect: boolean;
-  title: string; // ej. "¡Exacto! ¡Bien rifado! 🦀" o "¡Casi! Vamos a revisarlo"
-  explanation: string; // Explicación pedagógica paso a paso
-  hint?: string; // Pista si se equivocó
+  title: string;
+  explanation: string;
+  hint?: string;
   xpEarned: number;
+  totalXp?: number;
+  nextExercise?: ExerciseCardData;
 }
 
 export interface ChatMessage {

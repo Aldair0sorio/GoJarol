@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
+from progress.models import StudentProgress
+
 User = get_user_model()
 
 
@@ -28,10 +30,34 @@ class RegisterSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
+        user = User.objects.create_user(**validated_data)
+        StudentProgress.objects.get_or_create(user=user)
+        return user
 
 
 class UserSerializer(serializers.ModelSerializer):
+    xp = serializers.SerializerMethodField()
+    streak_days = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ["id", "username", "email", "rol", "nivel", "grado", "alias", "ranking_publico"]
+        fields = [
+            "id",
+            "username",
+            "email",
+            "rol",
+            "nivel",
+            "grado",
+            "alias",
+            "ranking_publico",
+            "xp",
+            "streak_days",
+        ]
+
+    def get_xp(self, obj):
+        progress, _ = StudentProgress.objects.get_or_create(user=obj)
+        return progress.xp
+
+    def get_streak_days(self, obj):
+        progress, _ = StudentProgress.objects.get_or_create(user=obj)
+        return progress.streak_days

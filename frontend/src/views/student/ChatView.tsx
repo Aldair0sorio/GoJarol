@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import type { ChatMessage } from '../../types/chat';
+import type { ChatMessage, ExerciseCardData } from '../../types/chat';
 import { apiService } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 import { JarolBubble } from '../../components/chat/JarolBubble';
 import { UserBubble } from '../../components/chat/UserBubble';
 import { FloatingInput } from '../../components/chat/FloatingInput';
@@ -8,7 +9,13 @@ import { PromptSuggestions } from '../../components/chat/PromptSuggestions';
 import { ExerciseCard } from '../../components/exercise/ExerciseCard';
 import { RotateCcw } from 'lucide-react';
 
-export const ChatView: React.FC = () => {
+interface ChatViewProps {
+  initialPrompt?: string | null;
+  onPromptConsumed?: () => void;
+}
+
+export const ChatView: React.FC<ChatViewProps> = ({ initialPrompt, onPromptConsumed }) => {
+  const { user, isAuthenticated, updateUser, addXP } = useAuth();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -33,7 +40,16 @@ export const ChatView: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const { replyText, exercise } = await apiService.sendChatMessage(text, messages);
+      const { replyText, exercise, xpEarned, totalXp } = await apiService.sendChatMessage(
+        text,
+        messages
+      );
+
+      if (totalXp !== undefined) {
+        updateUser({ xp: totalXp });
+      } else if (xpEarned && xpEarned > 0) {
+        addXP(xpEarned);
+      }
 
       const jarolMsg: ChatMessage = {
         id: `msg_j_${Date.now()}`,
@@ -49,8 +65,32 @@ export const ChatView: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (initialPrompt) {
+      handleSendMessage(initialPrompt);
+      onPromptConsumed?.();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialPrompt]);
+
+  const handleNextExercise = (nextEx?: ExerciseCardData, topicName?: string) => {
+    if (nextEx) {
+      const jarolMsg: ChatMessage = {
+        id: `msg_j_${Date.now()}`,
+        sender: 'jarol',
+        text: `¡Vientos! Aquí tienes el siguiente reto de **${nextEx.topicName}** (nivel ${nextEx.difficulty || 'Básico'}). Analízalo paso a paso:`,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        exercise: nextEx,
+      };
+      setMessages((prev) => [...prev, jarolMsg]);
+    } else {
+      handleSendMessage(`Ponme otro ejercicio de ${topicName || 'este tema'}`);
+    }
+  };
+
   const handleResetChat = () => {
     setMessages([]);
+    apiService.resetChatContext();
   };
 
   return (
@@ -60,7 +100,7 @@ export const ChatView: React.FC = () => {
         <div className="flex justify-end px-4 pt-2">
           <button
             onClick={handleResetChat}
-            className="flex items-center gap-1 text-[11px] font-display font-medium text-[#596B72] hover:text-[#126B73] px-2 py-1 rounded-full bg-white border border-[#E8E5DC] shadow-2xs"
+            className="flex items-center gap-1 text-[11px] font-display font-medium text-[#596B72] hover:text-[#126B73] px-2 py-1 rounded-full bg-white border border-[#E8E5DC] shadow-2xs cursor-pointer"
           >
             <RotateCcw className="w-3 h-3" />
             <span>Nueva duda</span>
@@ -85,13 +125,13 @@ export const ChatView: React.FC = () => {
           </div>
 
           <h1 className="font-display font-extrabold text-2xl text-[#0A1D2C] tracking-tight">
-            ¡Quiúbole! Soy Jarol
+            {isAuthenticated ? `¡Quiúbole, ${user.name.split(' ')[0]}! Soy Jarol` : '¡Quiúbole! Soy Jarol'}
           </h1>
           <h2 className="font-display font-semibold text-sm text-[#126B73] mt-0.5">
             ¿Qué vamos a aprender hoy?
           </h2>
-          <p className="text-xs text-[#596B72] mt-1 max-w-[280px]">
-            Pregúntame sobre fracciones, álgebra o ciencias. Yo te guío paso a pasito.
+          <p className="text-xs text-[#596B72] mt-1 max-w-[320px]">
+            Pregúntame sobre Fracciones, Ecuaciones, Porcentajes, Comprensión Lectora, Ortografía o Acentuación. Te guío con pistas sin regalarte la respuesta.
           </p>
 
           <PromptSuggestions onSelectPrompt={handleSendMessage} />
@@ -113,8 +153,8 @@ export const ChatView: React.FC = () => {
               <div className="w-full max-w-[94%] ml-auto sm:ml-8">
                 <ExerciseCard
                   exercise={msg.exercise}
-                  onNextExercise={() =>
-                    handleSendMessage('Quiero practicar el siguiente ejercicio de fracciones')
+                  onNextExercise={(nextEx) =>
+                    handleNextExercise(nextEx, msg.exercise?.topicName)
                   }
                 />
               </div>
@@ -125,7 +165,7 @@ export const ChatView: React.FC = () => {
         {isLoading && (
           <div className="flex items-center gap-2 text-xs font-display text-[#126B73] p-3 bg-white/70 rounded-2xl w-fit border border-[#E8E5DC]">
             <span className="animate-spin text-base">🦀</span>
-            <span>Jarol está pensando cómo explicártelo...</span>
+            <span>Jarol está analizando tu mensaje...</span>
           </div>
         )}
 
