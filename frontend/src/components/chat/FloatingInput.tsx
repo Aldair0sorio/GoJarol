@@ -4,9 +4,11 @@ import { ArrowUp } from 'lucide-react';
 interface FloatingInputProps {
   onSendMessage: (text: string) => void;
   isLoading?: boolean;
+  /** Aviso discreto y fijo debajo de la barra (no tapa el campo de texto). */
+  notice?: string;
 }
 
-export const FloatingInput: React.FC<FloatingInputProps> = ({ onSendMessage, isLoading }) => {
+export const FloatingInput: React.FC<FloatingInputProps> = ({ onSendMessage, isLoading, notice }) => {
   const [inputText, setInputText] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -45,6 +47,11 @@ export const FloatingInput: React.FC<FloatingInputProps> = ({ onSendMessage, isL
           <ArrowUp className="w-5 h-5 stroke-[2.5px]" />
         </button>
       </form>
+      {notice && (
+        <p className="max-w-md md:max-w-2xl lg:max-w-3xl mx-auto mt-1 px-4 text-center text-[10px] leading-tight text-[#596B72]">
+          {notice}
+        </p>
+      )}
     </div>
   );
 };

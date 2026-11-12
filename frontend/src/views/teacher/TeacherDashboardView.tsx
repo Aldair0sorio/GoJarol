@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { apiService } from '../../services/api';
 import { StudentDetailModal } from './StudentDetailModal';
+import { CopySignalsCard } from '../../components/teacher/CopySignalsCard';
 import type { DetailedStudent } from '../../types/leagues';
 import type { ClassGroup, StudentMastery } from '../../types/curriculum';
 import {
@@ -673,6 +674,11 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({
                     </div>
                   )}
                 </div>
+              </div>
+
+              {/* Anticopia: carga sus propios datos; si falla, el resto del panel sigue igual. */}
+              <div className="mt-4">
+                <CopySignalsCard key={activeClass.id} classId={activeClass.id} />
               </div>
             </>
           )}
