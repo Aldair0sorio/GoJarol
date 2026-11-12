@@ -7,11 +7,11 @@ interface PromptSuggestionsProps {
 
 export const PromptSuggestions: React.FC<PromptSuggestionsProps> = ({ onSelectPrompt }) => {
   const suggestions = [
-    'Explícame cómo sumar fracciones y ponme un ejercicio',
-    'Ponme un ejercicio de ecuaciones de primer grado',
-    'Explícame cómo calcular porcentajes y ponme un reto',
-    'Dame un reto de comprensión lectora',
-    'Ayúdame a practicar reglas de acentuación y ortografía',
+    'Explícame las fracciones',
+    'Ponme un ejercicio de fracciones',
+    'Explícame las ecuaciones de primer grado',
+    'Ponme un ejercicio de porcentajes',
+    'Ponme un ejercicio de comprensión lectora',
   ];
 
   return (

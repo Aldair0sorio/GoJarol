@@ -90,6 +90,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ initialPrompt, onPromptConsu
 
   const handleResetChat = () => {
     setMessages([]);
+    apiService.resetChatContext();
   };
 
   return (

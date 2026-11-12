@@ -1,4 +1,3 @@
-
 {
   "id": "mat_fracciones",
   "subject": "matematicas",
@@ -16,9 +15,9 @@
     "correct_index": 1
   },
   "explanations": {
-    "basic": "Una fracción representa partes de un todo dividido en partes iguales.",
-    "intermediate": "Una fracción tiene numerador y denominador. El denominador indica en cuántas partes iguales se divide el total.",
-    "alternative": "Imagina una pizza dividida en partes iguales. Una fracción permite representar cuántas partes seleccionamos."
+    "basic": "Una fracción representa partes de un todo dividido en partes iguales: el denominador (abajo) indica en cuántas partes iguales se divide el entero y el numerador (arriba) cuántas partes tomamos.\n1. Suma o resta con igual denominador: conserva el mismo denominador y suma o resta únicamente los numeradores. Ejemplo: 1/5 + 2/5 = 3/5; para restar: 4/5 - 1/5 = 3/5.\n2. Suma o resta con distinto denominador: busca un denominador común (como el mínimo común múltiplo), convierte cada fracción a su equivalente y luego suma o resta los numeradores. Ejemplo: 1/2 + 1/4 = 2/4 + 1/4 = 3/4; para restar: 3/4 - 1/2 = 3/4 - 2/4 = 1/4.\n3. Si el resultado se puede simplificar, divide numerador y denominador entre el mismo número.",
+    "intermediate": "Una fracción tiene numerador y denominador. Cuando dos fracciones tienen distinto denominador, primero conviértelas a fracciones equivalentes con el mismo denominador multiplicando numerador y denominador por el mismo factor. Después suma o resta los numeradores y conserva el denominador común.",
+    "alternative": "Imagina una pizza dividida en rebanadas iguales:\n1. Si sumas o restas rebanadas del mismo tamaño (igual denominador), solo sumas o restas los números de arriba y el de abajo queda igual: 5/8 - 2/8 = 3/8.\n2. Si las rebanadas son de distinto tamaño (diferente denominador), primero córtalas al mismo tamaño (fracciones equivalentes): para 1/3 + 1/6, convierte 1/3 en 2/6 y luego suma 2/6 + 1/6 = 3/6 = 1/2.\nSi quieres practicar, escríbeme: 'Ponme un ejercicio de fracciones'."
   },
   "exercise": {
     "id": "frac_001",
@@ -33,4 +32,3 @@
     ]
   }
 }
-

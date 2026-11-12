@@ -49,19 +49,19 @@ const SUBJECT_META: Record<string, { iconName: string; color: string }> = {
 const TOPIC_DESCRIPTIONS: Record<string, { description: string; prompt: string }> = {
   mat_fracciones: {
     description: 'Suma, resta, simplificación y comparación de fracciones con pistas paso a paso.',
-    prompt: 'Explícame cómo sumar fracciones y ponme un ejercicio',
+    prompt: 'Ponme un ejercicio de fracciones',
   },
   mat_porcentajes: {
     description: 'Cálculo de descuentos, incrementos y proporciones en situaciones cotidianas.',
-    prompt: 'Explícame cómo calcular porcentajes y ponme un ejercicio',
+    prompt: 'Ponme un ejercicio de porcentajes',
   },
   mat_ecuaciones: {
     description: 'Despeje de la incógnita x en ecuaciones lineales de primer grado con una o dos operaciones.',
-    prompt: 'Explícame las ecuaciones de primer grado y ponme un ejercicio',
+    prompt: 'Ponme un ejercicio de ecuaciones',
   },
   esp_comprension: {
     description: 'Identificación de idea principal, información explícita e inferencias a partir de textos.',
-    prompt: 'Dame un reto de comprensión lectora',
+    prompt: 'Ponme un ejercicio de comprensión lectora',
   },
   esp_ortografia: {
     description: 'Uso correcto de grafías (b/v, c/s/z, g/j) y signos de puntuación en contexto.',
@@ -69,7 +69,7 @@ const TOPIC_DESCRIPTIONS: Record<string, { description: string; prompt: string }
   },
   esp_acentuacion: {
     description: 'Clasificación y tildación de palabras agudas, graves, esdrújulas y acento diacrítico.',
-    prompt: 'Ayúdame a practicar reglas de acentuación',
+    prompt: 'Ponme un ejercicio de acentuación',
   },
 };
 
@@ -418,6 +418,21 @@ export const apiService = {
       hint: 'Analiza primero qué datos te da el problema y qué operación te permite despejar o simplificar el resultado.',
       hintsUsed: hintsUsed + 1,
     };
+  },
+
+  /**
+   * Reinicia el contexto de conversación del tutor ("Nueva duda") conservando el progreso y XP.
+   */
+  async resetChatContext(): Promise<void> {
+    try {
+      await fetch(`${API_BASE}/chat/messages/`, {
+        method: 'POST',
+        headers: getAuthHeaders(true),
+        body: JSON.stringify({ reset: true }),
+      });
+    } catch {
+      // ignore
+    }
   },
 
   /**
