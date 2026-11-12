@@ -2,8 +2,8 @@ import pytest
 from progress.ranks import rank_for_xp, tier_change
 
 
-@pytest.mark.parametrize('xp,rank', [(-1,'bronce'),(0,'bronce'),(149,'bronce'),(150,'plata'),
-                                    (399,'plata'),(400,'oro'),(799,'oro'),(800,'diamante')])
+@pytest.mark.parametrize('xp,rank', [(-1,'bronce'),(0,'bronce'),(499,'bronce'),(500,'plata'),
+                                    (1199,'plata'),(1200,'oro'),(2499,'oro'),(2500,'diamante')])
 def test_rank_boundaries(xp, rank):
     result = rank_for_xp(xp)
     assert result['id'] == rank
@@ -11,6 +11,6 @@ def test_rank_boundaries(xp, rank):
 
 
 def test_tier_change_requires_crossing_threshold():
-    assert tier_change(149,150)[1] is True
-    assert tier_change(150,151)[1] is False
-    assert rank_for_xp(1000)['nextRank'] is None
+    assert tier_change(499, 500)[1] is True
+    assert tier_change(500, 501)[1] is False
+    assert rank_for_xp(3000)['nextRank'] is None

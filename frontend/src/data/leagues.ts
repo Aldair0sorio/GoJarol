@@ -47,7 +47,7 @@ export const LEAGUE_TIERS: LeagueTier[] = [
   {
     id: 'plata',
     name: 'Plata',
-    minXp: 150,
+    minXp: 500,
     imageUrl: '/leagues/plata.png',
     tagline: 'Constancia en tus primeros retos',
     cardBg: 'bg-slate-50',
@@ -59,7 +59,7 @@ export const LEAGUE_TIERS: LeagueTier[] = [
   {
     id: 'oro',
     name: 'Oro',
-    minXp: 400,
+    minXp: 1200,
     imageUrl: '/leagues/oro.png',
     tagline: 'Dominio sólido de la materia',
     cardBg: 'bg-amber-50',
@@ -71,7 +71,7 @@ export const LEAGUE_TIERS: LeagueTier[] = [
   {
     id: 'diamante',
     name: 'Diamante',
-    minXp: 800,
+    minXp: 2500,
     imageUrl: '/leagues/diamante.png',
     tagline: 'Élite académica Go Jarol',
     cardBg: 'bg-sky-50',

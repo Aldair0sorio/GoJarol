@@ -1,9 +1,9 @@
 # Umbrales de XP para cada rango. Son un punto de partida: se ajustan aquí.
 RANKS = [
     {"id": "bronce", "name": "Bronce", "min_xp": 0},
-    {"id": "plata", "name": "Plata", "min_xp": 150},
-    {"id": "oro", "name": "Oro", "min_xp": 400},
-    {"id": "diamante", "name": "Diamante", "min_xp": 800},
+    {"id": "plata", "name": "Plata", "min_xp": 500},
+    {"id": "oro", "name": "Oro", "min_xp": 1200},
+    {"id": "diamante", "name": "Diamante", "min_xp": 2500},
 ]
 
 

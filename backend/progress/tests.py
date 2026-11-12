@@ -19,7 +19,7 @@ class ProgressLeagueViewsTests(TestCase):
             alias="Ana",
         )
         progress_gold, _ = StudentProgress.objects.get_or_create(user=self.student_gold)
-        progress_gold.xp = 420
+        progress_gold.xp = 1250
         progress_gold.save()
 
         self.student_silver = User.objects.create_user(
@@ -31,18 +31,18 @@ class ProgressLeagueViewsTests(TestCase):
             alias="Luis",
         )
         progress_silver, _ = StudentProgress.objects.get_or_create(user=self.student_silver)
-        progress_silver.xp = 180
+        progress_silver.xp = 650
         progress_silver.save()
 
     def test_progress_me_includes_league_rank(self):
         self.client.force_authenticate(user=self.student_gold)
         res = self.client.get("/api/v1/progress/me/")
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(res.data["xp"], 420)
+        self.assertEqual(res.data["xp"], 1250)
         self.assertEqual(res.data["league"]["id"], "oro")
         self.assertEqual(res.data["league"]["name"], "Oro")
         self.assertEqual(res.data["league"]["nextRank"], "Diamante")
-        self.assertEqual(res.data["league"]["xpToNext"], 380)
+        self.assertEqual(res.data["league"]["xpToNext"], 1250)
 
     def test_leaderboard_includes_league_for_each_student(self):
         self.client.force_authenticate(user=self.student_gold)
