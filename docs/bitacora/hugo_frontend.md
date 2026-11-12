@@ -257,3 +257,31 @@ Para cada sesión o iteración se documenta:
 - **Archivos creados / modificados**:
   - `docker-compose.yml`
   - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 12 · 11 de Noviembre de 2026 (20:25 - 20:32)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Fusión de la rama `main` hacia `hugo-dev` e implementación completa de la autenticación con Google (Google Sign-In / OAuth).
+
+- **Para qué se usaron**:
+  - Sincronización y resolución limpia del merge conflict de dependencias en `backend/requirements.txt` integrando el stack de Django 6 con el módulo pedagógico y NLP local de Machine Learning.
+  - Implementación del botón y flujo de autenticación con Google en [`AuthModal.tsx`](frontend/src/components/auth/AuthModal.tsx), incluyendo el logotipo SVG oficial, integración de Google Identity Services (GIS), y selector de cuentas institucionales de Veracruz (`@estudiantes.sev.gob.mx` y `@docentes.sev.gob.mx`).
+  - Creación del método `loginWithGoogle` en [`api.ts`](frontend/src/services/api.ts) y persistencia de sesión en [`AuthContext.tsx`](frontend/src/context/AuthContext.tsx).
+  - Creación del endpoint `POST /api/v1/auth/google/` en Django ([`backend/accounts/views.py`](backend/accounts/views.py) y [`urls.py`](backend/accounts/urls.py)) que decodifica credenciales de Google, gestiona la creación idempotente del usuario en PostgreSQL y expide tokens de autenticación de DRF.
+  - Pruebas unitarias de autenticación Google añadidas en [`backend/accounts/tests.py`](backend/accounts/tests.py).
+
+- **Decisiones clave tomadas**:
+  - Se habilitó tanto el soporte para tokens reales de Google Identity Services como un selector ágil de cuentas institucionales veracruzanas con avatares reales para facilitar las demostraciones en vivo ante el jurado del hackathon sin depender de bloqueos por popups externos.
+  - El perfil (`ProfileModal.tsx`) muestra el distintivo y correo oficial de Google con el que el usuario inició sesión.
+
+- **Archivos creados / modificados**:
+  - `backend/accounts/views.py`
+  - `backend/accounts/urls.py`
+  - `backend/accounts/tests.py`
+  - `backend/requirements.txt`
+  - `frontend/index.html`
+  - `frontend/src/components/auth/AuthModal.tsx`
+  - `frontend/src/components/profile/ProfileModal.tsx`
+  - `frontend/src/context/AuthContext.tsx`
+  - `frontend/src/services/api.ts`
+  - `docs/bitacora/hugo_frontend.md`
