@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "scope": "Semilla verificada y ampliable, no totalidad del curriculo nacional.",
+  "sources": [
+    {
+      "id": "sep_f6_2024",
+      "title": "Programa Sintético de la Fase 6",
+      "url": "https://educacionbasica.sep.gob.mx/wp-content/uploads/2024/06/Programa_Sintetico_Fase_6.pdf",
+      "verification": "verified",
+      "accessed": "2026-11-11",
+      "method": "Documento completo, texto de tablas por grado; paginas impresas.",
+      "note": "Extracto inicial del programa, no inventario completo."
+    },
+    {
+      "id": "dof_mccems_2025",
+      "title": "Acuerdo 21/08/25, MCCEMS",
+      "url": "https://sidof.segob.gob.mx/notas/docFuente/5765757",
+      "verification": "verified",
+      "accessed": "2026-11-11",
+      "method": "Texto oficial completo; articulos 12 y 13.",
+      "note": "Metas normativas, sin inferir su semestre a partir del numeral romano."
+    },
+    {
+      "id": "cosac_materials",
+      "title": "COSAC - Materiales educativos",
+      "url": "https://cosac.sems.gob.mx/Materiales/web/",
+      "verification": "indexed_only",
+      "accessed": "2026-11-11",
+      "method": "Indice oficial en buscador; consulta directa devuelve 502.",
+      "note": "La pagina distingue programas 2025 y 2026; no demuestra equivalencia."
+    },
+    {
+      "id": "cosac_pm_2025",
+      "title": "Pensamiento Matemático - programa 2025",
+      "url": "https://cosac.sems.gob.mx/Materiales/web/descargar/29",
+      "verification": "indexed_only",
+      "accessed": "2026-11-11",
+      "method": "Extracto indexado del PF4 y tabla, pagina 15; descarga directa 502.",
+      "note": "Verificar documento completo, semestre y aplicabilidad antes de habilitar."
+    },
+    {
+      "id": "cosac_lyc_2025",
+      "title": "Lengua y Comunicación - programa 2025",
+      "url": "https://cosac.sems.gob.mx/Materiales/web/descargar/68",
+      "verification": "indexed_only",
+      "accessed": "2026-11-11",
+      "method": "Extracto indexado: seccion 2.1, tabla 1, PF1, primer semestre; descarga directa 502.",
+      "note": "No asignar una version 2026 por la fecha de consulta."
+    },
+    {
+      "id": "dgb_maps",
+      "title": "DGB - Mapas curriculares",
+      "url": "https://dgb.sep.gob.mx/mapas-curriculares",
+      "verification": "indexed_only",
+      "accessed": "2026-11-11",
+      "method": "Indice oficial consultado en buscador; consulta directa expira.",
+      "note": "Distingue estructura 2026 y mapa 2025; los oficios de 2026 no convierten el modelo 2025 en modelo 2026."
+    },
+    {
+      "id": "dgb_rvoe_2026",
+      "title": "DGB - Consideraciones académicas para el trámite de RVOE",
+      "url": "https://dgb.sep.gob.mx/storage/recursos/2026/04/tk46gEw825-Consideraciones_academicas_2026_VFinal.pdf",
+      "verification": "verified",
+      "accessed": "2026-11-11",
+      "method": "Documento completo, seccion de modalidades, pagina impresa 6.",
+      "note": "Contexto de modalidades para particulares; no se usa como programa de contenidos ni para generalizar a subsistemas."
+    }
+  ],
+  "programs": [
+    {
+      "id": "sep_f6_2024",
+      "level": "secundaria",
+      "model": "fase6",
+      "version": "2024",
+      "modality": "fase6",
+      "source_id": "sep_f6_2024",
+      "verification": "verified",
+      "scope": "Primero a tercero. Catalogacion parcial por asignatura."
+    },
+    {
+      "id": "mccems_2025",
+      "level": "bachillerato",
+      "model": "mccems_2025",
+      "version": "2025",
+      "modality": "marco_comun",
+      "source_id": "dof_mccems_2025",
+      "verification": "verified",
+      "scope": "Metas del marco comun, sin asignar semestres o subsistemas."
+    },
+    {
+      "id": "cosac_2025",
+      "level": "bachillerato",
+      "model": "mccems_2025",
+      "version": "2025",
+      "modality": "programa_asignaturas",
+      "source_id": "cosac_materials",
+      "verification": "pending",
+      "scope": "Programas de asignaturas pendientes de contraste documental completo."
+    },
+    {
+      "id": "cosac_2026",
+      "level": "bachillerato",
+      "model": "mccems_2026",
+      "version": "2026",
+      "modality": "programa_asignaturas",
+      "source_id": "cosac_materials",
+      "verification": "pending",
+      "scope": "Existe un programa 2026 en el indice. No copiar contenidos ni semestres de 2025."
+    },
+    {
+      "id": "dgb_2026_general",
+      "level": "bachillerato",
+      "model": "dgb_2026",
+      "version": "2026",
+      "modality": "escolarizada_presencial",
+      "source_id": "dgb_maps",
+      "verification": "pending",
+      "scope": "Estructura diferenciada en indice DGB; programas y distribucion pendientes de verificar."
+    },
+    {
+      "id": "dgb_2026_modular",
+      "level": "bachillerato",
+      "model": "dgb_2026",
+      "version": "2026",
+      "modality": "escolarizada_presencial_modular",
+      "source_id": "dgb_maps",
+      "verification": "pending",
+      "scope": "Estructura diferenciada en indice DGB; programas y distribucion pendientes de verificar."
+    },
+    {
+      "id": "dgb_2026_margarita_maza",
+      "level": "bachillerato",
+      "model": "dgb_2026",
+      "version": "2026",
+      "modality": "mixta",
+      "source_id": "dgb_maps",
+      "verification": "pending",
+      "scope": "Estructura diferenciada en indice DGB; programas y distribucion pendientes de verificar."
+    },
+    {
+      "id": "dgb_2026_emsad",
+      "level": "bachillerato",
+      "model": "dgb_2026",
+      "version": "2026",
+      "modality": "mixta_emsad",
+      "source_id": "dgb_maps",
+      "verification": "pending",
+      "scope": "Estructura diferenciada en indice DGB; programas y distribucion pendientes de verificar."
+    },
+    {
+      "id": "dgb_2026_prepa_linea",
+      "level": "bachillerato",
+      "model": "dgb_2026",
+      "version": "2026",
+      "modality": "pendiente",
+      "source_id": "dgb_maps",
+      "verification": "pending",
+      "scope": "Estructura diferenciada en indice DGB; programas y distribucion pendientes de verificar."
+    },
+    {
+      "id": "dgb_2025",
+      "level": "bachillerato",
+      "model": "dgb_2025",
+      "version": "2025",
+      "modality": "pendiente",
+      "source_id": "dgb_maps",
+      "verification": "pending",
+      "scope": "Mapa modelo 2025 autorizado mediante oficio de 2026; no es el modelo 2026."
+    }
+  ],
+  "pending_verifications": [
+    {
+      "id": "programs_2026",
+      "program_id": "cosac_2026",
+      "source_id": "cosac_materials",
+      "task": "Obtener programas 2026 de ambas asignaturas y verificar contenidos, semestres y modalidades."
+    },
+    {
+      "id": "dgb_structures",
+      "program_id": "dgb_2025",
+      "source_id": "dgb_maps",
+      "task": "Descargar estructuras 2025 y 2026 y contrastar cada modalidad; no extrapolar el mapa de un subsistema."
+    },
+    {
+      "id": "f6_remaining",
+      "program_id": "sep_f6_2024",
+      "source_id": "sep_f6_2024",
+      "task": "Completar transcripcion resumida de PDA restantes por grado, con revision docente."
+    }
+  ]
+}

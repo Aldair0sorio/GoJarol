@@ -54,10 +54,16 @@ class ExerciseSelector:
             "id", "question", "difficulty", "type", "options", "reading_text", "competency"
         ) if key in exercise})
 
-    def select(self, topic_id: str, difficulty: int, excluded_ids=()) -> dict | None:
+    def list_public_exercises(self, topic_id: str, competencies=None) -> list[dict]:
+        return [self.get_public_exercise(topic_id, exercise["id"])
+                for exercise in self._exercises.get(topic_id, {}).values()
+                if competencies is None or exercise.get("competency") in competencies]
+
+    def select(self, topic_id: str, difficulty: int, excluded_ids=(), competencies=None) -> dict | None:
         excluded = set(excluded_ids)
         for exercise in self._exercises.get(topic_id, {}).values():
-            if exercise["difficulty"] == difficulty and exercise["id"] not in excluded:
+            if (exercise["difficulty"] == difficulty and exercise["id"] not in excluded
+                    and (competencies is None or exercise.get("competency") in competencies)):
                 return self.get_public_exercise(topic_id, exercise["id"])
         return None
 

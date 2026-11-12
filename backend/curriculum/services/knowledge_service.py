@@ -63,6 +63,10 @@ class KnowledgeService:
             for topic in self._topics.values()
         ]
 
+    def has_explanation(self, topic_id: str) -> bool:
+        topic = self._topics.get(topic_id)
+        return bool(topic and topic["explanations"].get("basic"))
+
     def get_explanation(
         self,
         topic_id: str,
