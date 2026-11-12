@@ -54,9 +54,11 @@ export function ProfileView({ onBack }: { onBack: () => void }) {
           <label className="text-sm font-medium">{profile.nivel === 'bachillerato' ? 'Semestre' : 'Año escolar'}<select required value={profile.grado ?? ''} className={fieldClass} onChange={e => setProfile({ ...profile, grado: Number(e.target.value) })}><option value="" disabled>Selecciona una opción</option>{Array.from({ length: profile.nivel === 'bachillerato' ? 6 : 3 }, (_, i) => <option key={i} value={i+1}>{i+1}°</option>)}</select></label>
         </div>
       </fieldset>}
-      <div className="mt-6 flex flex-wrap items-center gap-4"><button disabled={busy} className="min-h-11 rounded-xl bg-[#126B73] px-5 font-semibold text-white hover:bg-[#005158] disabled:opacity-50">{busy ? 'Guardando…' : 'Guardar cambios'}</button><p role="status" className="text-sm text-[#126B73]">{notice}</p></div>
+      <div className="mt-6 flex flex-wrap items-center gap-4">
+        <button type="submit" disabled={busy} className="min-h-11 rounded-xl bg-[#126B73] px-5 font-semibold text-white hover:bg-[#005158] disabled:opacity-50">{busy ? 'Guardando…' : 'Guardar cambios'}</button>
+        <button type="button" disabled={busy} className="min-h-11 rounded-xl border border-[#D8E2DC] bg-white px-5 font-semibold text-[#126B73] hover:bg-[#F7F5EF] disabled:opacity-50" onClick={async () => { setBusy(true); try { await logout(); } catch { setError('No se pudo cerrar la sesión. Intenta de nuevo.'); } finally { setBusy(false); } }}>Cerrar sesión</button>
+        <p role="status" className="text-sm text-[#126B73]">{notice}</p>
+      </div>
     </form>}
-    <section className="mt-8 border-t border-[#E8E5DC] pt-5" aria-labelledby="security-heading"><h2 id="security-heading" className="font-display text-lg font-bold">Seguridad</h2><p className="mt-2 text-sm text-[#596B72]">El cambio y la recuperación de contraseña estarán disponibles en una próxima actualización.</p></section>
-    <section className="mt-8 border-t border-[#E8E5DC] pt-5" aria-labelledby="session-heading"><h2 id="session-heading" className="font-display text-lg font-bold">Sesión</h2><button disabled={busy} className="mt-2 min-h-11 font-semibold text-[#126B73]" onClick={async () => { setBusy(true); try { await logout(); } catch { setError('No se pudo cerrar la sesión. Intenta de nuevo.'); } finally { setBusy(false); } }}>Cerrar sesión</button></section>
   </section>;
 }
