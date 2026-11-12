@@ -202,8 +202,16 @@ export const apiService = {
    */
   async getSubjects(): Promise<Subject[]> {
     try {
-      const res = await fetch(`${API_BASE}/subjects/`);
-      if (res.ok) return await res.json();
+      const token = getAuthToken();
+      const headers: Record<string, string> = {};
+      if (token && !token.startsWith('jarol_demo_') && !token.startsWith('jarol_gtoken_')) {
+        headers['Authorization'] = `Token ${token}`;
+      }
+      const res = await fetch(`${API_BASE}/subjects/`, { headers });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) return data;
+      }
     } catch {
       // fallback
     }
@@ -215,8 +223,16 @@ export const apiService = {
    */
   async getClasses(): Promise<ClassGroup[]> {
     try {
-      const res = await fetch(`${API_BASE}/classes/`);
-      if (res.ok) return await res.json();
+      const token = getAuthToken();
+      const headers: Record<string, string> = {};
+      if (token && !token.startsWith('jarol_demo_') && !token.startsWith('jarol_gtoken_')) {
+        headers['Authorization'] = `Token ${token}`;
+      }
+      const res = await fetch(`${API_BASE}/classes/`, { headers });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) return data;
+      }
     } catch {
       // fallback
     }
@@ -228,6 +244,33 @@ export const apiService = {
    */
   async joinClassWithCode(code: string): Promise<{ success: boolean; message: string }> {
     const cleanCode = code.trim().toUpperCase();
+    try {
+      const token = getAuthToken();
+      if (token && !token.startsWith('jarol_demo_') && !token.startsWith('jarol_gtoken_')) {
+        const res = await fetch(`${API_BASE}/classes/join/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`,
+          },
+          body: JSON.stringify({ codigo: cleanCode }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          return {
+            success: true,
+            message: `¡Te uniste con éxito a la clase "${data.nombre || cleanCode}"!`,
+          };
+        } else {
+          const errData = await res.json().catch(() => ({}));
+          const errMsg = errData.error?.message || errData.detail || 'Código no válido o inactivo.';
+          return { success: false, message: errMsg };
+        }
+      }
+    } catch {
+      // fallback
+    }
+
     if (cleanCode === 'JAROL-3B' || cleanCode === 'JAROL-2A') {
       return { success: true, message: '¡Te uniste con éxito a la clase del Prof. Laura!' };
     }

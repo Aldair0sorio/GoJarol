@@ -361,3 +361,24 @@ Para cada sesión o iteración se documenta:
 - **Archivos creados / modificados**:
   - `docs/bitacora/hugo_frontend.md`
   - Integración de 173 archivos desde `main` (clases, currículum, fixtures, ejercicios, modelos).
+
+### Entrada 17 · 11 de Noviembre de 2026 (21:51 - 21:55)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Interconexión frontend-backend de Clases y Asignaturas con tokens DRF y ajuste de permisos de catálogo.
+
+- **Para qué se usaron**:
+  - Configuración de permiso público `AllowAny` en [`backend/curriculum/views.py`](backend/curriculum/views.py) (`SubjectListView`) permitiendo que cualquier estudiante explore el catálogo curricular sin bloqueo previo de autenticación.
+  - Actualización de [`frontend/src/services/api.ts`](frontend/src/services/api.ts) en los métodos `getSubjects()`, `getClasses()` y `joinClassWithCode()`, inyectando cabecera `Authorization: Token <token>` para usuarios autenticados y conectando con el endpoint real `POST /api/v1/classes/join/`.
+  - Verificación del despliegue exitoso en el VPS Debian:
+    - Aplicación de migración de base de datos: `Applying classes.0001_initial... OK`.
+    - Carga de fixture curricular: `Installed 12 object(s) from 1 fixture(s)`.
+    - Contenedores `gojarol_frontend`, `gojarol_backend` y `gojarol_db` operativos.
+
+- **Decisiones clave tomadas**:
+  - Catálogo de asignaturas accesible como recurso abierto, mientras que la unión e inscripción a clases requiere sesión activa de estudiante.
+
+- **Archivos creados / modificados**:
+  - `backend/curriculum/views.py`
+  - `frontend/src/services/api.ts`
+  - `docs/bitacora/hugo_frontend.md`
