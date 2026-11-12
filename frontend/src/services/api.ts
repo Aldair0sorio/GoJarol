@@ -31,6 +31,17 @@ function getAuthHeaders(includeJson = true): Record<string, string> {
   ) {
     headers['Authorization'] = `Token ${token}`;
   }
+  try {
+    const rawUser = localStorage.getItem('jarol_current_user');
+    if (rawUser) {
+      const parsed = JSON.parse(rawUser);
+      if (parsed?.id) headers['X-Jarol-User-Id'] = String(parsed.id);
+      if (parsed?.email) headers['X-Jarol-User-Email'] = String(parsed.email);
+      if (parsed?.name) headers['X-Jarol-User-Name'] = String(parsed.name);
+    }
+  } catch {
+    // ignore
+  }
   return headers;
 }
 
@@ -369,7 +380,10 @@ export const apiService = {
           explanation: data.explanation || data.feedback || '',
           hint: data.hint || undefined,
           xpEarned: Number(data.xpEarned ?? data.xp_earned ?? 0),
-          totalXp: data.totalXp !== undefined ? Number(data.totalXp) : undefined,
+          totalXp:
+            data.totalXp !== undefined && data.totalXp !== null
+              ? Number(data.totalXp)
+              : undefined,
           nextExercise: data.nextExercise || undefined,
         };
       }
@@ -460,7 +474,10 @@ export const apiService = {
           replyText: data.reply || data.message,
           exercise: data.exercise || undefined,
           xpEarned: Number(data.xpEarned || 0),
-          totalXp: data.totalXp !== undefined ? Number(data.totalXp) : undefined,
+          totalXp:
+            data.totalXp !== undefined && data.totalXp !== null
+              ? Number(data.totalXp)
+              : undefined,
         };
       }
     } catch {
