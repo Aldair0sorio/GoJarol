@@ -6,6 +6,22 @@ interface JarolBubbleProps {
   badge?: string;
 }
 
+function renderFormattedText(raw: string): React.ReactNode {
+  // Limpiar delimitadores LaTeX simples si existen y renderizar **negritas**
+  const cleaned = raw.replace(/\$([^$]+)\$/g, '$1');
+  const parts = cleaned.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, idx) => {
+    if (part.startsWith('**') && part.endsWith('**') && part.length > 4) {
+      return (
+        <strong key={idx} className="font-display font-bold text-[#0A1D2C]">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    return <React.Fragment key={idx}>{part}</React.Fragment>;
+  });
+}
+
 export const JarolBubble: React.FC<JarolBubbleProps> = ({ text, timestamp, badge }) => {
   return (
     <div className="flex items-start gap-2.5 w-full max-w-[92%] my-1">
@@ -28,7 +44,7 @@ export const JarolBubble: React.FC<JarolBubbleProps> = ({ text, timestamp, badge
             </span>
           )}
           <p className="whitespace-pre-line text-[#0A1D2C]">
-            {text}
+            {renderFormattedText(text)}
           </p>
         </div>
 
