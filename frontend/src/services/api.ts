@@ -2,7 +2,6 @@ import {
   MOCK_FEEDBACK_DB,
   MOCK_EXERCISE_FRACTIONS_1,
   MOCK_EXERCISE_FRACTIONS_2,
-  MOCK_SUBJECTS,
   MOCK_STUDENT,
 } from './mockData';
 import type { AnswerFeedback, ChatMessage, ExerciseCardData } from '../types/chat';
@@ -52,18 +51,6 @@ function getAuthHeaders(includeJson = true): Record<string, string> {
   }
   return headers;
 }
-
-const SUBJECT_META: Record<string, { iconName: string; color: string }> = {
-  aritmetica: { iconName: 'Calculator', color: 'teal' },
-  algebra: { iconName: 'Variable', color: 'indigo' },
-  espanol: { iconName: 'BookOpen', color: 'amber' },
-  matematicas: { iconName: 'Compass', color: 'blue' },
-  historia: { iconName: 'Landmark', color: 'rose' },
-  geografia: { iconName: 'Globe', color: 'emerald' },
-  fisica: { iconName: 'Atom', color: 'purple' },
-  quimica: { iconName: 'FlaskConical', color: 'cyan' },
-  biologia: { iconName: 'Dna', color: 'green' },
-};
 
 const TOPIC_DESCRIPTIONS: Record<string, { description: string; prompt: string }> = {
   mat_fracciones: {
@@ -649,39 +636,78 @@ export const apiService = {
       if (subjRes.ok) {
         const data = await subjRes.json();
         if (Array.isArray(data) && data.length > 0) {
-          return data.map((s: Record<string, unknown>) => {
-            const slug = String(s.slug || s.id || 'materia');
-            const meta = SUBJECT_META[slug] || { iconName: 'BookOpen', color: 'teal' };
+          const mathTopics: Subject['topics'] = [];
+          const spanTopics: Subject['topics'] = [];
+          const seenIds = new Set<string>();
+
+          for (const s of data as Record<string, unknown>[]) {
+            const slug = String(s.slug || s.id || '');
             const rawTopics = Array.isArray(s.topics) ? s.topics : [];
-            return {
-              id: slug,
-              name: String(s.nombre || s.name || slug),
-              iconName: meta.iconName,
-              color: meta.color,
-              isAvailable: Boolean(s.disponible ?? s.isAvailable),
-              topics: rawTopics.map((t: Record<string, unknown>) => {
-                const tSlug = String(t.slug || t.id || '');
-                const tInfo = TOPIC_DESCRIPTIONS[tSlug] || {
-                  description: 'Contenido curricular en preparación para próximas versiones.',
-                  prompt: `Explícame el tema de ${String(t.nombre || t.name || tSlug)}`,
-                };
-                return {
-                  id: tSlug,
-                  name: String(t.nombre || t.name || tSlug),
-                  description: tInfo.description,
-                  isAvailable: Boolean(t.disponible ?? t.isAvailable),
-                  progressPercent: progressMap[tSlug] ?? 0,
-                  prompt: tInfo.prompt,
-                };
-              }),
-            };
-          });
+            for (const t of rawTopics as Record<string, unknown>[]) {
+              const tSlug = String(t.slug || t.id || '');
+              const tAvailable = Boolean(t.disponible ?? t.isAvailable);
+              if (!tSlug || !tAvailable || seenIds.has(tSlug)) continue;
+              seenIds.add(tSlug);
+
+              const tInfo = TOPIC_DESCRIPTIONS[tSlug] || {
+                description: 'Práctica interactiva guiada con pistas paso a paso.',
+                prompt: `Explícame el tema de ${String(t.nombre || t.name || tSlug)}`,
+              };
+              const topicItem = {
+                id: tSlug,
+                name: String(t.nombre || t.name || tSlug),
+                description: tInfo.description,
+                isAvailable: true,
+                progressPercent: progressMap[tSlug] ?? 0,
+                prompt: tInfo.prompt,
+              };
+
+              if (
+                tSlug.startsWith('esp_') ||
+                slug === 'espanol'
+              ) {
+                spanTopics.push(topicItem);
+              } else if (
+                tSlug.startsWith('mat_') ||
+                slug === 'aritmetica' ||
+                slug === 'algebra' ||
+                slug === 'matematicas'
+              ) {
+                mathTopics.push(topicItem);
+              }
+            }
+          }
+
+          const consolidated: Subject[] = [];
+          if (mathTopics.length > 0) {
+            consolidated.push({
+              id: 'matematicas',
+              name: 'Matemáticas',
+              iconName: 'Calculator',
+              color: 'teal',
+              isAvailable: true,
+              topics: mathTopics,
+            });
+          }
+          if (spanTopics.length > 0) {
+            consolidated.push({
+              id: 'espanol',
+              name: 'Español',
+              iconName: 'BookOpen',
+              color: 'amber',
+              isAvailable: true,
+              topics: spanTopics,
+            });
+          }
+          if (consolidated.length > 0) {
+            return consolidated;
+          }
         }
       }
     } catch {
       // fallback
     }
-    return MOCK_SUBJECTS;
+    return [];
   },
 
   /**

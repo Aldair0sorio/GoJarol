@@ -12,7 +12,6 @@ import {
   Dna,
   Globe,
   ArrowRight,
-  Lock,
 } from 'lucide-react';
 
 interface ChallengesViewProps {
@@ -85,71 +84,60 @@ export const ChallengesView: React.FC<ChallengesViewProps> = ({ onStartTopic }) 
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-          {subjects.map((sub) => {
-            const bgHex = COLOR_MAP[sub.color] || sub.color || '#126B73';
-            return (
-              <div
-                key={sub.id}
-                className={`p-4 rounded-2xl border transition-all ${
-                  sub.isAvailable
-                    ? 'bg-white border-[#E8E5DC] shadow-[0_3px_0_#D2E5F9]'
-                    : 'bg-white/60 border-dashed border-[#BEC8CA] opacity-75'
-                }`}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center shadow-xs"
-                      style={{ backgroundColor: bgHex }}
-                    >
-                      {getIcon(sub.iconName)}
-                    </div>
+          {subjects
+            .filter((sub) => sub.isAvailable)
+            .map((sub) => {
+              const bgHex = COLOR_MAP[sub.color] || sub.color || '#126B73';
+              const activeTopics = sub.topics.filter((t) => t.isAvailable);
+              return (
+                <div
+                  key={sub.id}
+                  className="p-4 rounded-2xl border bg-white border-[#E8E5DC] shadow-[0_3px_0_#D2E5F9] transition-all"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-10 h-10 rounded-xl flex items-center justify-center shadow-xs"
+                        style={{ backgroundColor: bgHex }}
+                      >
+                        {getIcon(sub.iconName)}
+                      </div>
 
-                    <div>
-                      <h3 className="font-display font-bold text-sm text-[#0A1D2C]">
-                        {sub.name}
-                      </h3>
-                      <span className="text-[11px] font-medium text-[#596B72]">
-                        {sub.isAvailable
-                          ? `${sub.topics.filter((t) => t.isAvailable).length} temas activos con IA`
-                          : 'Plan de estudios SEP / DGB'}
-                      </span>
+                      <div>
+                        <h3 className="font-display font-bold text-sm text-[#0A1D2C]">
+                          {sub.name}
+                        </h3>
+                        <span className="text-[11px] font-medium text-[#596B72]">
+                          {activeTopics.length} temas activos con IA
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  {!sub.isAvailable && (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-display font-bold px-2 py-0.5 rounded-full bg-slate-100 text-[#596B72] border border-slate-200">
-                      <Lock className="w-2.5 h-2.5" />
-                      Próximamente
-                    </span>
-                  )}
-                </div>
-
-                {/* Temas si están disponibles */}
-                {sub.isAvailable && sub.topics.length > 0 && (
-                  <div className="mt-3 pt-3 border-t border-[#E8E5DC] flex flex-col gap-2">
-                    {sub.topics.map((top) => (
-                      <div
-                        key={top.id}
-                        className="flex items-center justify-between p-2.5 rounded-xl bg-[#F7F5EF] hover:bg-[#DCEFEB]/60 transition-colors gap-2"
-                      >
-                        <div className="min-w-0 pr-2 flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-display font-bold text-xs text-[#0A1D2C] truncate">
-                              {top.name}
-                            </span>
-                            {top.progressPercent > 0 && (
-                              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[#DCEFEB] text-[#126B73]">
-                                {top.progressPercent}%
+                  {/* Temas activos */}
+                  {activeTopics.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-[#E8E5DC] flex flex-col gap-2">
+                      {activeTopics.map((top) => (
+                        <div
+                          key={top.id}
+                          className="flex items-center justify-between p-2.5 rounded-xl bg-[#F7F5EF] hover:bg-[#DCEFEB]/60 transition-colors gap-2"
+                        >
+                          <div className="min-w-0 pr-2 flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-display font-bold text-xs text-[#0A1D2C] truncate">
+                                {top.name}
                               </span>
-                            )}
+                              {top.progressPercent > 0 && (
+                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[#DCEFEB] text-[#126B73]">
+                                  {top.progressPercent}%
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-[11px] text-[#596B72] line-clamp-1">
+                              {top.description}
+                            </p>
                           </div>
-                          <p className="text-[11px] text-[#596B72] line-clamp-1">
-                            {top.description}
-                          </p>
-                        </div>
 
-                        {top.isAvailable ? (
                           <button
                             onClick={() =>
                               onStartTopic(
@@ -161,18 +149,13 @@ export const ChallengesView: React.FC<ChallengesViewProps> = ({ onStartTopic }) 
                             <span>Practicar</span>
                             <ArrowRight className="w-3 h-3" />
                           </button>
-                        ) : (
-                          <span className="text-[10px] font-semibold text-[#596B72] px-2 py-1">
-                            Próximamente
-                          </span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
         </div>
       )}
     </div>
