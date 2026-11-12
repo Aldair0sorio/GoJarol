@@ -5,9 +5,10 @@ from gojarol_ml.nlp.topic_retriever import TopicRetriever, normalize_text
 
 
 class JarolAnalyzer:
-    def __init__(self, model_path: str | Path, catalog_path: str | Path):
+    def __init__(self, model_path: str | Path, catalog_path: str | Path, curriculum_retriever=None):
         self.intent_model = joblib.load(model_path)
         self.topic_retriever = TopicRetriever(catalog_path)
+        self.curriculum_retriever = curriculum_retriever
 
     def analyze_message(self, message: str, context: dict | None = None) -> dict:
         context = context or {}
@@ -81,7 +82,7 @@ class JarolAnalyzer:
                 or (topic is None and intent not in global_intents)
         )
 
-        return {
+        result = {
             "intent": str(intent),
             "intent_confidence": round(confidence, 4),
             "subject": subject,
@@ -90,3 +91,15 @@ class JarolAnalyzer:
             "match_method": match_method,
             "needs_clarification": needs_clarification,
         }
+        if self.curriculum_retriever is not None and intent not in global_intents:
+            curriculum = self.curriculum_retriever.retrieve(
+                message, context.get("academic_context"), topic,
+            )
+            result["curriculum"] = curriculum
+            if curriculum["status"] in {"resolved", "pending_verification"}:
+                result["topic"] = curriculum["topic_id"]
+                result["subject"] = "matematicas" if curriculum["topic_id"].startswith("mat_") else "espanol"
+                result["needs_clarification"] = False
+            elif curriculum["status"] == "ambiguous":
+                result["needs_clarification"] = True
+        return result

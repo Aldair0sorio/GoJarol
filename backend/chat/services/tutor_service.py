@@ -3,6 +3,9 @@ import re
 from copy import deepcopy
 from pathlib import Path
 
+from curriculum.services.curriculum_catalog import CurriculumCatalog
+from gojarol_ml.nlp.curriculum_retriever import CurriculumRetriever
+
 from exercises.services.exercise_selector import ExerciseSelector
 from exercises.services.hint_service import HintService
 
@@ -38,7 +41,7 @@ ANSWER_PATTERN = re.compile(
 
 
 class TutorService:
-    def __init__(self, analyzer, knowledge, hints, adaptive=None, selector=None):
+    def __init__(self, analyzer, knowledge, hints, adaptive=None, selector=None, curriculum=None):
         self.analyzer = analyzer
         self.knowledge = knowledge
         self.selector = selector or hints.selector or ExerciseSelector(
@@ -49,6 +52,8 @@ class TutorService:
             else HintService(knowledge, self.selector)
         )
         self.adaptive = adaptive or AdaptiveLearningService()
+        self.curriculum = curriculum or CurriculumCatalog()
+        self.curriculum_retriever = CurriculumRetriever(self.curriculum.entries)
 
         self.available_topics = {
             topic["id"] for topic in knowledge.list_topics()
@@ -66,11 +71,19 @@ class TutorService:
             "last_response_type": None,
             "awaiting_reflection": False,
             "active_exercise_type": None,
+            "academic_context": {},
+            "current_competency_id": None,
+            "curriculum": None,
         }
 
     @staticmethod
     def _response(message, state, response_type, **extra):
         state["last_response_type"] = response_type
+        curriculum = state.get("curriculum")
+        if curriculum:
+            extra["curriculum"] = deepcopy(curriculum)
+            if response_type in {"explanation", "exercise"} and curriculum.get("relation") in {"partial", "prerequisite"}:
+                message = "Práctica de apoyo parcial; no cubre todo el aprendizaje curricular.\n\n" + message
 
         return {
             "type": response_type,
@@ -103,13 +116,40 @@ class TutorService:
             strategy=result["strategy"],
         )
 
-    def process_message(self, message, state=None):
+    def process_message(self, message, state=None, *, academic_context=None):
         if not isinstance(message, str) or not message.strip():
             raise ValueError("El mensaje no puede estar vacio.")
 
         state = deepcopy(
             self.initial_state() if state is None else state
         )
+
+        if academic_context is not None:
+            if not isinstance(academic_context, dict):
+                raise ValueError("El contexto academico debe ser un objeto.")
+            if set(academic_context) - {"level", "grade", "semester", "model", "version", "program_id", "modality", "subject", "area", "competency_id"}:
+                raise ValueError("Campo de contexto academico desconocido.")
+            if any(value is not None and (not isinstance(value, str) or not value.strip())
+                   for key, value in academic_context.items() if key not in {"grade", "semester"}):
+                raise ValueError("Los campos del contexto academico deben ser texto.")
+            if academic_context.get("level") not in {None, "secundaria", "bachillerato"}:
+                raise ValueError("Nivel educativo invalido.")
+            if (academic_context.get("grade") is not None and academic_context.get("semester") is not None
+                    or academic_context.get("level") == "secundaria" and academic_context.get("semester") is not None
+                    or academic_context.get("level") == "bachillerato" and academic_context.get("grade") is not None):
+                raise ValueError("No mezcles grados y semestres.")
+            for field, allowed in (("grade", {1, 2, 3}), ("semester", set(range(1, 7)))):
+                value = academic_context.get(field)
+                if value is not None and (type(value) is not int or value not in allowed):
+                    raise ValueError("Grado o semestre invalido.")
+            if academic_context != state.get("academic_context", {}):
+                state["active_exercise_id"] = None
+                state["active_exercise_type"] = None
+                state["hints_used"] = 0
+                state["awaiting_reflection"] = False
+                state["current_competency_id"] = None
+                state["curriculum"] = None
+            state["academic_context"] = deepcopy(academic_context)
 
         # Si hay un ejercicio activo, primero detectamos respuestas.
         active_id = state.get("active_exercise_id")
@@ -192,11 +232,57 @@ class TutorService:
 
         analysis = self.analyzer.analyze_message(
             message,
-            {"current_topic": state["current_topic"]},
+            {"current_topic": state["current_topic"], "academic_context": state.get("academic_context", {})},
         )
 
         intent = analysis.get("intent")
         detected_topic = analysis.get("topic")
+
+        if intent not in {"saludar", "despedirse", "consultar_progreso"}:
+            curricular = analysis.get("curriculum") or self.curriculum_retriever.retrieve(
+                message, state.get("academic_context", {}), detected_topic,
+            )
+            if curricular["status"] == "ambiguous":
+                return self._response(
+                    "Hay varias competencias posibles. Indica nivel, grado o semestre y modelo; "
+                    "también puedes elegir un identificador curricular de las opciones.",
+                    state, "curriculum_clarification", candidates=curricular["candidates"],
+                )
+            if curricular["status"] in {"resolved", "pending_verification", "context_unavailable"}:
+                detected_topic = curricular["topic_id"]
+                analysis["needs_clarification"] = False
+            state["current_competency_id"] = curricular["competency_id"]
+            state["curriculum"] = (
+                self.curriculum.describe(curricular["competency_id"], detected_topic, self.knowledge, self.selector)
+                if curricular["competency_id"] else {"mode": curricular["status"], "competency_id": None}
+            )
+            if detected_topic and detected_topic != state["current_topic"]:
+                state["current_topic"] = detected_topic
+                state["active_exercise_id"] = None
+                state["active_exercise_type"] = None
+                state["hints_used"] = 0
+                state["awaiting_reflection"] = False
+            if curricular["status"] in {"pending_verification", "context_unavailable"}:
+                state["active_exercise_id"] = None
+                state["active_exercise_type"] = None
+                state["hints_used"] = 0
+                state["awaiting_reflection"] = False
+                return self._response(
+                    "No tengo una vinculación curricular verificada para ese contexto. "
+                    "No puedo presentar esta actividad como parte de tu programa. "
+                    "Puedes precisar el modelo o solicitar práctica general sin asignación curricular.",
+                    state, "curriculum_unavailable",
+                )
+            if state["current_competency_id"]:
+                coverage = state["curriculum"]
+                requires_exercise = intent in {"solicitar_reto", "repetir_ejercicio"}
+                if not coverage["content_available"] or (requires_exercise and not coverage["exercises_available"]):
+                    return self._response(
+                        "Esa competencia está catalogada, pero aún no tengo "
+                        "contenido o ejercicios implementados para enseñarla. "
+                        "El registro curricular no significa cobertura educativa completa.",
+                        state, "curriculum_unavailable",
+                    )
 
         if analysis.get("needs_clarification"):
             return self._response(
@@ -294,6 +380,7 @@ class TutorService:
                     topic_id=topic_id,
                     difficulty=progress["difficulty"],
                     excluded_ids=state["completed_exercises"],
+                    competencies=(state.get("curriculum") or {}).get("exercise_competencies") or None,
                 )
             except KeyError:
                 return self._response(
