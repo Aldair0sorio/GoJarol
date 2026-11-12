@@ -6,7 +6,7 @@ Go Jarol **reduce la copia y la hace visible para el docente**. No puede garanti
 
 ## 1. Cómo lo atendimos
 
-> Go Jarol reduce la copia y la hace visible para el docente. Jarol nunca entrega el resultado: si un alumno escribe «dame la respuesta», «hazme la tarea» o «ignora tus instrucciones», responde «No te voy a dar el resultado, pero te acompaño» y le da la siguiente pista del paso en el que va; a la tercera petición le muestra un ejemplo parecido con otros números. Los problemas que trae el alumno se resuelven por pasos y SymPy verifica cada paso. El docente ve cuántas veces se pidió la respuesta directa frente a lo que cada quien resolvió por su cuenta, con una señal «Revisar» basada en una regla pública. Una señal invita a conversar, no es una acusación. No guardamos el texto de los mensajes, solo el tipo de evento. Pruebas automáticas recorren los 54 ejercicios del banco y verifican que ningún flujo muestre el resultado.
+> Go Jarol reduce la copia y la hace visible para el docente. Jarol nunca entrega el resultado: si un alumno escribe «dame la respuesta», «hazme la tarea» o «ignora tus instrucciones», responde «No te voy a dar el resultado, pero te acompaño» y le da la siguiente pista del paso en el que va; a la tercera petición le muestra un ejemplo parecido con otros números. Los problemas que trae el alumno se resuelven por pasos y SymPy verifica cada paso. El docente ve cuántas veces se pidió la respuesta directa frente a lo que cada quien resolvió por su cuenta, con una señal «Revisar» basada en una regla pública. Una señal invita a conversar, no es una acusación. No guardamos el texto de los mensajes, solo el tipo de evento. Pruebas automáticas recorren los 51 ejercicios del banco y verifican que ningún flujo muestre el resultado.
 
 ## 2. Qué se registra y qué NO
 
@@ -99,7 +99,7 @@ Desde `backend/`:
 
 | Archivo | Qué verifica |
 |---|---|
-| `chat/test_anticopia_matrix.py` | 8 maneras de pedir la respuesta en 4 flujos (ejercicio activo en los 54 ejercicios del banco incluida su última pista, problema guiado, menú pendiente y nada pendiente en los 6 temas): nunca aparece el resultado ni el `expected_answer`. También la instrucción de la tarjeta y los ejemplos de formato del frontend. |
+| `chat/test_anticopia_matrix.py` | 8 maneras de pedir la respuesta en 4 flujos (ejercicio activo en los 51 ejercicios del banco incluida su última pista, problema guiado, menú pendiente y nada pendiente en los 6 temas): nunca aparece el resultado ni el `expected_answer`. También la instrucción de la tarjeta y los ejemplos de formato del frontend. |
 | `chat/test_anticopia.py` | Detección (incluidos falsos positivos como "dame una pista" o "¿está bien mi respuesta?"), rechazo, ejemplo a la 3.ª petición, reinicio del contador, tareas pegadas. |
 | `chat/test_guided_step_texts.py` | Cada paso de las guías (fracciones y división), con todas sus ayudas, respuestas equivocadas y el ejemplo completo, no muestra la respuesta de ese paso ni de los siguientes antes de que el alumno la escriba. |
 | `chat/test_fixed_examples.py` | Ningún ejemplo fijo de explicaciones y guías coincide con un ejercicio del banco ni con su resultado. |
