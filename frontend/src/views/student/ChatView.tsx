@@ -125,7 +125,9 @@ export const ChatView: React.FC<ChatViewProps> = ({ initialPrompt, onPromptConsu
           </div>
 
           <h1 className="font-display font-extrabold text-2xl text-[#0A1D2C] tracking-tight">
-            {isAuthenticated ? `¡Quiúbole, ${user.name.split(' ')[0]}! Soy Jarol` : '¡Quiúbole! Soy Jarol'}
+            {isAuthenticated
+              ? `¡Quiúbole, ${(user.name || 'Amigo').split(' ')[0]}! Soy Jarol`
+              : '¡Quiúbole! Soy Jarol'}
           </h1>
           <h2 className="font-display font-semibold text-sm text-[#126B73] mt-0.5">
             ¿Qué vamos a aprender hoy?

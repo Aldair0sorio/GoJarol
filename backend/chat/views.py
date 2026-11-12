@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from chat.services.operation_guides import match_specific_operation_guide
 from chat.services.runtime import get_runtime
 from progress.models import StudentProgress
-from progress.views import resolve_progress_for_request
+from progress.views import record_exercise_attempt, resolve_progress_for_request
 
 
 class ChatMessageView(APIView):
@@ -16,8 +16,8 @@ class ChatMessageView(APIView):
 
         # Permitir reiniciar el contexto conversacional ("Nueva duda") conservando el progreso acumulado
         if request.data.get("reset"):
-            if request.user and request.user.is_authenticated:
-                progress_obj, _ = StudentProgress.objects.get_or_create(user=request.user)
+            progress_obj = resolve_progress_for_request(request)
+            if progress_obj is not None:
                 old_state = progress_obj.tutor_state if isinstance(progress_obj.tutor_state, dict) else {}
                 fresh_state = runtime.tutor.initial_state()
                 fresh_state["completed_exercises"] = old_state.get("completed_exercises", [])
@@ -46,6 +46,7 @@ class ChatMessageView(APIView):
 
         previous_topic = state.get("current_topic")
         previous_type = state.get("last_response_type")
+        previous_exercise_id = state.get("active_exercise_id")
         hints_before = state.get("hints_used", 0)
 
         # 1. Revisar si el alumno pregunta por una operación específica (ej. "y cuanto seria 5/2", dividir, multiplicar, restar, sumar)
@@ -120,6 +121,24 @@ class ChatMessageView(APIView):
                 progress_obj.xp += xp_earned
             progress_obj.tutor_state = new_state
             progress_obj.save()
+
+            if (
+                response_type == "evaluation"
+                and evaluation
+                and evaluation.get("status") in {"correct", "incorrect"}
+                and previous_exercise_id
+            ):
+                eval_topic = previous_topic or topic_id or runtime.find_topic_for_exercise(previous_exercise_id) or ""
+                raw_eval_ex = runtime.selector._exercises.get(eval_topic, {}).get(previous_exercise_id, {})
+                record_exercise_attempt(
+                    user=progress_obj.user,
+                    topic_id=eval_topic,
+                    raw_ex=raw_eval_ex,
+                    submitted_answer=message,
+                    is_correct=bool(evaluation.get("correct")),
+                    hints_used=hints_before,
+                    feedback=reply_text,
+                )
 
         formatted_exercise = runtime.format_exercise_for_frontend(topic_id, raw_exercise)
 

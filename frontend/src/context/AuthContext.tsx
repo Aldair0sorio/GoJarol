@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import type { User, UserRole } from '../types/auth';
+import { apiService, getAuthToken } from '../services/api';
 
 export const GUEST_USER: User = {
   id: 'guest',
@@ -19,9 +20,9 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isGoogleUser: boolean;
   login: (user: User, token?: string) => void;
-  loginWithGoogle: (googleUser: Partial<User>) => void;
+  loginWithGoogle: (googleUser: Partial<User>, token?: string) => void;
   logout: () => void;
-  switchRole: (newRole: UserRole) => void;
+  switchRole: (newRole: UserRole) => Promise<void>;
   addXP: (amount: number) => void;
   updateUser: (fields: Partial<User>) => void;
 }
@@ -32,15 +33,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     const savedUser = localStorage.getItem('jarol_current_user');
     const savedToken = localStorage.getItem('jarol_token');
-    return Boolean(savedUser && savedToken);
+    return Boolean(savedUser && (savedToken || localStorage.getItem('jarol_is_google') === 'true'));
   });
 
   const [currentUser, setCurrentUser] = useState<User>(() => {
     const savedUser = localStorage.getItem('jarol_current_user');
-    const savedToken = localStorage.getItem('jarol_token');
-    if (savedUser && savedToken) {
+    if (savedUser) {
       try {
-        return JSON.parse(savedUser);
+        const parsed = JSON.parse(savedUser);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          const rawRole = String(parsed.role || parsed.rol || '').toLowerCase();
+          return {
+            ...GUEST_USER,
+            ...parsed,
+            name: String(parsed.name || parsed.alias || parsed.username || 'Usuario'),
+            role: rawRole === 'teacher' || rawRole === 'docente' ? 'teacher' : 'student',
+            avatarUrl: parsed.avatarUrl || '/mascot/jarol-crab.png',
+          };
+        }
       } catch {
         // fallback a guest
       }
@@ -60,15 +70,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
   });
 
-  const switchRole = (newRole: UserRole) => {
-    setRole(newRole);
+  // Si hay una sesión demo o Google vieja sin token DRF real, sincronizar automáticamente con backend
+  React.useEffect(() => {
+    const token = getAuthToken();
+    if (!isAuthenticated) return;
+    if (token && token.startsWith('jarol_demo_')) {
+      const profile: 'student' | 'teacher' =
+        currentUser.role === 'teacher' ? 'teacher' : 'student';
+      apiService.loginDemo(profile).then((res) => {
+        if (res.success && res.user) {
+          setCurrentUser(res.user);
+          setRole(res.user.role);
+          localStorage.setItem('jarol_current_user', JSON.stringify(res.user));
+        }
+      });
+    } else if (
+      (!token || token.startsWith('jarol_gtoken_') || token.startsWith('jarol_token_')) &&
+      currentUser.email
+    ) {
+      apiService
+        .loginWithGoogle({
+          email: currentUser.email,
+          name: currentUser.name,
+          role: currentUser.role === 'teacher' ? 'teacher' : 'student',
+          grade: currentUser.grade,
+          school: currentUser.school,
+        })
+        .then((res) => {
+          if (res.success && res.user && res.token && !res.token.startsWith('jarol_')) {
+            setCurrentUser(res.user);
+            setRole(res.user.role);
+            localStorage.setItem('jarol_current_user', JSON.stringify(res.user));
+          }
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const switchRole = async (newRole: UserRole) => {
+    const normalized: 'student' | 'teacher' = newRole === 'teacher' ? 'teacher' : 'student';
+    setRole(normalized);
     setCurrentUser((prev) => {
-      const updated = { ...prev, role: newRole };
+      const updated = { ...prev, role: normalized };
       if (isAuthenticated) {
         localStorage.setItem('jarol_current_user', JSON.stringify(updated));
       }
       return updated;
     });
+    if (isAuthenticated) {
+      await apiService.switchBackendRole(normalized);
+    }
   };
 
   const addXP = (amount: number) => {
@@ -107,7 +158,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const loginWithGoogle = (googleUser: Partial<User>) => {
+  const loginWithGoogle = (googleUser: Partial<User>, token?: string) => {
     const updatedUser: User = {
       id: googleUser.id || `guser_${Date.now()}`,
       name: googleUser.name || 'Estudiante Google',
@@ -116,8 +167,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       grade: googleUser.grade || '3° de Secundaria',
       school: googleUser.school || 'Secundaria Técnica #26 · Veracruz',
       avatarUrl: googleUser.avatarUrl || '/mascot/jarol-crab.png',
-      xp: googleUser.xp ?? 320,
-      streakDays: googleUser.streakDays ?? 4,
+      xp: googleUser.xp ?? 0,
+      streakDays: googleUser.streakDays ?? 1,
     };
 
     setCurrentUser(updatedUser);
@@ -126,6 +177,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsGoogleUser(true);
     localStorage.setItem('jarol_is_google', 'true');
     localStorage.setItem('jarol_current_user', JSON.stringify(updatedUser));
+    if (token) {
+      localStorage.setItem('jarol_token', token);
+    }
   };
 
   const logout = () => {

@@ -14,7 +14,9 @@ import { ProfileModal } from './components/profile/ProfileModal';
 
 const MainShell: React.FC = () => {
   const { role, isAuthenticated } = useAuth();
-  const [currentTab, setCurrentTab] = useState('chat');
+  const [currentTab, setCurrentTab] = useState<string>(() =>
+    role === 'teacher' ? 'panel' : 'chat'
+  );
   const [showAuthModal, setShowAuthModal] = useState(!isAuthenticated);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
@@ -78,7 +80,14 @@ const MainShell: React.FC = () => {
               {currentTab === 'progreso' && <ProgressView onPracticeTopic={handleStartTopic} />}
             </>
           ) : (
-            <TeacherDashboardView />
+            <TeacherDashboardView
+              activeTab={
+                currentTab === 'panel' || currentTab === 'clases' || currentTab === 'alumnos'
+                  ? currentTab
+                  : 'panel'
+              }
+              onTabChange={setCurrentTab}
+            />
           )}
         </main>
 
