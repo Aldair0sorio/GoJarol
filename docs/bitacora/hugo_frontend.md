@@ -342,3 +342,22 @@ Para cada sesión o iteración se documenta:
   - `backend/accounts/views.py`
   - `frontend/src/services/api.ts`
   - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 16 · 11 de Noviembre de 2026 (21:40 - 21:46)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Fusión y sincronización integral de rama `origin/main` en `hugo-dev`, validación de compatibilidad con backend y compilación de frontend.
+
+- **Para qué se usaron**:
+  - Integración de los PRs #14, #15, #16, #17, #18, #19 y #20 procedentes de `main` desarrollados por el equipo backend/ML (Aldair e Iván).
+  - Incorporación de módulos de Clases (`backend/classes/`) para creación y unión con código por parte de docentes y estudiantes.
+  - Incorporación del catálogo curricular y fixture de asignaturas (`backend/curriculum/fixtures/catalogo.json`) con 9 materias oficiales y bancos de ejercicios de matemáticas y español (`content/exercises/`, `content/topics/`).
+  - Integración de servicios de NLP (`ml/src/gojarol_ml/nlp/`) y tutor adaptativo con retroalimentación formativa veracruzana.
+  - Verificación exitosa del build de producción de Vite + TypeScript (`npx pnpm run build`) sin advertencias ni roturas de tipos.
+
+- **Decisiones clave tomadas**:
+  - Consolidar todas las capacidades del equipo sobre la rama activa de despliegue `hugo-dev` para sincronizar la base de datos PostgreSQL y los contenedores Docker en el servidor VPS de producción.
+
+- **Archivos creados / modificados**:
+  - `docs/bitacora/hugo_frontend.md`
+  - Integración de 173 archivos desde `main` (clases, currículum, fixtures, ejercicios, modelos).
