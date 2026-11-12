@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { apiService, getAuthConfig, resolveGoogleClientId } from '../../services/api';
+import { defaultPathForRole } from '../../routing';
 import { inputClass, primaryClass, linkClass } from './AuthLayout';
 
 interface GoogleIdentityApi {
@@ -74,7 +75,7 @@ export function GoogleSignInButton({ role = 'student', nivel = 'secundaria', gra
               }
               login(result.user, result.token);
               localStorage.setItem('jarol_is_google', 'true');
-              navigate('/chat', { replace: true });
+              navigate(defaultPathForRole(result.user.role), { replace: true });
             } catch {
               if (active) setError('No se pudo iniciar sesión con Google.');
             } finally {
@@ -126,7 +127,7 @@ export function GoogleSignInButton({ role = 'student', nivel = 'secundaria', gra
       }
       login(result.user, result.token);
       localStorage.setItem('jarol_is_google', 'true');
-      navigate('/chat', { replace: true });
+      navigate(defaultPathForRole(result.user.role), { replace: true });
     } catch {
       setError('No se pudo completar tu registro con Google.');
     } finally {

@@ -16,20 +16,24 @@ const {renderPage,routeRedirect,STATES} = await import(pathToFileURL(join(output
 test('Guests are redirected away from every private route', () => {
   for (const path of ['/','/chat','/perfil','/clases','/panel','/alumnos','/progreso']) assert.equal(routeRedirect(path,false,'student'),'/login');
 });
-test('Authenticated entry and login always lead to the local chat', () => {
-  for (const role of ['student','teacher','admin']) {
-    for (const path of ['/','/login','/registro']) assert.equal(routeRedirect(path,true,role),'/chat');
-    assert.equal(routeRedirect('/chat',true,role),null);
+test('Authenticated entry and login route students to chat and teachers to classes', () => {
+  for (const [role, expected] of [['student', '/chat'], ['teacher', '/clases'], ['admin', '/clases']]) {
+    for (const path of ['/','/login','/registro']) assert.equal(routeRedirect(path,true,role),expected);
+    assert.equal(routeRedirect(expected,true,role),null);
     assert.equal(routeRedirect('/perfil',true,role),null);
-    assert.equal(routeRedirect('https://attacker.test',true,role),'/chat');
+    assert.equal(routeRedirect('https://attacker.test',true,role),expected);
   }
 });
 test('Academic role routes stay isolated and destinations do not loop', () => {
   assert.equal(routeRedirect('/panel',true,'student'),'/chat');
   assert.equal(routeRedirect('/alumnos',true,'student'),'/chat');
+  assert.equal(routeRedirect('/chat',true,'student'),null);
   for (const role of ['teacher','admin']) {
-    assert.equal(routeRedirect('/panel',true,role),null); assert.equal(routeRedirect('/alumnos',true,role),null);
-    assert.equal(routeRedirect('/progreso',true,role),'/chat');
+    assert.equal(routeRedirect('/panel',true,role),null);
+    assert.equal(routeRedirect('/clases',true,role),null);
+    assert.equal(routeRedirect('/alumnos',true,role),null);
+    assert.equal(routeRedirect('/chat',true,role),'/clases');
+    assert.equal(routeRedirect('/progreso',true,role),'/clases');
   }
   assert.equal(routeRedirect('/login',false,'student'),null);
 });

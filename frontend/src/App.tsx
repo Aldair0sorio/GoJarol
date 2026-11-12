@@ -13,14 +13,15 @@ import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from
 import { LoginPage } from './views/auth/LoginPage';
 import { RegisterPage } from './views/auth/RegisterPage';
 import { VerificationPendingPage, VerifyEmailPage, VerificationSuccessPage, VerificationInvalidPage, RecoveryPlaceholderPage } from './views/auth/VerificationPages';
-import { routeRedirect, tabPaths } from './routing';
+import { defaultPathForRole, routeRedirect, tabPaths } from './routing';
 import { ProfileView } from './views/ProfileView';
 
 const MainShell: React.FC = () => {
   const { user, role } = useAuth();
   const navigate = useNavigate(); const { pathname } = useLocation();
-  const currentTab = Object.entries(tabPaths).find(([, path]) => path === pathname)?.[0] || 'chat';
-  const setCurrentTab = (tab: string) => navigate(tabPaths[tab] || '/chat');
+  const defaultTab = role === 'student' ? 'chat' : 'clases';
+  const currentTab = Object.entries(tabPaths).find(([, path]) => path === pathname)?.[0] || defaultTab;
+  const setCurrentTab = (tab: string) => navigate(tabPaths[tab] || defaultPathForRole(role));
   const openProfile = () => navigate('/perfil');
   const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
 
@@ -49,7 +50,7 @@ const MainShell: React.FC = () => {
 
         {/* Vistas Principales */}
         <main className="flex-1 flex flex-col overflow-y-auto">
-          {currentTab === 'profile' && <ProfileView onBack={() => setCurrentTab('chat')}/>}
+          {currentTab === 'profile' && <ProfileView onBack={() => setCurrentTab(defaultTab)}/>}
           {role === 'student' ? (
             <>
               <div hidden={currentTab !== 'chat'} className="flex-1">
@@ -66,10 +67,12 @@ const MainShell: React.FC = () => {
               {currentTab === 'progreso' && <ProgressView onPracticeTopic={handleStartTopic} />}
             </>
           ) : (
-            <><div hidden={currentTab !== 'chat'} className="flex-1"><ChatView key={user.id} initialPrompt={pendingPrompt} onPromptConsumed={() => setPendingPrompt(null)}/></div><div hidden={['profile', 'chat'].includes(currentTab)}><TeacherDashboardView
-                activeTab={currentTab === 'clases' || currentTab === 'alumnos' ? currentTab : 'panel'}
+            currentTab !== 'profile' && (
+              <TeacherDashboardView
+                activeTab={currentTab === 'panel' || currentTab === 'alumnos' ? currentTab : 'clases'}
                 onTabChange={setCurrentTab}
-              /></div></>
+              />
+            )
           )}
         </main>
 

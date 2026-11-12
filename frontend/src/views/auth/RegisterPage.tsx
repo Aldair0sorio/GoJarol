@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { apiService } from '../../services/api';
+import { defaultPathForRole } from '../../routing';
 import { AuthLayout, inputClass, primaryClass, linkClass } from '../../components/auth/AuthLayout';
 import { PasswordField } from '../../components/auth/PasswordField';
 import { GoogleSignInButton } from '../../components/auth/GoogleSignInButton';
@@ -23,7 +24,7 @@ export function RegisterPage() {
         const result = await apiService.register({ username, fullName, email, password, passwordConfirm: confirm, role, nivel, grado, estado });
         if (result.success && result.user && result.token) {
           login(result.user, result.token);
-          navigate('/chat', { replace: true });
+          navigate(defaultPathForRole(result.user.role), { replace: true });
         } else setError(result.error || 'No se pudo crear tu cuenta.');
       } catch { setError('No pudimos confirmar el registro. Comprueba tu conexión.'); }
       finally { sending.current = false; setBusy(false); }

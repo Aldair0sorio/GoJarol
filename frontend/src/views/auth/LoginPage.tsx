@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { apiService } from '../../services/api';
+import { defaultPathForRole } from '../../routing';
 import { AuthLayout, inputClass, linkClass, primaryClass } from '../../components/auth/AuthLayout';
 import { PasswordField } from '../../components/auth/PasswordField';
 import { GoogleSignInButton } from '../../components/auth/GoogleSignInButton';
@@ -15,7 +16,7 @@ export function LoginPage() {
       event.preventDefault(); if (sending.current) return; sending.current = true; setBusy(true); setError('');
       try {
         const result = await apiService.login({ username: identifier, password });
-        if (result.success && result.user && result.token) { login(result.user, result.token); navigate('/chat', { replace: true }); }
+        if (result.success && result.user && result.token) { login(result.user, result.token); navigate(defaultPathForRole(result.user.role), { replace: true }); }
         else { setError(result.error || 'Revisa tus datos.'); }
       } catch { setError('No pudimos iniciar sesión. Inténtalo de nuevo.'); }
       finally { sending.current = false; setBusy(false); }
