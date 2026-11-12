@@ -376,7 +376,7 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({
   const tabMap = {
     panel: {
       title: 'Panel General Docente',
-      subtitle: 'Diagnóstico grupal en tiempo real y alertas tempranas con Jarol + SymPy.',
+      subtitle: 'Diagnóstico grupal en tiempo real y alertas tempranas.',
     },
     clases: {
       title: 'Mis Clases y Códigos',
