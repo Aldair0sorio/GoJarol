@@ -24,14 +24,14 @@ export const TeacherDashboardView: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col flex-1 px-4 py-3 pb-24">
+    <div className="flex flex-col flex-1 px-4 md:px-8 py-4 pb-24 md:pb-8 max-w-md md:max-w-4xl lg:max-w-5xl mx-auto w-full">
       {/* Header Docente */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="font-display font-extrabold text-xl text-[#0A1D2C]">
+          <h1 className="font-display font-extrabold text-xl md:text-2xl text-[#0A1D2C]">
             Panel de Control Docente
           </h1>
-          <p className="text-xs text-[#596B72]">
+          <p className="text-xs md:text-sm text-[#596B72]">
             Seguimiento de grupos y diagnóstico de dificultades en tiempo real.
           </p>
         </div>
@@ -41,7 +41,7 @@ export const TeacherDashboardView: React.FC = () => {
             setShowCreateModal(true);
             setCreatedCode(null);
           }}
-          className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#E76D55] text-white font-display font-bold text-xs shadow-[0_3px_0_#711707] active:translate-y-0.5 active:shadow-[0_1px_0_#711707] transition-all cursor-pointer"
+          className="shrink-0 flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-full bg-[#E76D55] text-white font-display font-bold text-xs md:text-sm shadow-[0_3px_0_#711707] active:translate-y-0.5 active:shadow-[0_1px_0_#711707] transition-all cursor-pointer"
         >
           <Plus className="w-3.5 h-3.5 stroke-[3px]" />
           <span>Crear Clase</span>
@@ -65,8 +65,8 @@ export const TeacherDashboardView: React.FC = () => {
         ))}
       </div>
 
-      {/* Métricas del Grupo */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
+      {/* Métricas del Grupo en 4 Columnas Responsive */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
         <div className="p-3.5 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_2px_0_#D2E5F9]">
           <span className="text-xs text-[#596B72] font-medium block">
             Código de Invitación
@@ -90,111 +90,138 @@ export const TeacherDashboardView: React.FC = () => {
             32 alumnos practicando
           </span>
         </div>
+
+        <div className="p-3.5 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_2px_0_#D2E5F9]">
+          <span className="text-xs text-[#596B72] font-medium block">
+            Precisión Promedio
+          </span>
+          <span className="font-display font-extrabold text-lg text-emerald-700 block mt-0.5">
+            81%
+          </span>
+          <span className="text-[10px] text-[#596B72] inline-block mt-1">
+            Respuestas correctas
+          </span>
+        </div>
+
+        <div className="p-3.5 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_2px_0_#D2E5F9]">
+          <span className="text-xs text-[#596B72] font-medium block">
+            Retos Completados
+          </span>
+          <span className="font-display font-extrabold text-lg text-[#126B73] block mt-0.5">
+            36
+          </span>
+          <span className="text-[10px] text-[#596B72] inline-block mt-1">
+            Esta semana
+          </span>
+        </div>
       </div>
 
-      {/* SEMÁFORO DE DIFICULTADES POR TEMA (Clave para el jurado) */}
-      <div className="p-4 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_3px_0_#D2E5F9] mb-4">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-1.5">
-            <AlertTriangle className="w-4 h-4 text-amber-500" />
+      {/* Grid de 2 Columnas en Desktop: Semáforo a la izquierda, Alumnos a la derecha */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+        {/* SEMÁFORO DE DIFICULTADES POR TEMA */}
+        <div className="p-4 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_3px_0_#D2E5F9]">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-1.5">
+              <AlertTriangle className="w-4 h-4 text-amber-500" />
+              <h3 className="font-display font-bold text-sm text-[#0A1D2C]">
+                Semáforo de Dificultades · Fracciones
+              </h3>
+            </div>
+            <span className="text-[11px] font-semibold text-[#596B72]">
+              IA Diagnóstica
+            </span>
+          </div>
+
+          <div className="flex flex-col gap-2.5">
+            {/* Verde */}
+            <div className="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200">
+              <div className="flex items-center justify-between text-xs font-display font-bold text-emerald-950 mb-1">
+                <span>Suma con igual denominador</span>
+                <span>88% Dominado</span>
+              </div>
+              <div className="w-full h-1.5 bg-emerald-200 rounded-full overflow-hidden">
+                <div className="h-full bg-emerald-600 rounded-full" style={{ width: '88%' }}></div>
+              </div>
+              <span className="text-[10px] text-emerald-800 mt-1 block">
+                🟢 La mayoría del grupo comprende que el denominador no se suma.
+              </span>
+            </div>
+
+            {/* Amarillo */}
+            <div className="p-2.5 rounded-xl bg-amber-50/70 border border-amber-200">
+              <div className="flex items-center justify-between text-xs font-display font-bold text-amber-950 mb-1">
+                <span>Simplificación a enteros</span>
+                <span>65% En proceso</span>
+              </div>
+              <div className="w-full h-1.5 bg-amber-200 rounded-full overflow-hidden">
+                <div className="h-full bg-amber-500 rounded-full" style={{ width: '65%' }}></div>
+              </div>
+              <span className="text-[10px] text-amber-800 mt-1 block">
+                🟡 11 alumnos necesitan repasar que 4/4 equivale a 1 entero.
+              </span>
+            </div>
+
+            {/* Rojo */}
+            <div className="p-2.5 rounded-xl bg-rose-50/70 border border-rose-200">
+              <div className="flex items-center justify-between text-xs font-display font-bold text-rose-950 mb-1">
+                <span>Suma con diferente denominador</span>
+                <span>34% Atención requerida</span>
+              </div>
+              <div className="w-full h-1.5 bg-rose-200 rounded-full overflow-hidden">
+                <div className="h-full bg-rose-600 rounded-full" style={{ width: '34%' }}></div>
+              </div>
+              <span className="text-[10px] text-rose-800 mt-1 block font-medium">
+                🔴 18 alumnos se atoran buscando el mínimo común múltiplo.
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Lista de Alumnos */}
+        <div className="p-4 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_3px_0_#D2E5F9]">
+          <div className="flex items-center justify-between mb-3">
             <h3 className="font-display font-bold text-sm text-[#0A1D2C]">
-              Semáforo de Dificultades · Fracciones
+              Alumnos Recientes
             </h3>
-          </div>
-          <span className="text-[11px] font-semibold text-[#596B72]">
-            IA Diagnóstica
-          </span>
-        </div>
-
-        <div className="flex flex-col gap-2.5">
-          {/* Verde: Bien afianzado */}
-          <div className="p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200">
-            <div className="flex items-center justify-between text-xs font-display font-bold text-emerald-950 mb-1">
-              <span>Suma con igual denominador</span>
-              <span>88% Dominado</span>
-            </div>
-            <div className="w-full h-1.5 bg-emerald-200 rounded-full overflow-hidden">
-              <div className="h-full bg-emerald-600 rounded-full" style={{ width: '88%' }}></div>
-            </div>
-            <span className="text-[10px] text-emerald-800 mt-1 block">
-              🟢 La mayoría del grupo comprende que el denominador no se suma.
+            <span className="text-xs text-[#596B72]">
+              {students.length} registrados
             </span>
           </div>
 
-          {/* Amarillo: En proceso */}
-          <div className="p-2.5 rounded-xl bg-amber-50/70 border border-amber-200">
-            <div className="flex items-center justify-between text-xs font-display font-bold text-amber-950 mb-1">
-              <span>Simplificación a enteros</span>
-              <span>65% En proceso</span>
-            </div>
-            <div className="w-full h-1.5 bg-amber-200 rounded-full overflow-hidden">
-              <div className="h-full bg-amber-500 rounded-full" style={{ width: '65%' }}></div>
-            </div>
-            <span className="text-[10px] text-amber-800 mt-1 block">
-              🟡 11 alumnos necesitan repasar que 4/4 equivale a 1 entero.
-            </span>
-          </div>
-
-          {/* Rojo: Dificultad Crítica */}
-          <div className="p-2.5 rounded-xl bg-rose-50/70 border border-rose-200">
-            <div className="flex items-center justify-between text-xs font-display font-bold text-rose-950 mb-1">
-              <span>Suma con diferente denominador</span>
-              <span>34% Atención requerida</span>
-            </div>
-            <div className="w-full h-1.5 bg-rose-200 rounded-full overflow-hidden">
-              <div className="h-full bg-rose-600 rounded-full" style={{ width: '34%' }}></div>
-            </div>
-            <span className="text-[10px] text-rose-800 mt-1 block font-medium">
-              🔴 18 alumnos se atoran buscando el mínimo común múltiplo.
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Lista de Alumnos */}
-      <div className="p-4 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_3px_0_#D2E5F9]">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-display font-bold text-sm text-[#0A1D2C]">
-            Alumnos Recientes
-          </h3>
-          <span className="text-xs text-[#596B72]">
-            {students.length} registrados
-          </span>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          {students.map((st: StudentMastery) => (
-            <button
-              key={st.studentId}
-              onClick={() => {
-                const detail = MOCK_DETAILED_STUDENTS[st.studentId];
-                if (detail) setSelectedStudentDetail(detail);
-              }}
-              className="w-full text-left p-3 rounded-xl bg-[#F7F5EF] hover:bg-[#DCEFEB]/60 transition-colors flex items-center justify-between border border-transparent hover:border-[#126B73]/30 active:scale-[0.99] cursor-pointer"
-            >
-              <div>
-                <span className="font-display font-bold text-xs text-[#0A1D2C] block">
-                  {st.studentName}
-                </span>
-                <span className="text-[10px] text-[#596B72]">
-                  {st.completedExercises} retos resueltos · {st.accuracy}% precisión
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                {st.needsHelpWith.length > 0 ? (
-                  <span className="text-[10px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded-full">
-                    Requiere apoyo
+          <div className="flex flex-col gap-2">
+            {students.map((st: StudentMastery) => (
+              <button
+                key={st.studentId}
+                onClick={() => {
+                  const detail = MOCK_DETAILED_STUDENTS[st.studentId];
+                  if (detail) setSelectedStudentDetail(detail);
+                }}
+                className="w-full text-left p-3 rounded-xl bg-[#F7F5EF] hover:bg-[#DCEFEB]/60 transition-colors flex items-center justify-between border border-transparent hover:border-[#126B73]/30 active:scale-[0.99] cursor-pointer"
+              >
+                <div>
+                  <span className="font-display font-bold text-xs text-[#0A1D2C] block">
+                    {st.studentName}
                   </span>
-                ) : (
-                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
-                    Al corriente
+                  <span className="text-[10px] text-[#596B72]">
+                    {st.completedExercises} retos resueltos · {st.accuracy}% precisión
                   </span>
-                )}
-                <ChevronRight className="w-3.5 h-3.5 text-[#596B72]" />
-              </div>
-            </button>
-          ))}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {st.needsHelpWith.length > 0 ? (
+                    <span className="text-[10px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded-full">
+                      Requiere apoyo
+                    </span>
+                  ) : (
+                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
+                      Al corriente
+                    </span>
+                  )}
+                  <ChevronRight className="w-3.5 h-3.5 text-[#596B72]" />
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

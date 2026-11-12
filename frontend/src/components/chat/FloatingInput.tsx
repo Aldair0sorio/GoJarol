@@ -18,10 +18,10 @@ export const FloatingInput: React.FC<FloatingInputProps> = ({ onSendMessage, isL
   };
 
   return (
-    <div className="sticky bottom-14 inset-x-0 z-30 px-3 py-2 bg-gradient-to-t from-[#F7F5EF] via-[#F7F5EF]/90 to-transparent">
+    <div className="sticky bottom-14 md:bottom-3 inset-x-0 z-30 px-3 md:px-6 py-2 bg-gradient-to-t from-[#F7F5EF] via-[#F7F5EF]/90 to-transparent">
       <form
         onSubmit={handleSubmit}
-        className="max-w-md mx-auto relative flex items-center bg-white rounded-full p-1.5 pl-4 border border-[#E8E5DC] shadow-[0_8px_20px_rgba(10,29,44,0.06),0_2px_0_#D2E5F9] focus-within:border-[#126B73] focus-within:shadow-[0_8px_24px_rgba(18,107,115,0.15),0_2px_0_#126B73] transition-all"
+        className="max-w-md md:max-w-2xl lg:max-w-3xl mx-auto relative flex items-center bg-white rounded-full p-1.5 pl-4 border border-[#E8E5DC] shadow-[0_8px_20px_rgba(10,29,44,0.06),0_2px_0_#D2E5F9] focus-within:border-[#126B73] focus-within:shadow-[0_8px_24px_rgba(18,107,115,0.15),0_2px_0_#126B73] transition-all"
       >
         <input
           type="text"

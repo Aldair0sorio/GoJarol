@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { AppHeader } from './components/layout/AppHeader';
 import { BottomNav } from './components/layout/BottomNav';
+import { DesktopSidebar } from './components/layout/DesktopSidebar';
 import { ChatView } from './views/student/ChatView';
 import { ChallengesView } from './views/student/ChallengesView';
 import { LeaguesView } from './views/student/LeaguesView';
@@ -31,14 +32,24 @@ const MainShell: React.FC = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#EAE7DC] flex justify-center">
-      {/* Contenedor Mobile-First centrado en Desktop */}
-      <div className="w-full max-w-md min-h-screen bg-[#F7F5EF] flex flex-col relative shadow-[0_0_24px_rgba(10,29,44,0.08)]">
+    <div className="w-full min-h-screen bg-[#F7F5EF] flex flex-col md:flex-row antialiased selection:bg-[#DCEFEB]">
+      {/* Sidebar de navegación en Tablet y Desktop (md: y lg:) */}
+      <DesktopSidebar
+        currentTab={currentTab}
+        onTabChange={setCurrentTab}
+        onOpenProfile={() => setShowProfileModal(true)}
+        onOpenAuth={() => setShowAuthModal(true)}
+      />
+
+      {/* Área de Contenido Principal Responsiva */}
+      <div className="flex-1 flex flex-col min-h-screen w-full relative">
+        {/* Cabecera Móvil (se oculta en Desktop donde el Sidebar ya provee el branding) */}
         <AppHeader
           onOpenAuth={() => setShowAuthModal(true)}
           onOpenProfile={() => setShowProfileModal(true)}
         />
 
+        {/* Vistas Principales */}
         <main className="flex-1 flex flex-col overflow-y-auto">
           {role === 'student' ? (
             <>
@@ -55,6 +66,7 @@ const MainShell: React.FC = () => {
           )}
         </main>
 
+        {/* Navegación Inferior (se oculta en Desktop md:hidden) */}
         <BottomNav currentTab={currentTab} onTabChange={setCurrentTab} />
 
         {/* Modal de Autenticación / Registro */}

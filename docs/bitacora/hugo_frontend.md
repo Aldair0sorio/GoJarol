@@ -188,3 +188,32 @@ Para cada sesión o iteración se documenta:
 - **Archivos creados / modificados**:
   - `docs/INFRAESTRUCTURA_HOST.md`
   - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 9 · 11 de Noviembre de 2026 (18:43 - 18:48)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Implementación de arquitectura responsiva integral para Tablet y Computadora (Desktop).
+
+- **Para qué se usaron**:
+  - Creación del componente de navegación lateral para escritorio [`DesktopSidebar.tsx`](frontend/src/components/layout/DesktopSidebar.tsx) que se activa automáticamente en pantallas medianas y grandes (`md:` y `lg:`).
+  - Adaptación de la cabecera móvil (`AppHeader.tsx`) y de la barra inferior móvil (`BottomNav.tsx`) para ocultarse limpiamente en pantallas de escritorio sin duplicar controles.
+  - Expansión de cuadrículas de contenido: retos por materia en 2 columnas, métricas docentes en 4 columnas, y semáforo de dificultades en paralelo con la lista de alumnos en desktop.
+  - Centrado de lectura fluido para el chat conversacional con Jarol (`max-w-3xl`) e input flotante adaptativo al pie de pantalla.
+
+- **Decisiones clave tomadas**:
+  1. **Dualidad Mobile-First y Desktop-Rich**: Se mantuvo la experiencia ágil en celular para los estudiantes con conexión inestable, y se dotó a la vista de escritorio de una estructura estilo aplicación moderna (Slack / Notion) ideal para la proyección en proyector o laptop ante el jurado.
+  2. **Persistencia de la interacción táctil**: Los botones de acción, selector de rol y tarjetas conservan su profundidad física 3D en todas las resoluciones.
+
+- **Archivos creados / modificados**:
+  - `frontend/src/components/layout/DesktopSidebar.tsx`
+  - `frontend/src/components/layout/AppHeader.tsx`
+  - `frontend/src/components/layout/BottomNav.tsx`
+  - `frontend/src/components/chat/FloatingInput.tsx`
+  - `frontend/src/views/student/ChatView.tsx`
+  - `frontend/src/views/student/ChallengesView.tsx`
+  - `frontend/src/views/student/ClassesView.tsx`
+  - `frontend/src/views/student/ProgressView.tsx`
+  - `frontend/src/views/student/LeaguesView.tsx`
+  - `frontend/src/views/teacher/TeacherDashboardView.tsx`
+  - `frontend/src/App.tsx`
+  - `docs/bitacora/hugo_frontend.md`

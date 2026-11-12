@@ -54,7 +54,7 @@ export const ChatView: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col flex-1 pb-20">
+    <div className="flex flex-col flex-1 pb-20 md:pb-6 max-w-md md:max-w-2xl lg:max-w-3xl mx-auto w-full">
       {/* Botón de limpiar chat si hay mensajes */}
       {messages.length > 0 && (
         <div className="flex justify-end px-4 pt-2">

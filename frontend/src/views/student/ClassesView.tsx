@@ -36,21 +36,21 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ onStartExercise }) => 
   };
 
   return (
-    <div className="flex flex-col flex-1 px-4 py-3 pb-24">
+    <div className="flex flex-col flex-1 px-4 md:px-8 py-4 pb-24 md:pb-8 max-w-md md:max-w-4xl lg:max-w-5xl mx-auto w-full">
       {/* Header con botón para unirse */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="font-display font-extrabold text-xl text-[#0A1D2C]">
+          <h1 className="font-display font-extrabold text-xl md:text-2xl text-[#0A1D2C]">
             Mis Clases
           </h1>
-          <p className="text-xs text-[#596B72]">
+          <p className="text-xs md:text-sm text-[#596B72]">
             Grupos escolares donde tu maestro sigue tu avance con Jarol.
           </p>
         </div>
 
         <button
           onClick={() => setShowModal(true)}
-          className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#126B73] text-white font-display font-bold text-xs shadow-[0_3px_0_#005158] active:translate-y-0.5 active:shadow-[0_1px_0_#005158] transition-all cursor-pointer"
+          className="shrink-0 flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-full bg-[#126B73] text-white font-display font-bold text-xs md:text-sm shadow-[0_3px_0_#005158] active:translate-y-0.5 active:shadow-[0_1px_0_#005158] transition-all cursor-pointer"
         >
           <Plus className="w-3.5 h-3.5 stroke-[3px]" />
           <span>Unirse</span>
@@ -58,7 +58,7 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ onStartExercise }) => 
       </div>
 
       {/* Lista de Clases */}
-      <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {classes.map((cls) => (
           <button
             key={cls.id}

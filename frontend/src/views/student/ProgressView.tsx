@@ -13,7 +13,7 @@ export const ProgressView: React.FC<ProgressViewProps> = ({ onPracticeTopic }) =
   const currentLevelXp = (user.xp || 0) % 100;
 
   return (
-    <div className="flex flex-col flex-1 px-4 py-3 pb-24">
+    <div className="flex flex-col flex-1 px-4 md:px-8 py-4 pb-24 md:pb-8 max-w-md md:max-w-3xl lg:max-w-4xl mx-auto w-full">
       {/* Perfil del Alumno Card */}
       <div className="p-4 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_3px_0_#D2E5F9] flex items-center gap-3 mb-4">
         <div className="relative">

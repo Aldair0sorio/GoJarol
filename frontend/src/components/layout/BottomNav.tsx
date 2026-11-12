@@ -35,7 +35,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentTab, onTabChange })
   const tabs = role === 'student' ? studentTabs : teacherTabs;
 
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-lg border-t border-[#E8E5DC] pb-safe px-3 py-1 shadow-[0_-4px_16px_rgba(10,29,44,0.04)]">
+    <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-lg border-t border-[#E8E5DC] pb-safe px-3 py-1 shadow-[0_-4px_16px_rgba(10,29,44,0.04)]">
       <div className="max-w-md mx-auto flex items-center justify-around">
         {tabs.map((tab) => {
           const Icon = tab.icon;

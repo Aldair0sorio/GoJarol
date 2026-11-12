@@ -11,7 +11,7 @@ export const LeaguesView: React.FC<LeaguesViewProps> = ({ onGoPractice }) => {
   const remainingList = MOCK_LEADERBOARD.slice(3);
 
   return (
-    <div className="flex flex-col flex-1 px-4 py-3 pb-24">
+    <div className="flex flex-col flex-1 px-4 md:px-8 py-4 pb-24 md:pb-8 max-w-md md:max-w-3xl lg:max-w-4xl mx-auto w-full">
       {/* Header de la Liga */}
       <div className="p-4 rounded-2xl bg-gradient-to-br from-[#126B73] to-[#005158] text-white shadow-[0_4px_16px_rgba(18,107,115,0.2)] mb-4 flex items-center justify-between">
         <div className="flex items-center gap-3">

@@ -11,7 +11,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ onOpenAuth, onOpenProfile 
   const { user, role, switchRole } = useAuth();
 
   return (
-    <header className="sticky top-0 inset-x-0 z-40 bg-[#F7F5EF]/90 backdrop-blur-md border-b border-[#E8E5DC] px-4 py-2.5">
+    <header className="md:hidden sticky top-0 inset-x-0 z-40 bg-[#F7F5EF]/90 backdrop-blur-md border-b border-[#E8E5DC] px-4 py-2.5">
       <div className="max-w-md mx-auto flex items-center justify-between">
         {/* Brand & Mascot */}
         <div className="flex items-center gap-2.5">

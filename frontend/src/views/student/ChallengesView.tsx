@@ -27,19 +27,19 @@ export const ChallengesView: React.FC<ChallengesViewProps> = ({ onStartTopic }) 
   };
 
   return (
-    <div className="flex flex-col flex-1 px-4 py-3 pb-24">
+    <div className="flex flex-col flex-1 px-4 md:px-8 py-4 pb-24 md:pb-8 max-w-md md:max-w-4xl lg:max-w-5xl mx-auto w-full">
       {/* Header */}
       <div className="mb-4">
-        <h1 className="font-display font-extrabold text-xl text-[#0A1D2C]">
+        <h1 className="font-display font-extrabold text-xl md:text-2xl text-[#0A1D2C]">
           Retos por Materia
         </h1>
-        <p className="text-xs text-[#596B72]">
+        <p className="text-xs md:text-sm text-[#596B72]">
           Prueba tus conocimientos con ejercicios interactivos y retroalimentación de Jarol.
         </p>
       </div>
 
       {/* Grid de Materias */}
-      <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
         {subjects.map((sub) => (
           <div
             key={sub.id}
