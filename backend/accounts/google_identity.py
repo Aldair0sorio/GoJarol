@@ -20,14 +20,16 @@ def verify_google_identity(credential):
         raise ImproperlyConfigured('Google client ID is not configured.')
     if not isinstance(credential, str) or not 1 <= len(credential) <= 8192:
         raise ValueError('Missing or invalid credential.')
-    claims = id_token.verify_oauth2_token(credential, VerificationRequest(), audience=audience)
+    claims = id_token.verify_oauth2_token(
+        credential, VerificationRequest(), audience=audience, clock_skew_in_seconds=10
+    )
     if (not isinstance(claims.get('iss'), str) or claims.get('iss') not in {'accounts.google.com', 'https://accounts.google.com'}
             or claims.get('aud') != audience or claims.get('email_verified') is not True
             or not isinstance(claims.get('sub'), str) or not 1 <= len(claims['sub']) <= 255):
         raise ValueError('Invalid identity claims.')
     now = time.time()
     if (type(claims.get('exp')) not in (int, float) or not math.isfinite(claims['exp']) or claims['exp'] <= now
-            or type(claims.get('iat')) not in (int, float) or not math.isfinite(claims['iat']) or claims['iat'] > now):
+            or type(claims.get('iat')) not in (int, float) or not math.isfinite(claims['iat']) or claims['iat'] > now + 60):
         raise ValueError('Invalid token lifetime.')
     email = claims.get('email')
     if not isinstance(email, str) or len(email) > 254:

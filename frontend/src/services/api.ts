@@ -1017,7 +1017,8 @@ export async function getAuthConfig(): Promise<PublicAuthConfig> {
 export function resolveGoogleClientId(config: PublicAuthConfig, buildId?: string): string | null {
   const serverId = config.google_client_id?.trim();
   if (!serverId || !/^[a-zA-Z0-9_-]+\.apps\.googleusercontent\.com$/.test(serverId)) return null;
-  if (buildId?.trim() && buildId.trim() !== serverId) return null;
+  const cleanBuild = buildId?.trim();
+  if (cleanBuild && !/^(tu_cliente|cliente_web)/i.test(cleanBuild) && cleanBuild !== serverId) return null;
   return serverId;
 }
 export async function verifyEmail(uid: string, token: string): Promise<void> {

@@ -49,7 +49,7 @@ export function GoogleSignInButton({ role = 'student', nivel = 'secundaria', gra
         finally { busy.current = false; if (active) setLoading(false); }
       } });
       container.current.replaceChildren();
-      window.google.accounts.id.renderButton(container.current, { type: 'standard', theme: 'outline', size: 'large', text: 'continue_with', width: Math.min(container.current.clientWidth, 340) });
+      window.google.accounts.id.renderButton(container.current, { type: 'standard', theme: 'outline', size: 'large', text: 'continue_with', width: Math.max(220, Math.min(container.current.clientWidth || 320, 340)) });
       setUnavailable(false); return true;
       } catch { setUnavailable(true); return false; }
     };

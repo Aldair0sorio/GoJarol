@@ -22,8 +22,14 @@ elif (BASE_DIR.parent / '.env').exists():
 # --- Seguridad y entorno (vienen del .env) ---
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env.bool('DEBUG', default=False)
-# Public OAuth audience; empty disables Google sign-in until configured.
-GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID', default='')
+# Public OAuth Web Client ID for Go Jarol; can be overridden via GOOGLE_CLIENT_ID in .env.
+DEFAULT_GOOGLE_CLIENT_ID = '1057441789427-vbbijigh0lbj5dju7curv2dk3dm3qjo3.apps.googleusercontent.com'
+_env_google_client_id = env('GOOGLE_CLIENT_ID', default='').strip()
+GOOGLE_CLIENT_ID = (
+    DEFAULT_GOOGLE_CLIENT_ID
+    if not _env_google_client_id or _env_google_client_id.startswith(('tu_cliente', 'cliente_web'))
+    else _env_google_client_id
+)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 if not ALLOWED_HOSTS or ALLOWED_HOSTS == ['']:
     ALLOWED_HOSTS = ['*']
