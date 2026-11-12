@@ -28,7 +28,7 @@ export const JarolBubble: React.FC<JarolBubbleProps> = ({ text, timestamp, badge
       {/* Avatar de Jarol */}
       <div className="relative shrink-0 mt-0.5">
         <img
-          src="/mascot/jarol-crab.png"
+          src="/mascot/jarol-crab.webp"
           alt="Jarol el Profe Cangrejo"
           className="w-9 h-9 rounded-full object-contain p-0.5 bg-[#DCEFEB] ring-2 ring-[#126B73]/20 shadow-xs"
         />

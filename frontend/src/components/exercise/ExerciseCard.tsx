@@ -12,6 +12,8 @@ import {
   Send,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { ConnectionNotice } from '../common/ConnectionNotice';
+import { failureNotice } from '../../services/netMessages';
 
 interface ExerciseCardProps {
   exercise: ExerciseCardData;
@@ -26,6 +28,8 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, onNextExer
   const [feedback, setFeedback] = useState<AnswerFeedback | null>(null);
   const [hintsList, setHintsList] = useState<string[]>([]);
   const [isLoadingHint, setIsLoadingHint] = useState(false);
+  // Aviso de conexión: qué falló y cómo reintentarlo (la respuesta escrita se conserva en openAnswer).
+  const [netError, setNetError] = useState<{ text: string; retry?: () => void } | null>(null);
 
   const isMultipleChoice =
     exercise.exerciseType === 'multiple_choice' ||
@@ -37,9 +41,18 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, onNextExer
 
     setSelectedOption(trimmed);
     setIsSubmitting(true);
+    setNetError(null);
 
     try {
-      const result = await apiService.submitExerciseAnswer(exercise.id, trimmed);
+      const response = await apiService.submitExerciseAnswer(exercise.id, trimmed);
+      if (!response.ok) {
+        // Sin evaluación del servidor: ni correcto ni incorrecto, ni XP.
+        const notice = failureNotice(response.reason, 'respuesta');
+        setSelectedOption(null);
+        setNetError({ text: notice.text, retry: notice.canRetry ? () => submitAnswer(trimmed) : undefined });
+        return;
+      }
+      const result = response.feedback;
       setFeedback(result);
 
       if (result.isCorrect) {
@@ -63,8 +76,14 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, onNextExer
   const handleRequestHint = async () => {
     if (isLoadingHint || feedback?.isCorrect) return;
     setIsLoadingHint(true);
+    setNetError(null);
     try {
       const res = await apiService.requestExerciseHint(exercise.id, hintsList.length);
+      if (!res.ok) {
+        const notice = failureNotice(res.reason, 'pista');
+        setNetError({ text: notice.text, retry: notice.canRetry ? handleRequestHint : undefined });
+        return;
+      }
       if (res.hint) {
         setHintsList((prev) =>
           prev.includes(res.hint) ? prev : [...prev, res.hint]
@@ -200,6 +219,9 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, onNextExer
           </button>
         </form>
       )}
+
+      {/* Aviso de conexión: la respuesta no se evaluó; se puede reintentar */}
+      {netError && <ConnectionNotice text={netError.text} onRetry={netError.retry} />}
 
       {/* Progressive Hints Section */}
       {!feedback?.isCorrect && (

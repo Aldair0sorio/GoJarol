@@ -132,7 +132,7 @@ export const StudentDetailModal: React.FC<StudentDetailModalProps> = ({
         <div className="sticky top-0 bg-[#F7F5EF] p-4 pb-3 border-b border-[#E8E5DC] flex items-center justify-between z-10">
           <div className="flex items-center gap-3 min-w-0">
             <img
-              src={detail.avatarUrl || '/mascot/jarol-crab.png'}
+              src={detail.avatarUrl || '/mascot/jarol-crab.webp'}
               alt={detail.name}
               className="w-12 h-12 rounded-full object-cover ring-2 ring-[#126B73]/30 shrink-0"
             />

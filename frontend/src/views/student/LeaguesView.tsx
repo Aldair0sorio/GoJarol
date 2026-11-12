@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { apiService, type StudentProgressSummary } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { LEAGUE_TIERS, getLeagueForXp } from '../../data/leagues';
+import { ConnectionNotice } from '../../components/common/ConnectionNotice';
+import { LOAD_FAILED } from '../../services/netMessages';
 import { Sparkles, Medal, ArrowUp, CheckCircle2 } from 'lucide-react';
 
 interface LeaguesViewProps {
@@ -11,14 +13,21 @@ interface LeaguesViewProps {
 export const LeaguesView: React.FC<LeaguesViewProps> = ({ onGoPractice }) => {
   const { user, updateUser } = useAuth();
   const [summary, setSummary] = useState<StudentProgressSummary | null>(null);
+  const [loadFailed, setLoadFailed] = useState(false);
 
-  useEffect(() => {
+  // Si falla, se avisa y se usa el XP ya conocido de la sesión (no un 0 inventado).
+  const loadProgress = () =>
     apiService.getProgress().then((data) => {
+      setLoadFailed(data === null);
+      if (!data) return;
       setSummary(data);
       if (data.xp !== undefined && data.xp !== user.xp) {
         updateUser({ xp: data.xp, streakDays: data.streakDays });
       }
     });
+
+  useEffect(() => {
+    loadProgress();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -26,6 +35,17 @@ export const LeaguesView: React.FC<LeaguesViewProps> = ({ onGoPractice }) => {
 
   return (
     <div className="flex flex-col flex-1 px-4 md:px-8 py-4 pb-24 md:pb-8 max-w-md md:max-w-3xl lg:max-w-4xl mx-auto w-full">
+      {loadFailed && (
+        <ConnectionNotice
+          className="mb-4"
+          text={LOAD_FAILED('tu liga actualizada')}
+          onRetry={() => {
+            setLoadFailed(false);
+            loadProgress();
+          }}
+        />
+      )}
+
       {/* Header de la Liga */}
       <div className="p-4 rounded-2xl bg-gradient-to-br from-[#126B73] to-[#005158] text-white shadow-[0_4px_16px_rgba(18,107,115,0.2)] mb-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
@@ -33,6 +53,10 @@ export const LeaguesView: React.FC<LeaguesViewProps> = ({ onGoPractice }) => {
             <img
               src={myLeague.tier.imageUrl}
               alt={`Liga ${myLeague.tier.name}`}
+              width={40}
+              height={40}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-contain drop-shadow-xs"
             />
           </div>
@@ -61,6 +85,10 @@ export const LeaguesView: React.FC<LeaguesViewProps> = ({ onGoPractice }) => {
             <img
               src={myLeague.tier.imageUrl}
               alt={`Liga ${myLeague.tier.name}`}
+              width={72}
+              height={72}
+              loading="lazy"
+              decoding="async"
               className="w-16 h-16 sm:w-18 sm:h-18 object-contain shrink-0 drop-shadow-xs"
             />
             <div>
@@ -129,6 +157,10 @@ export const LeaguesView: React.FC<LeaguesViewProps> = ({ onGoPractice }) => {
                   <img
                     src={tier.imageUrl}
                     alt={`Emblema Liga ${tier.name}`}
+                    width={64}
+                    height={64}
+                    loading="lazy"
+                    decoding="async"
                     className={`w-14 h-14 sm:w-16 sm:h-16 object-contain mb-1.5 ${
                       !isUnlocked ? 'grayscale-[25%]' : ''
                     }`}

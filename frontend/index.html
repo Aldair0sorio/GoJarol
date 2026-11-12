@@ -3,15 +3,15 @@
   <head>
     <meta name="referrer" content="strict-origin" />
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/mascot/jarol-crab.png" />
+    <link rel="icon" type="image/png" href="/mascot/jarol-crab-64.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="theme-color" content="#126b73" />
     <meta name="description" content="Go Jarol - Plataforma educativa con IA para estudiantes de secundaria y bachillerato en Veracruz" />
     
-    <!-- Tipografías Oficiales del Reto: Sora y Atkinson Hyperlegible Next -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400..700;1,400..700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Tipografías Oficiales del Reto: Sora y Atkinson Hyperlegible Next, autoalojadas
+         (sin conexiones a terceros; @font-face con font-display: swap en src/index.css) -->
+    <link rel="preload" href="/fonts/atkinson-hyperlegible-next-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/sora-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
     
     <!-- Google Identity Services (GIS) para inicio de sesión con Google -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
