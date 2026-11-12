@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from chat.services.runtime import get_runtime
 from exercises.services.exercise_evaluator import evaluate_exercise_answer
 from progress.models import StudentProgress
+from progress.views import resolve_progress_for_request
 
 
 class ExerciseAnswerView(APIView):
@@ -31,12 +32,10 @@ class ExerciseAnswerView(APIView):
         evaluation = evaluate_exercise_answer(answer_str, expected, public_ex["type"])
         is_correct = bool(evaluation["correct"])
 
-        progress_obj = None
+        progress_obj = resolve_progress_for_request(request)
         state = runtime.tutor.initial_state()
-        if request.user and request.user.is_authenticated:
-            progress_obj, _ = StudentProgress.objects.get_or_create(user=request.user)
-            if isinstance(progress_obj.tutor_state, dict):
-                state.update(progress_obj.tutor_state)
+        if progress_obj is not None and isinstance(progress_obj.tutor_state, dict):
+            state.update(progress_obj.tutor_state)
 
         hints_used = state.get("hints_by_exercise", {}).get(
             exercise_id, state.get("hints_used", 0)
@@ -120,7 +119,7 @@ class ExerciseAnswerView(APIView):
                 "explanation": explanation,
                 "hint": hint_text,
                 "xpEarned": xp_earned,
-                "totalXp": progress_obj.xp if progress_obj else xp_earned,
+                "totalXp": progress_obj.xp if progress_obj is not None else None,
                 "nextExercise": next_exercise_formatted,
             }
         )
@@ -138,12 +137,10 @@ class ExerciseHintView(APIView):
                 status=404,
             )
 
-        progress_obj = None
+        progress_obj = resolve_progress_for_request(request)
         state = runtime.tutor.initial_state()
-        if request.user and request.user.is_authenticated:
-            progress_obj, _ = StudentProgress.objects.get_or_create(user=request.user)
-            if isinstance(progress_obj.tutor_state, dict):
-                state.update(progress_obj.tutor_state)
+        if progress_obj is not None and isinstance(progress_obj.tutor_state, dict):
+            state.update(progress_obj.tutor_state)
 
         hints_used = state.get("hints_by_exercise", {}).get(
             exercise_id,
