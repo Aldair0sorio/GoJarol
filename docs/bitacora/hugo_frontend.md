@@ -285,3 +285,22 @@ Para cada sesión o iteración se documenta:
   - `frontend/src/context/AuthContext.tsx`
   - `frontend/src/services/api.ts`
   - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 13 · 11 de Noviembre de 2026 (20:50 - 20:56)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Vinculación oficial de Google Identity Services con el Client ID de producción obtenido de Google Cloud Console.
+
+- **Para qué se usaron**:
+  - Configuración del ID de Cliente oficial de Google Cloud (`1057441789427-vbbijigh0lbj5dju7curv2dk3dm3qjo3.apps.googleusercontent.com`) en [`AuthModal.tsx`](frontend/src/components/auth/AuthModal.tsx) y [`.env.example`](.env.example).
+  - Inicialización automática de `window.google.accounts.id.initialize` y renderizado del botón nativo oficial de Google mediante `renderButton`.
+  - Conexión del callback del JWT emitido por Google con el endpoint backend de autenticación en PostgreSQL.
+  - Soporte de reintento One-Tap y botón rápido de prueba con cuentas institucionales de Veracruz.
+
+- **Decisiones clave tomadas**:
+  - El botón ahora abre la ventana emergente oficial y nativa de Google Cloud autorizada para los dominios `https://gojarol.tecnodesarrollo.site` y `http://localhost:5173`.
+
+- **Archivos creados / modificados**:
+  - `frontend/src/components/auth/AuthModal.tsx`
+  - `.env.example`
+  - `docs/bitacora/hugo_frontend.md`
