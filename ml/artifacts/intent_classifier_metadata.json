@@ -1,0 +1,22 @@
+{
+  "version": "synthetic-50000-v1",
+  "train_rows": 50000,
+  "validation_rows": 1200,
+  "intent_labels": [
+    "cambiar_tema",
+    "consultar_progreso",
+    "despedirse",
+    "repetir_ejercicio",
+    "saludar",
+    "simplificar_explicacion",
+    "solicitar_ejemplo",
+    "solicitar_explicacion",
+    "solicitar_pista",
+    "solicitar_reto",
+    "solicitar_retroalimentacion",
+    "verificar_respuesta"
+  ],
+  "validation_accuracy": 0.77917,
+  "validation_macro_f1": 0.77224,
+  "warning": "Validacion sintetica, no demuestra rendimiento con estudiantes reales"
+}

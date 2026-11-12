@@ -43,13 +43,6 @@ ENV/
 htmlcov/
 coverage.xml
 
-# Machine Learning artifacts
-ml/artifacts/*
-!ml/artifacts/.gitkeep
-
-# Generated ML datasets
-ml/data/processed/*
-!ml/data/processed/.gitkeep
 
 # Node.js / pnpm
 node_modules/
