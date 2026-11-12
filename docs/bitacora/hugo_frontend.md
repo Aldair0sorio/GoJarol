@@ -382,3 +382,22 @@ Para cada sesión o iteración se documenta:
   - `backend/curriculum/views.py`
   - `frontend/src/services/api.ts`
   - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 18 · 11 de Noviembre de 2026 (21:54 - 21:58)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Verificación end-to-end de persistencia multiusuario en PostgreSQL y consulta de catálogo curricular en producción.
+
+- **Para qué se usaron**:
+  - Comprobación exitosa en el VPS de producción de la persistencia de usuarios autenticados mediante Google OAuth y demo institucional:
+    - `id: 2 | huguito.goku16@gmail.com | Garcia Lara Hugo | estudiante`
+    - `id: 3 | emiliano.valdes@estudiantes.sev.gob.mx | Emiliano Valdés | estudiante`
+    - `id: 4 | ivanpazvalladares@gmail.com | Ivan Paz | estudiante`
+  - Comprobación del endpoint público `GET /api/v1/subjects/` respondiendo JSON activo con las 9 materias oficiales y sus respectivos temas y estados de disponibilidad.
+  - Consolidación del ecosistema completo: Frontend React 19 + Nginx SSL reverso + Django 6 DRF + PostgreSQL 15 + Google Identity Services.
+
+- **Decisiones clave tomadas**:
+  - Confirmar que el flujo de autenticación es 100% resiliente y que los datos de usuarios reales y fixtures pedagógicos se encuentran debidamente sincronizados en el servidor de evaluación.
+
+- **Archivos creados / modificados**:
+  - `docs/bitacora/hugo_frontend.md`
