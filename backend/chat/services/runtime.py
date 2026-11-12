@@ -82,9 +82,9 @@ class TutorRuntime:
         catalog_path = ML_DIR / "data" / "knowledge" / "topics.json"
         topics_dir = CONTENT_DIR / "topics"
         exercises_dir = CONTENT_DIR / "exercises"
-        curriculum_path = CONTENT_DIR / "curriculum" / "catalog.json"
+        curriculum_dir = CONTENT_DIR / "curriculum"
 
-        self.curriculum = CurriculumCatalog(curriculum_path)
+        self.curriculum = CurriculumCatalog(curriculum_dir)
         self.analyzer = JarolAnalyzer(
             model_path=model_path,
             catalog_path=catalog_path,
