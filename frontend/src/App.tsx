@@ -78,7 +78,10 @@ const MainShell: React.FC = () => {
               {currentTab === 'progreso' && <ProgressView onPracticeTopic={handleStartTopic} />}
             </>
           ) : (
-            <TeacherDashboardView />
+            <TeacherDashboardView
+              activeTab={currentTab as 'panel' | 'clases' | 'alumnos'}
+              onTabChange={setCurrentTab}
+            />
           )}
         </main>
 

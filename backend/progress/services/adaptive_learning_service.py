@@ -12,6 +12,7 @@ class AdaptiveLearningService:
             "consecutive_errors": 0,
             "unassisted_correct_ids": [],
             "total_attempts": 0,
+            "correct_attempts": 0,
         }
 
     def update_progress(
@@ -58,6 +59,7 @@ class AdaptiveLearningService:
         state["total_attempts"] += 1
 
         if status == "correct":
+            state["correct_attempts"] = int(state.get("correct_attempts", 0)) + 1
             state["consecutive_errors"] = 0
 
             if hints_used > 0:

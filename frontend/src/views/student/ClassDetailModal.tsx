@@ -1,41 +1,47 @@
 import React, { useState } from 'react';
+import { apiService } from '../../services/api';
 import type { ClassGroup } from '../../types/curriculum';
-import { X, Users2, BookOpen, Bell, ArrowRight, CheckCircle2 } from 'lucide-react';
+import {
+  X,
+  Users2,
+  BookOpen,
+  Bell,
+  ArrowRight,
+  CheckCircle2,
+  LogOut,
+  Sparkles,
+} from 'lucide-react';
 
 interface ClassDetailModalProps {
   cls: ClassGroup;
   onClose: () => void;
   onStartExercise?: (topicPrompt: string) => void;
+  onLeftClass?: (classId: string) => void;
 }
 
 export const ClassDetailModal: React.FC<ClassDetailModalProps> = ({
   cls,
   onClose,
   onStartExercise,
+  onLeftClass,
 }) => {
   const [activeTab, setActiveTab] = useState<'retos' | 'alumnos' | 'avisos'>('retos');
-  const classmates = cls.studentsDetail || [];
+  const [leaving, setLeaving] = useState(false);
+  const [confirmLeave, setConfirmLeave] = useState(false);
 
-  const assignedChallenges = [
-    {
-      title: 'Fracciones Equivalentes y Suma',
-      desc: 'Ejercicios adaptativos evaluados simbólicamente con SymPy.',
-      prompt: 'Explícame cómo sumar fracciones y ponme un ejercicio',
-      xp: '+30 XP',
-    },
-    {
-      title: 'Ecuaciones Lineales de Primer Grado',
-      desc: 'Despeje de la incógnita x paso a paso con pistas graduales.',
-      prompt: 'Ponme un ejercicio de ecuaciones de primer grado',
-      xp: '+30 XP',
-    },
-    {
-      title: 'Comprensión Lectora y Acentuación',
-      desc: 'Lecturas originales con identificación de idea principal e inferencias.',
-      prompt: 'Dame un reto de comprensión lectora',
-      xp: '+30 XP',
-    },
-  ];
+  const classmates = cls.studentsDetail || [];
+  const challenges = cls.challenges || [];
+  const announcements = cls.announcements || [];
+
+  const handleLeave = async () => {
+    setLeaving(true);
+    const res = await apiService.leaveClass(cls.id);
+    setLeaving(false);
+    if (res.success) {
+      if (onLeftClass) onLeftClass(cls.id);
+      onClose();
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-3">
@@ -74,7 +80,7 @@ export const ClassDetailModal: React.FC<ClassDetailModalProps> = ({
             }`}
           >
             <BookOpen className="w-3.5 h-3.5" />
-            <span>Retos ({assignedChallenges.length})</span>
+            <span>Retos ({challenges.length})</span>
           </button>
 
           <button
@@ -98,7 +104,7 @@ export const ClassDetailModal: React.FC<ClassDetailModalProps> = ({
             }`}
           >
             <Bell className="w-3.5 h-3.5" />
-            <span>Avisos</span>
+            <span>Avisos ({announcements.length})</span>
           </button>
         </div>
 
@@ -106,38 +112,94 @@ export const ClassDetailModal: React.FC<ClassDetailModalProps> = ({
         <div className="p-4 flex flex-col gap-3">
           {activeTab === 'retos' && (
             <div className="flex flex-col gap-2.5">
-              {assignedChallenges.map((ch, idx) => (
-                <div
-                  key={idx}
-                  className="p-3.5 rounded-xl bg-white border border-[#E8E5DC] shadow-2xs flex flex-col gap-2"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <span className="text-[10px] font-bold text-[#E76D55] uppercase">
-                        Práctica activa
-                      </span>
-                      <h3 className="font-display font-bold text-sm text-[#0A1D2C]">
-                        {ch.title}
-                      </h3>
-                      <p className="text-xs text-[#596B72] mt-0.5">{ch.desc}</p>
-                    </div>
-                    <span className="text-xs font-bold text-[#126B73] bg-[#DCEFEB] px-2 py-0.5 rounded-full shrink-0">
-                      {ch.xp}
-                    </span>
-                  </div>
-
+              {challenges.length === 0 ? (
+                <div className="p-4 rounded-xl bg-white border border-[#E8E5DC] text-center flex flex-col gap-2">
+                  <Sparkles className="w-6 h-6 text-[#126B73] mx-auto" />
+                  <p className="text-xs text-[#596B72]">
+                    Tu docente aún no ha asignado retos específicos en este grupo. Puedes adelantar
+                    practicando {cls.subject} con Jarol.
+                  </p>
                   <button
                     onClick={() => {
                       onClose();
-                      if (onStartExercise) onStartExercise(ch.prompt);
+                      if (onStartExercise) {
+                        onStartExercise(`Ponme un ejercicio de ${cls.subject}`);
+                      }
                     }}
-                    className="w-full mt-1 py-2 rounded-full bg-[#126B73] text-white font-display font-bold text-xs flex items-center justify-center gap-1.5 shadow-[0_2px_0_#005158] active:translate-y-0.5 cursor-pointer"
+                    className="mt-1 py-2 px-4 rounded-full bg-[#126B73] text-white font-display font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
                   >
-                    <span>Resolver con Jarol</span>
+                    <span>Practicar {cls.subject} con Jarol</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
-              ))}
+              ) : (
+                challenges.map((ch) => {
+                  const pct = Math.min(
+                    100,
+                    Math.round((ch.solvedCount / Math.max(ch.targetExercises, 1)) * 100)
+                  );
+                  return (
+                    <div
+                      key={ch.id}
+                      className="p-3.5 rounded-xl bg-white border border-[#E8E5DC] shadow-2xs flex flex-col gap-2"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span
+                              className={`text-[10px] font-bold uppercase ${
+                                ch.isPersonal ? 'text-[#E76D55]' : 'text-[#126B73]'
+                              }`}
+                            >
+                              {ch.isPersonal ? 'Reto personalizado para ti' : 'Reto del grupo'}
+                            </span>
+                            <span className="text-[10px] text-[#596B72]">· {ch.createdAt}</span>
+                          </div>
+                          <h3 className="font-display font-bold text-sm text-[#0A1D2C] mt-0.5">
+                            {ch.title}
+                          </h3>
+                          {ch.instructions && (
+                            <p className="text-xs text-[#596B72] mt-0.5">{ch.instructions}</p>
+                          )}
+                        </div>
+                        <span
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
+                            ch.isCompleted
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : 'bg-[#DCEFEB] text-[#126B73]'
+                          }`}
+                        >
+                          {ch.isCompleted
+                            ? 'Completado ✓'
+                            : `${ch.solvedCount}/${ch.targetExercises} ej.`}
+                        </span>
+                      </div>
+
+                      <div className="w-full h-1.5 bg-[#F7F5EF] rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all ${
+                            ch.isCompleted ? 'bg-emerald-600' : 'bg-[#126B73]'
+                          }`}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+
+                      {!ch.isCompleted && (
+                        <button
+                          onClick={() => {
+                            onClose();
+                            if (onStartExercise) onStartExercise(ch.prompt);
+                          }}
+                          className="w-full mt-1 py-2 rounded-full bg-[#126B73] text-white font-display font-bold text-xs flex items-center justify-center gap-1.5 shadow-[0_2px_0_#005158] active:translate-y-0.5 cursor-pointer"
+                        >
+                          <span>Resolver con Jarol</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  );
+                })
+              )}
             </div>
           )}
 
@@ -162,7 +224,8 @@ export const ClassDetailModal: React.FC<ClassDetailModalProps> = ({
                           {mate.studentName}
                         </span>
                         <span className="text-[10px] text-[#596B72]">
-                          {mate.completedExercises} retos resueltos · {mate.accuracy}% precisión
+                          {mate.completedExercises} retos resueltos · {mate.accuracy}% precisión ·{' '}
+                          {mate.lastActive}
                         </span>
                       </div>
                     </div>
@@ -177,16 +240,72 @@ export const ClassDetailModal: React.FC<ClassDetailModalProps> = ({
           )}
 
           {activeTab === 'avisos' && (
-            <div className="p-3.5 rounded-xl bg-white border border-[#E8E5DC] flex flex-col gap-1.5">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#126B73]" />
-                <span className="font-display font-bold text-xs text-[#0A1D2C]">
-                  Bienvenida de {cls.teacherName}
-                </span>
-              </div>
-              <p className="text-xs text-[#3F484A] leading-relaxed">
-                "¡Bienvenidos al grupo {cls.name}! Utilicen el tutor Jarol para practicar y pedir pistas paso a paso. Todos los ejercicios que resuelvan se registrarán automáticamente en nuestro seguimiento grupal."
-              </p>
+            <div className="flex flex-col gap-2.5">
+              {announcements.length === 0 ? (
+                <div className="p-3.5 rounded-xl bg-white border border-[#E8E5DC] flex flex-col gap-1.5">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-[#126B73]" />
+                    <span className="font-display font-bold text-xs text-[#0A1D2C]">
+                      Bienvenida de {cls.teacherName}
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#3F484A] leading-relaxed">
+                    ¡Bienvenido al grupo {cls.name}! Usa el tutor Jarol para practicar y pedir pistas paso a paso. Tu avance se comparte automáticamente con tu docente.
+                  </p>
+                </div>
+              ) : (
+                announcements.map((ann) => (
+                  <div
+                    key={ann.id}
+                    className="p-3.5 rounded-xl bg-white border border-[#E8E5DC] flex flex-col gap-1"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-display font-bold text-xs text-[#0A1D2C]">
+                        {ann.title}
+                      </span>
+                      <span className="text-[10px] text-[#596B72]">{ann.createdAt}</span>
+                    </div>
+                    <p className="text-xs text-[#3F484A] leading-relaxed">{ann.message}</p>
+                    <span className="text-[10px] text-[#126B73] font-medium">
+                      Por {ann.authorName}
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+
+          {/* Salir de la clase */}
+          {onLeftClass && (
+            <div className="pt-2 border-t border-[#E8E5DC]">
+              {confirmLeave ? (
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-xs">
+                  <span className="text-rose-800 font-medium">¿Salir de {cls.name}?</span>
+                  <div className="flex gap-1.5">
+                    <button
+                      onClick={() => setConfirmLeave(false)}
+                      className="px-2.5 py-1 rounded-lg bg-white border border-[#E8E5DC] text-[#596B72] cursor-pointer"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      onClick={handleLeave}
+                      disabled={leaving}
+                      className="px-2.5 py-1 rounded-lg bg-rose-600 text-white font-bold cursor-pointer"
+                    >
+                      {leaving ? 'Saliendo...' : 'Sí, salir'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setConfirmLeave(true)}
+                  className="w-full py-2 rounded-full text-xs font-display font-semibold text-rose-700 hover:bg-rose-50 flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Salir de este grupo</span>
+                </button>
+              )}
             </div>
           )}
         </div>

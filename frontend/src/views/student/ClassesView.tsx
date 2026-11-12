@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { ClassGroup } from '../../types/curriculum';
 import { apiService } from '../../services/api';
 import { ClassDetailModal } from './ClassDetailModal';
-import { Users2, Plus, CheckCircle2, AlertCircle, ChevronRight, School } from 'lucide-react';
+import { Users2, Plus, CheckCircle2, AlertCircle, ChevronRight, School, Bell } from 'lucide-react';
 
 interface ClassesViewProps {
   onStartExercise?: (topic: string) => void;
@@ -39,7 +39,9 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ onStartExercise }) => 
       if (res.classGroup) {
         setClasses((prev) => {
           const exists = prev.some((c) => c.id === res.classGroup!.id);
-          return exists ? prev : [res.classGroup!, ...prev];
+          return exists
+            ? prev.map((c) => (c.id === res.classGroup!.id ? res.classGroup! : c))
+            : [res.classGroup!, ...prev];
         });
       } else {
         loadClasses();
@@ -48,7 +50,7 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ onStartExercise }) => 
         setShowModal(false);
         setJoinCode('');
         setJoinStatus(null);
-      }, 1400);
+      }, 1300);
     }
   };
 
@@ -61,7 +63,7 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ onStartExercise }) => 
             Mis Clases
           </h1>
           <p className="text-xs md:text-sm text-[#596B72]">
-            Grupos escolares donde tu docente sigue tu avance real con Jarol.
+            Grupos escolares donde tu docente sigue tu avance real y te asigna retos con Jarol.
           </p>
         </div>
 
@@ -91,10 +93,15 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ onStartExercise }) => 
             Aún no estás inscrito en ninguna clase
           </h3>
           <p className="text-xs text-[#596B72] max-w-sm">
-            Pídele a tu docente el código de invitación de su grupo (por ejemplo <strong className="font-mono text-[#126B73]">JAROL-XXXXX</strong>) y únete para compartir tu progreso.
+            Pídele a tu docente el código de invitación de su grupo (por ejemplo{' '}
+            <strong className="font-mono text-[#126B73]">JAROL-XXXXX</strong>) y únete para ver
+            retos asignados y compartir tu progreso.
           </p>
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => {
+              setJoinStatus(null);
+              setShowModal(true);
+            }}
             className="mt-1 px-4 py-2 rounded-full bg-[#126B73] text-white font-display font-bold text-xs shadow-[0_2px_0_#005158] cursor-pointer"
           >
             Ingresar código de clase
@@ -102,44 +109,60 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ onStartExercise }) => 
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {classes.map((cls) => (
-            <button
-              key={cls.id}
-              onClick={() => setSelectedClass(cls)}
-              className="w-full text-left p-4 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_3px_0_#D2E5F9] hover:border-[#126B73] transition-all flex flex-col gap-2.5 active:translate-y-0.5 cursor-pointer"
-            >
-              <div className="flex items-start justify-between w-full">
-                <div>
-                  <span className="text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#DCEFEB] text-[#126B73]">
-                    {cls.subject}
-                  </span>
-                  <h3 className="font-display font-bold text-base text-[#0A1D2C] mt-1">
-                    {cls.name}
-                  </h3>
-                  <p className="text-xs text-[#596B72] mt-0.5">
-                    Docente: <strong className="text-[#0A1D2C]">{cls.teacherName}</strong>
-                  </p>
+          {classes.map((cls) => {
+            const pendingCount = (cls.challenges || []).filter((c) => !c.isCompleted).length;
+            const annCount = (cls.announcements || []).length;
+            return (
+              <button
+                key={cls.id}
+                onClick={() => setSelectedClass(cls)}
+                className="w-full text-left p-4 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_3px_0_#D2E5F9] hover:border-[#126B73] transition-all flex flex-col gap-2.5 active:translate-y-0.5 cursor-pointer"
+              >
+                <div className="flex items-start justify-between w-full">
+                  <div>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#DCEFEB] text-[#126B73]">
+                        {cls.subject}
+                      </span>
+                      {pendingCount > 0 && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#E76D55]/15 text-[#E76D55]">
+                          {pendingCount} {pendingCount === 1 ? 'reto pendiente' : 'retos pendientes'}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="font-display font-bold text-base text-[#0A1D2C] mt-1">
+                      {cls.name}
+                    </h3>
+                    <p className="text-xs text-[#596B72] mt-0.5">
+                      Docente: <strong className="text-[#0A1D2C]">{cls.teacherName}</strong>
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[11px] font-mono font-bold bg-[#F7F5EF] px-2 py-1 rounded-md border border-[#E8E5DC] text-[#126B73]">
+                      {cls.code}
+                    </span>
+                    <ChevronRight className="w-4 h-4 text-[#596B72]" />
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] font-mono font-bold bg-[#F7F5EF] px-2 py-1 rounded-md border border-[#E8E5DC] text-[#126B73]">
-                    {cls.code}
+                <div className="flex items-center justify-between pt-2 border-t border-[#E8E5DC] text-xs text-[#596B72] w-full">
+                  <span className="flex items-center gap-1">
+                    <Users2 className="w-3.5 h-3.5" />
+                    {cls.studentCount} {cls.studentCount === 1 ? 'alumno' : 'alumnos'}
+                    {annCount > 0 && (
+                      <span className="ml-2 flex items-center gap-1 text-[#E76D55] font-semibold">
+                        <Bell className="w-3 h-3" /> {annCount}
+                      </span>
+                    )}
                   </span>
-                  <ChevronRight className="w-4 h-4 text-[#596B72]" />
+                  <span className="font-display font-semibold text-[#126B73]">
+                    {cls.averageMastery}% precisión grupal
+                  </span>
                 </div>
-              </div>
-
-              <div className="flex items-center justify-between pt-2 border-t border-[#E8E5DC] text-xs text-[#596B72] w-full">
-                <span className="flex items-center gap-1">
-                  <Users2 className="w-3.5 h-3.5" />
-                  {cls.studentCount} {cls.studentCount === 1 ? 'alumno' : 'alumnos'}
-                </span>
-                <span className="font-display font-semibold text-[#126B73]">
-                  {cls.averageMastery}% precisión grupal
-                </span>
-              </div>
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
       )}
 
@@ -149,6 +172,9 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ onStartExercise }) => 
           cls={selectedClass}
           onClose={() => setSelectedClass(null)}
           onStartExercise={onStartExercise}
+          onLeftClass={(id) => {
+            setClasses((prev) => prev.filter((c) => c.id !== id));
+          }}
         />
       )}
 
@@ -160,7 +186,8 @@ export const ClassesView: React.FC<ClassesViewProps> = ({ onStartExercise }) => 
               Unirte a una clase
             </h3>
             <p className="text-xs text-[#596B72]">
-              Ingresa el código que generó tu docente en su panel (formato: <strong className="font-mono text-[#126B73]">JAROL-XXXXX</strong>).
+              Ingresa el código que generó tu docente en su panel (formato:{' '}
+              <strong className="font-mono text-[#126B73]">JAROL-XXXXX</strong>).
             </p>
 
             <form onSubmit={handleJoinClass} className="flex flex-col gap-3">

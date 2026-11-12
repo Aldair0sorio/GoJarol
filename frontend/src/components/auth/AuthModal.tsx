@@ -154,17 +154,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         name: googleName,
         picture: googlePicture,
         role: targetRole,
+        explicitRole: mode === 'register',
         grade: gradeStr,
         school: registerSchool,
       });
 
       if (result.success && result.user) {
-        loginWithGoogle({
-          ...result.user,
-          name: result.user.name || googleName,
-          email: result.user.email || googleEmail,
-          avatarUrl: result.user.avatarUrl || googlePicture,
-        });
+        loginWithGoogle(
+          {
+            ...result.user,
+            name: result.user.name || googleName,
+            email: result.user.email || googleEmail,
+            avatarUrl: result.user.avatarUrl || googlePicture,
+          },
+          result.token
+        );
 
         setSuccessMessage(`¡Bienvenido, ${result.user.name || googleName}!`);
         setGoogleLoading(false);
@@ -262,8 +266,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  // Demo account select
-  const handleDemoAccountSelect = (account: {
+  // Demo account select (autenticación real en PostgreSQL)
+  const handleDemoAccountSelect = async (account: {
     name: string;
     email: string;
     role: 'student' | 'teacher';
@@ -271,27 +275,34 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     school?: string;
     picture?: string;
   }) => {
-    const demoUser = {
-      id: `demo_${Date.now()}`,
-      name: account.name,
-      email: account.email,
-      role: account.role,
-      grade: account.grade,
-      school: account.school,
-      avatarUrl: account.picture,
-      xp: account.role === 'student' ? 320 : 0,
-      streakDays: account.role === 'student' ? 4 : 0,
-    };
+    const profile: 'student' | 'teacher' = account.role === 'teacher' ? 'teacher' : 'student';
+    const res = await apiService.loginDemo(profile);
 
-    login(demoUser, `jarol_demo_${Date.now()}`);
-    setSuccessMessage(`¡Accediste como ${account.name}!`);
+    if (res.success && res.user) {
+      login(res.user, res.token);
+      setSuccessMessage(`¡Accediste como ${res.user.name}!`);
+    } else {
+      const demoUser = {
+        id: `demo_${Date.now()}`,
+        name: account.name,
+        email: account.email,
+        role: account.role,
+        grade: account.grade,
+        school: account.school,
+        avatarUrl: account.picture,
+        xp: account.role === 'student' ? 320 : 0,
+        streakDays: account.role === 'student' ? 4 : 0,
+      };
+      login(demoUser, `jarol_demo_${Date.now()}`);
+      setSuccessMessage(`¡Accediste como ${account.name}!`);
+    }
+
     setSubmitted(true);
-
     setTimeout(() => {
       setSubmitted(false);
       setShowDemoAccounts(false);
       onClose();
-    }, 1000);
+    }, 900);
   };
 
   return (
