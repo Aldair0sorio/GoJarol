@@ -1,6 +1,7 @@
 import React from 'react';
 import { AccountMenu } from '../profile/AccountMenu';
 import { useAuth } from '../../context/AuthContext';
+import { getLeagueForXp } from '../../data/leagues';
 import {
   MessageSquareText,
   Target,
@@ -32,11 +33,12 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
   onOpenProfile,
 }) => {
   const { user, role } = useAuth();
+  const leagueStatus = getLeagueForXp(user.xp || 0);
 
   const studentTabs: SidebarTab[] = [
     { id: 'chat', label: 'Tutor Jarol', icon: MessageSquareText, badge: 'IA' },
     { id: 'retos', label: 'Retos por Materia', icon: Target },
-    { id: 'ligas', label: 'Ligas Veracruz', icon: Trophy, badge: 'Top 5' },
+    { id: 'ligas', label: 'Ligas Veracruz', icon: Trophy, badge: leagueStatus.tier.name },
     { id: 'clases', label: 'Mis Clases', icon: Users2 },
     { id: 'progreso', label: 'Mi Progreso', icon: TrendingUp },
   ];
@@ -84,9 +86,17 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
               <Flame className="w-4 h-4 text-amber-500 fill-amber-500" />
               <span>{user.streakDays || 1} días de racha</span>
             </div>
-            <div className="flex items-center gap-1 text-xs font-display font-extrabold text-[#126B73] bg-[#DCEFEB] px-2 py-0.5 rounded-full">
-              <Sparkles className="w-3.5 h-3.5 text-[#E4AA50] fill-[#E4AA50]" />
-              <span>{user.xp || 0} XP</span>
+            <div className="flex items-center gap-1.5">
+              <img
+                src={leagueStatus.tier.imageUrl}
+                alt={`Liga ${leagueStatus.tier.name}`}
+                title={`Liga ${leagueStatus.tier.name}`}
+                className="w-5 h-5 object-contain"
+              />
+              <div className="flex items-center gap-1 text-xs font-display font-extrabold text-[#126B73] bg-[#DCEFEB] px-2 py-0.5 rounded-full">
+                <Sparkles className="w-3.5 h-3.5 text-[#E4AA50] fill-[#E4AA50]" />
+                <span>{user.xp || 0} XP</span>
+              </div>
             </div>
           </div>
         )}

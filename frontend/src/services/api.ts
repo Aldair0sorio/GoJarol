@@ -7,6 +7,7 @@ import type { AnswerFeedback, ChatMessage, ExerciseCardData } from '../types/cha
 import type { Subject, ClassGroup, StudentMastery, GroupTopicAnalytics, ClassChallengeItem, ClassAnnouncementItem, StudentTopicMetric } from '../types/curriculum';
 import type { DetailedStudent, StudentExerciseAttempt } from '../types/leagues';
 import type { User, BackendProfile, ProfileChanges } from '../types/auth';
+import type { BackendLeagueRank } from '../data/leagues';
 
 const API_BASE = '/api/v1';
 
@@ -68,6 +69,7 @@ export interface TopicProgressItem {
 
 export interface StudentProgressSummary {
   xp: number;
+  league?: BackendLeagueRank;
   streakDays: number;
   completedCount: number;
   totalAttempts: number;
@@ -83,6 +85,7 @@ export interface LeaderboardEntry {
   username?: string;
   grade: string;
   xp: number;
+  league?: BackendLeagueRank;
   streakDays: number;
   isCurrentUser?: boolean;
 }

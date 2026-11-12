@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { apiService, type LeaderboardEntry } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import { Trophy, Flame, Sparkles, Medal, ArrowUp, Users } from 'lucide-react';
+import { LEAGUE_TIERS, getLeagueForXp, getLeagueTierById } from '../../data/leagues';
+import { Flame, Sparkles, Medal, ArrowUp, Users, CheckCircle2 } from 'lucide-react';
 
 interface LeaguesViewProps {
   onGoPractice: () => void;
@@ -22,29 +23,132 @@ export const LeaguesView: React.FC<LeaguesViewProps> = ({ onGoPractice }) => {
   }, []);
 
   const topThree = entries.slice(0, 3);
+  const myEntry = entries.find((item) => Boolean(item.isCurrentUser || item.id === user.id));
+  const myLeague = getLeagueForXp(myEntry?.xp ?? user.xp ?? 0, myEntry?.league);
+  const goldBadge = getLeagueTierById('oro');
+  const silverBadge = getLeagueTierById('plata');
+  const bronzeBadge = getLeagueTierById('bronce');
 
   return (
     <div className="flex flex-col flex-1 px-4 md:px-8 py-4 pb-24 md:pb-8 max-w-md md:max-w-3xl lg:max-w-4xl mx-auto w-full">
       {/* Header de la Liga */}
-      <div className="p-4 rounded-2xl bg-gradient-to-br from-[#126B73] to-[#005158] text-white shadow-[0_4px_16px_rgba(18,107,115,0.2)] mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-xs">
-            <Trophy className="w-6 h-6 text-[#E4AA50] fill-[#E4AA50]" />
+      <div className="p-4 rounded-2xl bg-gradient-to-br from-[#126B73] to-[#005158] text-white shadow-[0_4px_16px_rgba(18,107,115,0.2)] mb-4 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-xs shrink-0 p-1">
+            <img
+              src={myLeague.tier.imageUrl}
+              alt={`Liga ${myLeague.tier.name}`}
+              className="w-full h-full object-contain drop-shadow-xs"
+            />
           </div>
-          <div>
+          <div className="min-w-0">
             <span className="text-[10px] font-display font-bold uppercase tracking-wider text-[#DCEFEB] block">
               Liga Estudiantil Veracruz
             </span>
-            <h1 className="font-display font-extrabold text-lg leading-tight">
+            <h1 className="font-display font-extrabold text-lg leading-tight truncate">
               Clasificación General en Vivo
             </h1>
           </div>
         </div>
 
-        <div className="text-right">
+        <div className="text-right shrink-0">
           <div className="inline-flex items-center gap-1 text-[11px] font-semibold bg-white/10 px-2.5 py-1 rounded-full border border-white/20 text-[#DCEFEB]">
             <Users className="w-3.5 h-3.5" />
             <span>{entries.length} estudiantes</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Tu Liga Actual + Divisiones por XP */}
+      <div className="bg-white rounded-2xl p-4 border border-[#E8E5DC] shadow-[0_3px_0_#D2E5F9] mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E8E5DC]">
+          <div className="flex items-center gap-3">
+            <img
+              src={myLeague.tier.imageUrl}
+              alt={`Liga ${myLeague.tier.name}`}
+              className="w-16 h-16 sm:w-18 sm:h-18 object-contain shrink-0 drop-shadow-xs"
+            />
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[11px] font-display font-bold uppercase tracking-wider text-[#596B72]">
+                  Tu liga actual
+                </span>
+                <span
+                  className={`text-[11px] font-display font-extrabold px-2 py-0.5 rounded-full ${myLeague.tier.badgeBg} ${myLeague.tier.badgeText}`}
+                >
+                  {myLeague.tier.name}
+                </span>
+              </div>
+              <p className="font-display font-extrabold text-base text-[#0A1D2C] mt-0.5">
+                {myLeague.xp} XP acumulados
+              </p>
+              <p className="text-xs text-[#596B72]">{myLeague.tier.tagline}</p>
+            </div>
+          </div>
+
+          <div className="sm:w-56">
+            <div className="flex items-center justify-between text-[11px] font-display font-semibold mb-1">
+              <span className="text-[#0A1D2C]">
+                {myLeague.nextTier ? `Rumbo a ${myLeague.nextTier.name}` : 'Liga máxima alcanzada'}
+              </span>
+              <span className="text-[#126B73]">
+                {myLeague.nextTier ? `${myLeague.xpToNext} XP restantes` : '100%'}
+              </span>
+            </div>
+            <div className="w-full h-2.5 bg-[#DCEFEB] rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${myLeague.tier.barColor}`}
+                style={{ width: `${myLeague.progressPercent}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-3">
+          <h2 className="font-display font-bold text-[11px] uppercase tracking-wider text-[#596B72] mb-2.5">
+            Divisiones de la Liga Go Jarol
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            {LEAGUE_TIERS.map((tier) => {
+              const isCurrent = tier.id === myLeague.tier.id;
+              const isUnlocked = myLeague.xp >= tier.minXp;
+              return (
+                <div
+                  key={tier.id}
+                  className={`relative rounded-xl p-2.5 border flex flex-col items-center text-center transition-all ${
+                    isCurrent
+                      ? `${tier.cardBg} ${tier.cardBorder} ring-2 ring-[#126B73] shadow-xs`
+                      : isUnlocked
+                      ? `${tier.cardBg} ${tier.cardBorder}`
+                      : 'bg-[#F7F5EF]/70 border-[#E8E5DC] opacity-75'
+                  }`}
+                >
+                  {isCurrent && (
+                    <span className="absolute -top-2 right-2 bg-[#126B73] text-white text-[9px] font-display font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-2xs">
+                      Tu liga
+                    </span>
+                  )}
+                  {!isCurrent && isUnlocked && (
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 absolute top-2 right-2" />
+                  )}
+                  <img
+                    src={tier.imageUrl}
+                    alt={`Emblema Liga ${tier.name}`}
+                    className={`w-14 h-14 sm:w-16 sm:h-16 object-contain mb-1.5 ${
+                      !isUnlocked ? 'grayscale-[25%]' : ''
+                    }`}
+                  />
+                  <span className="font-display font-extrabold text-xs text-[#0A1D2C]">
+                    {tier.name}
+                  </span>
+                  <span
+                    className={`mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${tier.badgeBg} ${tier.badgeText}`}
+                  >
+                    {tier.minXp === 0 ? 'Inicio (0+ XP)' : `${tier.minXp}+ XP`}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -76,8 +180,9 @@ export const LeaguesView: React.FC<LeaguesViewProps> = ({ onGoPractice }) => {
                 <span className="text-[11px] font-semibold text-[#126B73]">
                   {topThree[1].xp} XP
                 </span>
-                <div className="w-full h-12 bg-slate-100 rounded-t-xl mt-2 flex items-center justify-center border-t-2 border-slate-300 text-slate-600 font-display font-bold text-xs">
-                  Plata
+                <div className="w-full h-14 bg-slate-100 rounded-t-xl mt-2 px-2 flex items-center justify-center gap-1.5 border-t-2 border-slate-300 text-slate-700 font-display font-bold text-xs">
+                  <img src={silverBadge.imageUrl} alt="Plata" className="w-7 h-7 object-contain" />
+                  <span>Plata</span>
                 </div>
               </div>
             )}
@@ -101,8 +206,9 @@ export const LeaguesView: React.FC<LeaguesViewProps> = ({ onGoPractice }) => {
                 <span className="text-xs font-bold text-[#E4AA50]">
                   {topThree[0].xp} XP
                 </span>
-                <div className="w-full h-16 bg-amber-50 rounded-t-xl mt-2 flex items-center justify-center border-t-2 border-[#E4AA50] text-amber-800 font-display font-bold text-sm">
-                  Oro
+                <div className="w-full h-18 bg-amber-50 rounded-t-xl mt-2 px-2 flex items-center justify-center gap-1.5 border-t-2 border-[#E4AA50] text-amber-900 font-display font-bold text-sm">
+                  <img src={goldBadge.imageUrl} alt="Oro" className="w-9 h-9 object-contain" />
+                  <span>Oro</span>
                 </div>
               </div>
             )}
@@ -126,8 +232,9 @@ export const LeaguesView: React.FC<LeaguesViewProps> = ({ onGoPractice }) => {
                 <span className="text-[11px] font-semibold text-[#126B73]">
                   {topThree[2].xp} XP
                 </span>
-                <div className="w-full h-9 bg-orange-50 rounded-t-xl mt-2 flex items-center justify-center border-t-2 border-amber-600 text-amber-900 font-display font-bold text-xs">
-                  Bronce
+                <div className="w-full h-12 bg-orange-50 rounded-t-xl mt-2 px-2 flex items-center justify-center gap-1.5 border-t-2 border-amber-600 text-amber-900 font-display font-bold text-xs">
+                  <img src={bronzeBadge.imageUrl} alt="Bronce" className="w-7 h-7 object-contain" />
+                  <span>Bronce</span>
                 </div>
               </div>
             )}
@@ -152,18 +259,19 @@ export const LeaguesView: React.FC<LeaguesViewProps> = ({ onGoPractice }) => {
         ) : (
           entries.map((item) => {
             const isMe = Boolean(item.isCurrentUser || item.id === user.id);
+            const itemLeague = getLeagueForXp(item.xp, item.league);
             return (
               <div
                 key={item.id}
-                className={`flex items-center justify-between p-2.5 rounded-xl transition-colors ${
+                className={`flex items-center justify-between gap-2 p-2.5 rounded-xl transition-colors ${
                   isMe
                     ? 'bg-[#DCEFEB] border-2 border-[#126B73] shadow-xs'
                     : 'bg-[#F7F5EF] hover:bg-slate-100'
                 }`}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 min-w-0">
                   <span
-                    className={`w-6 text-center font-display font-bold text-sm ${
+                    className={`w-6 text-center font-display font-bold text-sm shrink-0 ${
                       isMe ? 'text-[#126B73]' : 'text-[#596B72]'
                     }`}
                   >
@@ -171,25 +279,28 @@ export const LeaguesView: React.FC<LeaguesViewProps> = ({ onGoPractice }) => {
                   </span>
 
                   <img
-                    src="/mascot/jarol-crab.png"
-                    alt={item.name}
-                    className="w-9 h-9 rounded-full object-contain bg-white p-0.5 ring-1 ring-[#E8E5DC]"
+                    src={itemLeague.tier.imageUrl}
+                    alt={`Liga ${itemLeague.tier.name}`}
+                    title={`Liga ${itemLeague.tier.name}`}
+                    className="w-10 h-10 object-contain shrink-0 drop-shadow-2xs"
                   />
 
-                  <div>
+                  <div className="min-w-0">
                     <span
-                      className={`font-display font-bold text-xs block ${
+                      className={`font-display font-bold text-xs block truncate ${
                         isMe ? 'text-[#126B73]' : 'text-[#0A1D2C]'
                       }`}
                     >
                       {item.name} {isMe ? '(Tú)' : ''}
                     </span>
-                    <span className="text-[10px] text-[#596B72]">{item.grade}</span>
+                    <span className="text-[10px] text-[#596B72] block truncate">
+                      {item.grade} • Liga {itemLeague.tier.name}
+                    </span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-0.5 text-amber-600">
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className="hidden sm:flex items-center gap-0.5 text-amber-600">
                     <Flame className="w-3.5 h-3.5 fill-amber-500" />
                     <span className="text-[11px] font-bold">{item.streakDays}d</span>
                   </div>

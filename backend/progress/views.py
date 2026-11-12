@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 
 from chat.services.runtime import TOPIC_METADATA, get_runtime
 from progress.models import ExerciseAttempt, StudentProgress
+from progress.ranks import rank_for_xp
 
 User = get_user_model()
 
@@ -235,8 +236,11 @@ def compute_user_diagnostics(progress_obj: StudentProgress | None, user_obj=None
         else sum(int(v or 0) for v in hints_by_exercise.values())
     )
 
+    xp_value = progress_obj.xp if progress_obj else 0
+
     return {
-        "xp": progress_obj.xp if progress_obj else 0,
+        "xp": xp_value,
+        "league": rank_for_xp(xp_value),
         "streakDays": progress_obj.streak_days if progress_obj else 1,
         "completedCount": len(completed_set),
         "totalAttempts": total_attempts_all,
@@ -301,6 +305,7 @@ class LeaderboardView(APIView):
                     "username": student.username,
                     "grade": grade_str,
                     "xp": prog.xp,
+                    "league": rank_for_xp(prog.xp),
                     "streakDays": prog.streak_days,
                     "isCurrentUser": bool(
                         request.user

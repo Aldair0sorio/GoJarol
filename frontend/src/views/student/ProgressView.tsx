@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { apiService, type StudentProgressSummary } from '../../services/api';
+import { getLeagueForXp } from '../../data/leagues';
 import { Flame, Sparkles, Award, Target, CheckCircle2, ArrowRight, BookOpen } from 'lucide-react';
 
 interface ProgressViewProps {
@@ -29,6 +30,7 @@ export const ProgressView: React.FC<ProgressViewProps> = ({ onPracticeTopic }) =
   const streakDays = summary?.streakDays ?? user.streakDays ?? 1;
   const level = Math.floor(xp / 100) + 1;
   const currentLevelXp = xp % 100;
+  const leagueStatus = getLeagueForXp(xp, summary?.league);
 
   return (
     <div className="flex flex-col flex-1 px-4 md:px-8 py-4 pb-24 md:pb-8 max-w-md md:max-w-3xl lg:max-w-4xl mx-auto w-full">
@@ -55,16 +57,34 @@ export const ProgressView: React.FC<ProgressViewProps> = ({ onPracticeTopic }) =
           </span>
         </div>
 
-        {summary && (
-          <div className="text-right hidden sm:block">
-            <span className="text-xs font-display font-bold text-[#0A1D2C] block">
-              {summary.completedCount} retos resueltos
-            </span>
-            <span className="text-[11px] text-[#596B72]">
-              Precisión: {summary.accuracy}%
-            </span>
+        <div className="flex items-center gap-2 shrink-0">
+          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl border ${leagueStatus.tier.cardBg} ${leagueStatus.tier.cardBorder}`}>
+            <img
+              src={leagueStatus.tier.imageUrl}
+              alt={`Liga ${leagueStatus.tier.name}`}
+              className="w-8 h-8 object-contain"
+            />
+            <div className="leading-tight">
+              <span className="text-[9px] font-display font-bold uppercase tracking-wider text-[#596B72] block">
+                Liga
+              </span>
+              <span className={`text-xs font-display font-extrabold ${leagueStatus.tier.badgeText}`}>
+                {leagueStatus.tier.name}
+              </span>
+            </div>
           </div>
-        )}
+
+          {summary && (
+            <div className="text-right hidden sm:block pl-1">
+              <span className="text-xs font-display font-bold text-[#0A1D2C] block">
+                {summary.completedCount} retos resueltos
+              </span>
+              <span className="text-[11px] text-[#596B72]">
+                Precisión: {summary.accuracy}%
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Gamificación: Racha y XP */}
@@ -96,17 +116,37 @@ export const ProgressView: React.FC<ProgressViewProps> = ({ onPracticeTopic }) =
         </div>
       </div>
 
-      {/* Barra de progreso de nivel */}
-      <div className="p-4 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_2px_0_#D2E5F9] mb-4">
-        <div className="flex items-center justify-between text-xs font-display font-semibold mb-1.5">
-          <span className="text-[#0A1D2C]">Progreso a Nivel {level + 1}</span>
-          <span className="text-[#126B73]">{currentLevelXp} / 100 XP</span>
+      {/* Barra de progreso de nivel y liga */}
+      <div className="p-4 rounded-2xl bg-white border border-[#E8E5DC] shadow-[0_2px_0_#D2E5F9] mb-4 flex flex-col gap-3">
+        <div>
+          <div className="flex items-center justify-between text-xs font-display font-semibold mb-1.5">
+            <span className="text-[#0A1D2C]">Progreso a Nivel {level + 1}</span>
+            <span className="text-[#126B73]">{currentLevelXp} / 100 XP</span>
+          </div>
+          <div className="w-full h-3 bg-[#DCEFEB] rounded-full overflow-hidden">
+            <div
+              className="h-full bg-[#126B73] rounded-full transition-all duration-500 shadow-xs"
+              style={{ width: `${currentLevelXp}%` }}
+            ></div>
+          </div>
         </div>
-        <div className="w-full h-3 bg-[#DCEFEB] rounded-full overflow-hidden">
-          <div
-            className="h-full bg-[#126B73] rounded-full transition-all duration-500 shadow-xs"
-            style={{ width: `${currentLevelXp}%` }}
-          ></div>
+
+        <div className="pt-2 border-t border-[#E8E5DC] flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <img
+              src={leagueStatus.tier.imageUrl}
+              alt={`Liga ${leagueStatus.tier.name}`}
+              className="w-7 h-7 object-contain shrink-0"
+            />
+            <span className="text-xs font-display font-bold text-[#0A1D2C] truncate">
+              Liga {leagueStatus.tier.name}
+            </span>
+          </div>
+          <span className="text-[11px] font-semibold text-[#596B72] shrink-0">
+            {leagueStatus.nextTier
+              ? `Faltan ${leagueStatus.xpToNext} XP para ${leagueStatus.nextTier.name}`
+              : 'Liga máxima alcanzada'}
+          </span>
         </div>
       </div>
 
