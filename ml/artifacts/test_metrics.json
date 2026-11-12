@@ -1,0 +1,14 @@
+{
+  "intents_test.csv": {
+    "rows": 1200,
+    "accuracy": 0.7575,
+    "macro_f1": 0.759077071386599,
+    "errors": 291
+  },
+  "intents_realistic_test.csv": {
+    "rows": 120,
+    "accuracy": 0.8333333333333334,
+    "macro_f1": 0.8357870686818055,
+    "errors": 20
+  }
+}
