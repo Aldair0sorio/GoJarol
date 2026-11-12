@@ -12,7 +12,7 @@ await build({ configFile: false, root, logLevel: 'silent', build: {
   rollupOptions: { output: { entryFileNames: 'api.mjs' } },
 } });
 const { apiService, isBackendToken, verifyEmail, resendVerification, authError, getAuthConfig, resolveGoogleClientId } = await import(pathToFileURL(join(output,'api.mjs')).href);
-const authConfig = {auth_contract_version:2,registration_mode:'email_verification',google_client_id:'test-client.apps.googleusercontent.com'};
+const authConfig = {auth_contract_version:2,registration_mode:'direct',google_client_id:'test-client.apps.googleusercontent.com'};
 function mockFetch(handler) {
   globalThis.fetch=(url, options) => url==='/api/v1/auth/config/'
     ? Promise.resolve(new Response(JSON.stringify(authConfig))) : handler(url, options);
@@ -30,29 +30,23 @@ for (const status of [400,401,409,500,503]) {
   });
 }
 
-test('Registration accepts verification pending without creating a session', async () => {
+test('Registration creates authenticated session directly from valid backend token and user', async () => {
   storage.clear();
+  const token = 'd'.repeat(40);
   mockFetch(async (url, options) => {
     assert.equal(url, '/api/v1/auth/register/');
     const body = JSON.parse(options.body);
     assert.equal(body.full_name, 'Ana López'); assert.equal(body.password_confirm, 'test-only');
     assert.equal(body.estado, '30'); assert.equal(body.school, undefined); assert.equal(body.email_status, undefined);
-    return new Response(JSON.stringify({verification_required:true,email_sent:true}), {status:201});
+    return new Response(JSON.stringify({token,user:{id:12,username:'ana',email:'ana@example.test',first_name:'Ana',last_name:'López',rol:'estudiante',nivel:'secundaria',grado:1,xp:0,streak_days:1}}), {status:201});
   });
   const result=await apiService.register({username:'ana',email:'ana@example.test',fullName:'Ana López',password:'test-only',passwordConfirm:'test-only',role:'student',estado:'30',nivel:'secundaria',grado:1});
-  assert.equal(result.success,true);assert.equal(result.verificationRequired,true);assert.equal(result.emailSent,true);
-  assert.equal(result.token,undefined);assert.equal(result.user,undefined);assert.equal(storage.size,0);
+  assert.equal(result.success,true);assert.equal(result.token,token);
+  assert.equal(result.user.id,'12');assert.equal(result.user.role,'student');
+  assert.equal(storage.get('jarol_token'),token);
 });
 
-test('SMTP failure reports saved account without claiming delivery or creating session', async () => {
-  storage.clear();
-  mockFetch(async () => new Response(JSON.stringify({account_created:true,email_sent:false,error:{message:'Delivery failed'}}),{status:503}));
-  const result=await apiService.register({username:'ana',email:'ana@example.test',fullName:'Ana',password:'test-only',passwordConfirm:'test-only',role:'student',estado:'30'});
-  assert.equal(result.success,false);assert.equal(result.verificationRequired,true);assert.equal(result.emailSent,false);
-  assert.ok(result.error.includes('no pudimos enviar'));assert.equal(storage.size,0);
-});
-
-test('Pending login is distinct from an authenticated session', async () => {
+test('Pending login response is rejected cleanly without session', async () => {
   storage.clear();
   mockFetch(async () => new Response(JSON.stringify({verification_required:true,error:{message:'Verify email'}}),{status:403}));
   const result=await apiService.login({username:'ana',password:'test-only'});

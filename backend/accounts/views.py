@@ -35,7 +35,7 @@ class RegistrationThrottle(AnonRateThrottle):
 class AuthConfigView(PublicAuthView):
     """Public contract and Google audience; never SMTP settings or credentials."""
     def get(self, request):
-        response = Response({'auth_contract_version': 2, 'registration_mode': 'email_verification',
+        response = Response({'auth_contract_version': 2, 'registration_mode': 'direct',
                              'google_client_id': getattr(settings, 'GOOGLE_CLIENT_ID', '') or None})
         response['Cache-Control'] = 'no-store'
         return response
@@ -52,15 +52,8 @@ class RegisterView(PublicAuthView):
                 user = serializer.save()
         except IntegrityError:
             return Response({'error': {'message': 'El usuario o correo ya está registrado.'}}, status=400)
-        try:
-            send_verification(user)
-        except VerificationRateLimited:
-            return Response({'verification_required': True, 'email_sent': False, 'account_created': True,
-                'error': {'message': 'Tu cuenta se creó. Ya se solicitó un correo; espera un minuto antes de reenviar.'}}, status=429)
-        except VerificationDeliveryFailed:
-            return Response({'verification_required': True, 'email_sent': False, 'account_created': True,
-                'error': {'message': 'Tu cuenta se creó, pero no pudimos enviar el correo. Solicita un reenvío en un minuto.'}}, status=503)
-        return Response({'verification_required': True, 'email_sent': True}, status=201)
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key, 'user': UserSerializer(user).data}, status=201)
 
 
 class LoginView(PublicAuthView):
@@ -84,7 +77,9 @@ class LoginView(PublicAuthView):
                 status=401,
             )
         if user.email_status == User.EmailStatus.PENDING:
-            return Response({'verification_required': True, 'error': {'message': 'Confirma tu correo antes de iniciar sesión.'}}, status=403)
+            user.email_status = User.EmailStatus.VERIFIED
+            user.email_verified_at = timezone.now()
+            user.save(update_fields=['email_status', 'email_verified_at'])
         token, _ = Token.objects.get_or_create(user=user)
         return Response({"token": token.key, "user": UserSerializer(user).data})
 
@@ -96,7 +91,7 @@ class GoogleLoginView(PublicAuthView):
         from django.db import IntegrityError, transaction
         from google.auth.exceptions import GoogleAuthError, TransportError
         from .google_identity import verify_google_identity
-        from .models import GoogleIdentity
+        from .models import EmailVerification, GoogleIdentity
 
         def error(code, message, status):
             return Response({'error': {'code': code, 'message': message}}, status=status)
@@ -121,20 +116,35 @@ class GoogleLoginView(PublicAuthView):
                         return error('identity_changed', 'El correo asociado cambió. Se requiere revisar la vinculación de la cuenta.', 409)
                     user = identity.user
                 else:
-                    if User.objects.filter(email__iexact=email).exists() or GoogleIdentity.objects.filter(email=email).exists():
-                        return error('account_link_required', 'Usa el acceso original de tu cuenta. No se vinculan cuentas automáticamente por correo.', 409)
-                    role = request.data.get('role', User.Rol.ESTUDIANTE)
-                    if not isinstance(role, str) or role not in {User.Rol.ESTUDIANTE, User.Rol.DOCENTE}:
-                        return error('invalid_role', 'Selecciona un tipo de cuenta permitido.', 400)
-                    level = request.data.get('nivel', User.Nivel.SECUNDARIA) if role == User.Rol.ESTUDIANTE else ''
-                    grade = request.data.get('grado', 1) if role == User.Rol.ESTUDIANTE else None
-                    if role == User.Rol.ESTUDIANTE and (not isinstance(level, str) or level not in User.Nivel.values or type(grade) is not int or not 1 <= grade <= (3 if level == User.Nivel.SECUNDARIA else 6)):
-                        return error('invalid_grade', 'El nivel o grado no es válido.', 400)
-                    user = User.objects.create_user(username='google_' + uuid.uuid4().hex, email=email,
-                        first_name=str(claims.get('given_name') or '')[:150], last_name=str(claims.get('family_name') or '')[:150],
-                        alias=str(claims.get('name') or '')[:50], rol=role, nivel=level, grado=grade,
-                        email_status=User.EmailStatus.VERIFIED, email_verified_at=timezone.now())
-                    GoogleIdentity.objects.create(subject=subject, email=email, user=user)
+                    if GoogleIdentity.objects.filter(email__iexact=email).exists():
+                        return error('account_link_required', 'Este correo ya está vinculado a otra cuenta de Google.', 409)
+                    existing_user = User.objects.select_for_update().filter(email__iexact=email).order_by('id').first()
+                    if existing_user is not None:
+                        if existing_user.rol == User.Rol.ADMIN or existing_user.is_staff or existing_user.is_superuser:
+                            return error('account_link_required', 'Usa el acceso original de tu cuenta de administrador.', 409)
+                        if not existing_user.is_active:
+                            return error('inactive_account', 'Esta cuenta no está disponible.', 403)
+                        if GoogleIdentity.objects.filter(user=existing_user).exists():
+                            return error('account_link_required', 'Esta cuenta ya está vinculada a otro acceso de Google.', 409)
+                        if existing_user.email_status == User.EmailStatus.PENDING and existing_user.has_usable_password():
+                            existing_user.set_unusable_password()
+                            existing_user.save(update_fields=['password'])
+                            EmailVerification.objects.filter(user=existing_user).delete()
+                        GoogleIdentity.objects.create(subject=subject, email=email, user=existing_user)
+                        user = existing_user
+                    else:
+                        role = request.data.get('role', User.Rol.ESTUDIANTE)
+                        if not isinstance(role, str) or role not in {User.Rol.ESTUDIANTE, User.Rol.DOCENTE}:
+                            return error('invalid_role', 'Selecciona un tipo de cuenta permitido.', 400)
+                        level = request.data.get('nivel', User.Nivel.SECUNDARIA) if role == User.Rol.ESTUDIANTE else ''
+                        grade = request.data.get('grado', 1) if role == User.Rol.ESTUDIANTE else None
+                        if role == User.Rol.ESTUDIANTE and (not isinstance(level, str) or level not in User.Nivel.values or type(grade) is not int or not 1 <= grade <= (3 if level == User.Nivel.SECUNDARIA else 6)):
+                            return error('invalid_grade', 'El nivel o grado no es válido.', 400)
+                        user = User.objects.create_user(username='google_' + uuid.uuid4().hex, email=email,
+                            first_name=str(claims.get('given_name') or '')[:150], last_name=str(claims.get('family_name') or '')[:150],
+                            alias=str(claims.get('name') or '')[:50], rol=role, nivel=level, grado=grade,
+                            email_status=User.EmailStatus.VERIFIED, email_verified_at=timezone.now())
+                        GoogleIdentity.objects.create(subject=subject, email=email, user=user)
                 if not user.is_active:
                     return error('inactive_account', 'Esta cuenta no está disponible.', 403)
                 if user.email_status != User.EmailStatus.VERIFIED:

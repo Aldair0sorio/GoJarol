@@ -56,6 +56,25 @@ def register(**changes):
     return request, response
 
 
+def register_pending(**changes):
+    from accounts.email_verification import send_verification
+    request = data(**changes)
+    user = User.objects.create_user(
+        username=request['username'],
+        email=request['email'],
+        password=request['password'],
+        first_name=request['full_name'],
+        alias=request['full_name'][:50],
+        rol=request['rol'],
+        nivel=request.get('nivel', '') if request['rol'] == 'estudiante' else '',
+        grado=request.get('grado') if request['rol'] == 'estudiante' else None,
+        estado=request['estado'],
+        email_status=User.EmailStatus.PENDING,
+    )
+    send_verification(user)
+    return request, user
+
+
 def link():
     match = re.search(r'/verificar-correo/(\d+)/([A-Za-z0-9_-]+)', mail.outbox[-1].body)
     assert match
@@ -63,31 +82,21 @@ def link():
 
 
 @pytest.mark.parametrize('role', ['estudiante', 'docente'])
-def test_register_verify_login_profile_chat_logout(role):
+def test_register_direct_login_profile_chat_logout(role):
     request, response = register(rol=role)
-    assert response.status_code == 201 and response.data == {'verification_required': True, 'email_sent': True}
+    assert response.status_code == 201 and 'token' in response.data and 'user' in response.data
     user = User.objects.get(username=request['username'])
-    assert user.email_status == 'pending' and user.email_verified_at is None
+    assert user.email_status == 'verified' and user.email_verified_at is not None
     assert user.first_name == request['full_name'] and user.estado == '30'
-    assert not user.is_staff and not user.is_superuser and not Token.objects.filter(user=user).exists()
+    assert not user.is_staff and not user.is_superuser and Token.objects.filter(user=user).exists()
     assert user.check_password(request['password']) and user.password != request['password']
     if role == 'docente':
         assert user.nivel == '' and user.grado is None
-    assert len(mail.outbox) == 1 and mail.outbox[0].to == [request['email']]
-    assert mail.outbox[0].from_email == 'Go Jarol <no.reply.trees.25@gmail.com>'
-    assert mail.outbox[0].body.startswith('¡Hola!')
+    assert len(mail.outbox) == 0
     visitor = APIClient()
     credentials = {'username': request['email'], 'password': request['password']}
-    pending = visitor.post('/auth/login/', credentials, format='json')
-    assert pending.status_code == 403 and pending.data['verification_required'] and 'token' not in pending.data
-    confirmation = link()
-    assert confirmation['token'] != user.email_verification.token_hash
-    assert visitor.post('/auth/verify-email/', confirmation, format='json').status_code == 200
-    assert visitor.post('/auth/verify-email/', confirmation, format='json').status_code == 400
-    user.refresh_from_db()
-    assert user.email_status == 'verified' and user.email_verified_at
     login = visitor.post('/auth/login/', credentials, format='json')
-    assert login.status_code == 200
+    assert login.status_code == 200 and login.data['token'] == response.data['token']
     visitor.credentials(HTTP_AUTHORIZATION='Token ' + login.data['token'])
     profile = visitor.get('/auth/me/')
     assert profile.status_code == 200 and profile.data['estado'] == '30' and profile.data['email_status'] == 'verified'
@@ -97,6 +106,19 @@ def test_register_verify_login_profile_chat_logout(role):
     assert chat.status_code == 200 and chat.data['type'] == 'explanation'
     assert visitor.post('/auth/logout/').status_code == 204
     assert visitor.get('/auth/me/').status_code == 401
+
+
+def test_login_promotes_existing_pending_account_to_verified():
+    user = User.objects.create_user(
+        username='stuck_pending',
+        email='stuck-pending@example.test',
+        password='Aprender-con-Jarol-734!',
+        email_status=User.EmailStatus.PENDING,
+    )
+    login = APIClient().post('/auth/login/', {'username': user.email, 'password': 'Aprender-con-Jarol-734!'}, format='json')
+    assert login.status_code == 200 and 'token' in login.data
+    user.refresh_from_db()
+    assert user.email_status == User.EmailStatus.VERIFIED and user.email_verified_at is not None
 
 
 @pytest.mark.parametrize('estado', [code for code, _ in STATES])
@@ -133,8 +155,7 @@ def test_bachillerato_semester_six_is_saved():
 
 
 def test_expired_invalid_and_other_account_tokens_are_rejected():
-    _, response = register()
-    assert response.status_code == 201
+    register_pending()
     confirmation = link()
     other_request, _ = register()
     other = User.objects.get(username=other_request['username'])
@@ -150,7 +171,7 @@ def test_expired_invalid_and_other_account_tokens_are_rejected():
 
 
 def test_resend_rotates_token_and_enforces_persistent_limits():
-    request, _ = register()
+    request, _ = register_pending()
     original = link()
     c = APIClient()
     assert c.post('/auth/resend-verification/', {'email': request['email']}, format='json').status_code == 429
@@ -172,18 +193,17 @@ def test_resend_rotates_token_and_enforces_persistent_limits():
     assert c.post('/auth/verify-email/', link(), format='json').status_code == 200
 
 
-def test_smtp_failure_retains_pending_account_without_claiming_delivery():
+def test_register_succeeds_even_when_smtp_would_fail():
     with patch('accounts.email_verification.EmailMessage.send', side_effect=smtplib.SMTPAuthenticationError(535, b'rejected')):
         request, response = register()
-    assert response.status_code == 503 and response.data['email_sent'] is False and response.data['account_created']
+    assert response.status_code == 201 and 'token' in response.data
     user = User.objects.get(username=request['username'])
-    assert user.email_status == 'pending' and not Token.objects.filter(user=user).exists()
-    assert user.email_verification.send_count == 1 and not user.email_verification.token_hash
+    assert user.email_status == 'verified' and Token.objects.filter(user=user).exists()
     assert not mail.outbox
 
 
 def test_failed_resend_preserves_last_successful_token_and_reports_failure():
-    request, _ = register()
+    request, _ = register_pending()
     confirmation = link()
     verification = EmailVerification.objects.get(user__username=request['username'])
     verification.last_attempt_at = timezone.now() - timedelta(seconds=61)
@@ -213,11 +233,12 @@ def test_duplicate_email_is_case_insensitive_and_database_enforced():
 
 
 def test_host_header_never_controls_verification_url():
-    register()
+    from accounts.email_verification import VerificationDeliveryFailed
+    register_pending()
     assert 'http://localhost:5173/verificar-correo/' in mail.outbox[-1].body
     with override_settings(FRONTEND_URL='https://example.test@attacker.test/path'):
-        _, response = register()
-    assert response.status_code == 503 and not response.data['email_sent']
+        with pytest.raises(VerificationDeliveryFailed):
+            register_pending()
 
 
 def test_resend_ip_throttle_rejects_excess_requests():
@@ -230,8 +251,7 @@ def test_resend_ip_throttle_rejects_excess_requests():
 def test_pending_accounts_cannot_authenticate_even_with_an_old_api_token():
     from accounts.authentication import VerifiedTokenAuthentication
     from rest_framework.exceptions import AuthenticationFailed
-    request, _ = register()
-    user = User.objects.get(username=request['username'])
+    _, user = register_pending()
     token = Token.objects.create(user=user)
     with pytest.raises(AuthenticationFailed):
         VerifiedTokenAuthentication().authenticate_credentials(token.key)
@@ -277,8 +297,7 @@ def smtp_settings():
 
 def test_actual_smtp_backend_uses_starttls_authentication_and_requested_sender():
     with override_settings(MAILERS=smtp_settings()), patch('smtplib.SMTP') as smtp, patch('smtplib.SMTP_SSL') as implicit_ssl:
-        request, response = register()
-    assert response.status_code == 201
+        request, _ = register_pending()
     assert smtp.call_args.args == ('smtp.example.test', 587) and smtp.call_args.kwargs['timeout'] == 10
     connection = smtp.return_value
     connection.starttls.assert_called_once()
@@ -290,11 +309,11 @@ def test_actual_smtp_backend_uses_starttls_authentication_and_requested_sender()
 
 @pytest.mark.parametrize('failure', [smtplib.SMTPSenderRefused(550, b'Not permitted', 'sender@example.test'), TimeoutError('timeout')])
 def test_smtp_transport_rejections_never_claim_delivery(failure):
+    from accounts.email_verification import VerificationDeliveryFailed
     with override_settings(MAILERS=smtp_settings()), patch('smtplib.SMTP') as smtp:
         smtp.return_value.sendmail.side_effect = failure
-        request, response = register()
-    assert response.status_code == 503 and response.data['email_sent'] is False
-    assert User.objects.get(username=request['username']).email_status == 'pending'
+        with pytest.raises(VerificationDeliveryFailed):
+            register_pending()
 
 
 @pytest.mark.parametrize('endpoint', ['register', 'login', 'google', 'verify-email', 'resend-verification'])
@@ -303,36 +322,31 @@ def test_public_auth_rejects_non_object_json(endpoint):
     assert result.status_code == 400 and 'token' not in result.data
 
 
-def test_registration_send_race_reports_pending_account_without_server_error():
-    from accounts.email_verification import VerificationRateLimited
-    with patch('accounts.views.send_verification', side_effect=VerificationRateLimited):
-        request, response = register()
-    assert response.status_code == 429 and response.data['account_created'] and not response.data['email_sent']
-    assert User.objects.get(username=request['username']).email_status == 'pending'
-
-
 def test_public_auth_config_reports_contract_and_public_google_id_only():
     with override_settings(GOOGLE_CLIENT_ID='configured.apps.googleusercontent.com', MAIL_PASSWORD='secret-canary'):
         response = APIClient().get('/auth/config/')
     assert response.status_code == 200 and response['Cache-Control'] == 'no-store'
-    assert response.data == {'auth_contract_version': 2, 'registration_mode': 'email_verification',
+    assert response.data == {'auth_contract_version': 2, 'registration_mode': 'direct',
                              'google_client_id': 'configured.apps.googleusercontent.com'}
     assert 'secret-canary' not in response.content.decode()
 
 
 @pytest.mark.parametrize('origin', ['http://localhost:5173', 'https://127.0.0.1', 'http://app.example.test', 'https://app.example.test:bad'])
 def test_production_rejects_nonpublic_or_insecure_verification_origins(origin):
+    from accounts.email_verification import VerificationDeliveryFailed
     with override_settings(DEBUG=False, FRONTEND_URL=origin):
-        _, response = register()
-    assert response.status_code == 503 and response.data['email_sent'] is False and not mail.outbox
+        with pytest.raises(VerificationDeliveryFailed):
+            register_pending()
+    assert not mail.outbox
 
 
 @pytest.mark.parametrize('failure,code', [(smtplib.SMTPAuthenticationError(535, b'Secret-Canary-Auth'), 'smtp_authentication_failed'),
                                         (smtplib.SMTPSenderRefused(550, b'Secret-Canary-Sender', 'private@example.test'), 'smtp_sender_refused')])
 def test_delivery_logs_classification_without_credentials_or_replies(caplog, failure, code):
+    from accounts.email_verification import VerificationDeliveryFailed
     with patch('accounts.email_verification.EmailMessage.send', side_effect=failure):
-        _, response = register()
-    assert response.status_code == 503
+        with pytest.raises(VerificationDeliveryFailed):
+            register_pending()
     assert code in caplog.text and 'Secret-Canary' not in caplog.text and 'private@example.test' not in caplog.text
 
 
@@ -377,10 +391,9 @@ def test_auth_diagnostic_redacts_smtp_failures():
 def test_registration_login_also_works_with_production_pbkdf2_hasher():
     with override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.PBKDF2PasswordHasher']):
         request, result = register()
-        assert result.status_code == 201
+        assert result.status_code == 201 and 'token' in result.data
         user = User.objects.get(username=request['username'])
         assert user.password.startswith('pbkdf2_sha256$') and user.check_password(request['password'])
-        assert APIClient().post('/auth/verify-email/', link(), format='json').status_code == 200
         assert APIClient().post('/auth/login/', {'username': request['username'], 'password': request['password']}, format='json').status_code == 200
 
 
@@ -390,7 +403,6 @@ def test_merged_chat_history_stays_private_and_does_not_duplicate_completed_atte
     request, registration = register()
     assert registration.status_code == 201
     c = APIClient()
-    assert c.post('/auth/verify-email/', link(), format='json').status_code == 200
     login = c.post('/auth/login/', {'username': request['username'], 'password': request['password']}, format='json')
     user = User.objects.get(username=request['username'])
     c.credentials(HTTP_AUTHORIZATION='Token '+login.data['token'])

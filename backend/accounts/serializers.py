@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from django.utils import timezone
 from rest_framework import serializers
 
 from progress.models import StudentProgress
@@ -27,7 +28,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate_email(self, value):
         value = value.strip().lower()
         if User.objects.filter(email__iexact=value).exists():
-            raise serializers.ValidationError('Este correo ya está registrado. Inicia sesión o solicita la verificación pendiente.')
+            raise serializers.ValidationError('Este correo ya está registrado. Inicia sesión.')
         return value
 
     def validate_rol(self, value):
@@ -52,7 +53,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         validated_data.pop('password_confirm')
         full_name = validated_data.pop('full_name')
         user = User.objects.create_user(**validated_data, first_name=full_name,
-            alias=full_name[:50], email_status=User.EmailStatus.PENDING)
+            alias=full_name[:50], email_status=User.EmailStatus.VERIFIED, email_verified_at=timezone.now())
         StudentProgress.objects.get_or_create(user=user)
         return user
 

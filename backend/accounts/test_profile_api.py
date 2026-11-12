@@ -171,12 +171,36 @@ def test_google_requires_real_credential(data):
     assert response.status_code==400 and 'token' not in response.data
 
 
-def test_google_never_links_existing_email_automatically(client,google_keys):
-    _,user=client
-    before=User.objects.count()
-    response=google_post(google_claims('unlinked-sub',user.email),google_keys)
-    assert response.status_code==409 and 'token' not in response.data
-    assert User.objects.count()==before and not GoogleIdentity.objects.filter(subject='unlinked-sub').exists()
+def test_google_links_existing_unlinked_account_and_protects_admin(client, google_keys):
+    _, user = client
+    before = User.objects.count()
+    response = google_post(google_claims('linked-sub', user.email), google_keys)
+    assert response.status_code == 200 and 'token' in response.data
+    assert response.data['user']['id'] == user.id
+    assert User.objects.count() == before
+    assert GoogleIdentity.objects.get(subject='linked-sub').user_id == user.id
+
+    pending_user = User.objects.create_user(
+        username='pending_victim',
+        email='pending-victim@example.test',
+        password='Temp-Password-99!',
+        email_status=User.EmailStatus.PENDING,
+    )
+    pending_resp = google_post(google_claims('pending-owner-sub', pending_user.email), google_keys)
+    assert pending_resp.status_code == 200 and pending_resp.data['user']['id'] == pending_user.id
+    pending_user.refresh_from_db()
+    assert pending_user.email_status == User.EmailStatus.VERIFIED
+    assert not pending_user.has_usable_password()
+
+    admin_user = User.objects.create_user(
+        username='admin_protected',
+        email='admin-protected@example.test',
+        password='Admin-Password-99!',
+        rol=User.Rol.ADMIN,
+    )
+    admin_resp = google_post(google_claims('admin-link-attempt', admin_user.email), google_keys)
+    assert admin_resp.status_code == 409 and 'token' not in admin_resp.data
+    assert not GoogleIdentity.objects.filter(subject='admin-link-attempt').exists()
 
 
 def test_google_inactive_linked_account_cannot_login(google_keys):

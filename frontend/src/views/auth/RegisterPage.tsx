@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { apiService } from '../../services/api';
 import { AuthLayout, inputClass, primaryClass, linkClass } from '../../components/auth/AuthLayout';
 import { PasswordField } from '../../components/auth/PasswordField';
@@ -7,21 +8,22 @@ import { GoogleSignInButton } from '../../components/auth/GoogleSignInButton';
 import { STATES } from '../../data/states';
 
 export function RegisterPage() {
-  const navigate = useNavigate(); const sending = useRef(false);
+  const { login } = useAuth(); const navigate = useNavigate(); const sending = useRef(false);
   const [role, setRole] = useState<'student' | 'teacher'>('student');
   const [fullName, setFullName] = useState(''); const [email, setEmail] = useState(''); const [username, setUsername] = useState('');
   const [nivel, setNivel] = useState<'secundaria' | 'bachillerato'>('secundaria'); const [grado, setGrado] = useState(1);
   const [estado, setEstado] = useState(''); const [password, setPassword] = useState(''); const [confirm, setConfirm] = useState('');
   const [busy, setBusy] = useState(false); const [error, setError] = useState('');
-  return <AuthLayout title="Empieza con Go Jarol" intro="Crea tu cuenta. Te enviaremos un enlace para confirmar tu correo antes de iniciar sesión.">
+  return <AuthLayout title="Empieza con Go Jarol" intro="Crea tu cuenta para empezar a aprender con Jarol.">
     <form aria-busy={busy} onSubmit={async event => {
       event.preventDefault(); if (sending.current) return;
       if (password !== confirm) { setError('Las contraseñas no coinciden.'); return; }
       sending.current = true; setBusy(true); setError('');
       try {
         const result = await apiService.register({ username, fullName, email, password, passwordConfirm: confirm, role, nivel, grado, estado });
-        if (result.success || result.verificationRequired) {
-          navigate('/verificacion-pendiente', { replace: true, state: { email, sent: result.emailSent === true, deliveryError: result.error } });
+        if (result.success && result.user && result.token) {
+          login(result.user, result.token);
+          navigate('/chat', { replace: true });
         } else setError(result.error || 'No se pudo crear tu cuenta.');
       } catch { setError('No pudimos confirmar el registro. Comprueba tu conexión.'); }
       finally { sending.current = false; setBusy(false); }
@@ -43,7 +45,7 @@ export function RegisterPage() {
         <p id="password-help" className="text-xs leading-relaxed text-muted">Usa al menos 8 caracteres. Evita contraseñas comunes, solo números o tus datos personales.</p>
         <PasswordField id="register-confirm" label="Confirmar contraseña" value={confirm} onChange={setConfirm} newPassword/>
         {error && <p role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-900">{error}</p>}
-        <button className={primaryClass}>{busy ? 'Creando cuenta…' : 'Crear cuenta y verificar correo'}</button>
+        <button className={primaryClass}>{busy ? 'Creando cuenta…' : 'Crear cuenta'}</button>
       </fieldset>
     </form>
     <GoogleSignInButton role={role} nivel={nivel} grado={grado}/>

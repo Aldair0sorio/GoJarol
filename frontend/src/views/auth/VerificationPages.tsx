@@ -51,5 +51,5 @@ export function VerificationInvalidPage() {
 }
 
 export function RecoveryPlaceholderPage() {
-  return <AuthLayout title="Recuperar contraseña" intro="La recuperación por correo estará disponible en la siguiente actualización."><p className="text-sm leading-relaxed text-muted">Si no has confirmado una cuenta nueva, puedes solicitar otro enlace de verificación. Esta página todavía no envía correos para cambiar contraseñas.</p><Link to="/verificacion-pendiente" className={`${linkClass} mt-4`}>Verificar una cuenta nueva</Link><br/><Link to="/login" className={linkClass}>Volver al inicio de sesión</Link></AuthLayout>;
+  return <AuthLayout title="Recuperar contraseña" intro="La recuperación por correo estará disponible en la siguiente actualización."><p className="text-sm leading-relaxed text-muted">Esta página todavía no envía correos para cambiar contraseñas. Si registraste tu cuenta con Google, usa el botón de Google para entrar.</p><Link to="/login" className={`${linkClass} mt-4 inline-block`}>Volver al inicio de sesión</Link></AuthLayout>;
 }

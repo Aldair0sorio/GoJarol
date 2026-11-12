@@ -232,9 +232,9 @@ export const apiService = {
     username: string; email: string; password: string; passwordConfirm: string;
     fullName: string; role: 'student' | 'teacher'; nivel?: 'secundaria' | 'bachillerato';
     grado?: number; estado: string;
-  }): Promise<{ success: boolean; verificationRequired?: boolean; emailSent?: boolean; error?: string }> {
+  }): Promise<{ success: boolean; token?: string; user?: User; verificationRequired?: boolean; emailSent?: boolean; error?: string }> {
     try {
-      await getAuthConfig(); // Never create an unverified legacy account on an outdated backend.
+      await getAuthConfig(); // Reject outdated servers before sending registration data.
       const response = await fetch(`${API_BASE}/auth/register/`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: payload.username.trim(), email: payload.email.trim(),
@@ -243,17 +243,20 @@ export const apiService = {
           grado: payload.grado, estado: payload.estado }),
       });
       const data = await response.json();
-      if (!isObject(data) || ['token', 'access', 'refresh', 'access_token', 'refresh_token', 'user'].some(key => key in data)) {
+      if (!isObject(data) || 'verification_required' in data || ['access', 'refresh', 'access_token', 'refresh_token'].some(key => key in data)) {
         return { success: false, error: AUTH_CONTRACT_ERROR };
       }
-      if (response.ok && data.verification_required === true && data.email_sent === true) {
-        return { success: true, verificationRequired: true, emailSent: true };
+      if (response.ok && isBackendToken(data.token) && isObject(data.user) && data.user.id && ['estudiante', 'docente', 'admin'].includes(String(data.user.rol))) {
+        setAuthToken(data.token);
+        return { success: true, token: data.token, user: profileToUser(data.user as unknown as BackendProfile) };
       }
-      return { success: false, verificationRequired: data.account_created === true,
-        emailSent: false, error: authError(data, data.account_created === true ? 'Tu cuenta se creó, pero no pudimos enviar el correo. Solicita un reenvío más tarde.' : 'No se pudo crear la cuenta.') };
+      if ('token' in data || response.ok) {
+        return { success: false, error: AUTH_CONTRACT_ERROR };
+      }
+      return { success: false, error: authError(data, 'No se pudo crear la cuenta.') };
     } catch (error) {
       if (error instanceof AuthConfigurationError) return { success: false, error: AUTH_CONTRACT_ERROR };
-      return { success: false, error: 'No pudimos confirmar el registro. Comprueba tu conexión; antes de repetirlo puedes solicitar un reenvío.' };
+      return { success: false, error: 'No pudimos confirmar el registro. Comprueba tu conexión e intenta de nuevo.' };
     }
   },
 
@@ -984,14 +987,14 @@ export function authError(data: unknown, fallback: string): string {
     invalid_credentials: 'Usuario o contraseña incorrectos.',
     invalid_google_token: 'La identidad de Google no pudo verificarse.',
     google_unavailable: 'Google no está disponible ahora. Usa tu contraseña o intenta más tarde.',
-    account_link_required: 'Usa el acceso original de tu cuenta. No se vinculan cuentas automáticamente por correo.',
+    account_link_required: 'Este correo ya está vinculado a otro acceso de Google o administrador.',
     identity_changed: 'Se requiere revisar la vinculación de tu cuenta. Usa tu acceso original.',
     inactive_account: 'Esta cuenta no está disponible.',
   };
   if (isObject(data.error) && typeof data.error.code === 'string' && Object.hasOwn(codes, data.error.code)) return codes[data.error.code];
   const fields: Record<string, string> = {
     full_name: 'Nombre completo: escribe tu nombre (máximo 150 caracteres).',
-    email: 'Correo: revisa la dirección. Si ya tienes cuenta, inicia sesión o solicita verificarla.',
+    email: 'Correo: revisa la dirección. Si ya tienes cuenta, inicia sesión.',
     username: 'Usuario: revisa el formato o elige otro nombre disponible.',
     nivel: 'Nivel escolar: selecciona secundaria o bachillerato.',
     grado: 'Selecciona un año (1–3) o semestre (1–6) válido.',
@@ -1004,18 +1007,19 @@ export function authError(data: unknown, fallback: string): string {
 
 export interface PublicAuthConfig {
   auth_contract_version: 2;
-  registration_mode: 'email_verification';
+  registration_mode: 'direct' | 'email_verification';
   google_client_id: string | null;
 }
 export class AuthConfigurationError extends Error {}
 export async function getAuthConfig(): Promise<PublicAuthConfig> {
   const response = await fetch(`${API_BASE}/auth/config/`, { cache: 'no-store', credentials: 'same-origin', signal: AbortSignal.timeout(10000) });
   const data: unknown = await response.json().catch(() => null);
-  if (!response.ok || !isObject(data) || data.auth_contract_version !== 2 || data.registration_mode !== 'email_verification'
+  const mode = isObject(data) ? data.registration_mode : null;
+  if (!response.ok || !isObject(data) || data.auth_contract_version !== 2 || (mode !== 'direct' && mode !== 'email_verification')
       || !(data.google_client_id === null || typeof data.google_client_id === 'string')) {
     throw new AuthConfigurationError(AUTH_CONTRACT_ERROR);
   }
-  return { auth_contract_version: 2, registration_mode: 'email_verification', google_client_id: data.google_client_id as string | null };
+  return { auth_contract_version: 2, registration_mode: mode, google_client_id: data.google_client_id as string | null };
 }
 export function resolveGoogleClientId(config: PublicAuthConfig, buildId?: string): string | null {
   const serverId = config.google_client_id?.trim();
