@@ -238,3 +238,22 @@ Para cada sesión o iteración se documenta:
   - `backend/requirements.txt`
   - `docker-compose.yml`
   - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 11 · 11 de Noviembre de 2026 (20:20 - 20:25)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Diagnóstico en vivo de logs de producción, resolución del error de arranque de Gunicorn (`core.wsgi` vs `config.wsgi`) y verificación de despliegue integral.
+
+- **Para qué se usaron**:
+  - Análisis del traceback de logs de `gojarol_backend` identificando la discrepancia entre el módulo WSGI de Django (`core.wsgi` referenciado en compose vs `config.wsgi` real).
+  - Guía de ejecución del comando de sustitución `sed` y orquestación con Docker Compose.
+  - Ejecución de migraciones de base de datos PostgreSQL (`accounts`, `curriculum`, `authtoken`, `contenttypes`, etc.).
+  - Ejecución de `collectstatic` en contenedor backend (157 archivos estáticos copiados a `/app/staticfiles`).
+  - Verificación exitosa del endpoint de salud `HTTP/1.1 200 OK {"status": "ok"}` en `http://127.0.0.1:3000/api/v1/health/` y HTTPS activo con Certbot en producción.
+
+- **Decisiones clave tomadas**:
+  - Despliegue 100% operativo en producción (`https://gojarol.tecnodesarrollo.site`) con arquitectura full-stack desacoplada y segura.
+
+- **Archivos creados / modificados**:
+  - `docker-compose.yml`
+  - `docs/bitacora/hugo_frontend.md`
