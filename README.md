@@ -5,7 +5,7 @@
 Tutor conversacional para secundaria y bachillerato que pregunta antes de explicar, guía paso a paso sin dar el resultado y le muestra al docente cómo avanza su grupo.
 
 - **Demo:** https://gojarol.tecnodesarrollo.site
-- **Video de respaldo (máx. 2 min):** [pendiente]
+- **Video de respaldo (máx. 2 min):** [https://drive.google.com/file/d/1-i9tIwOY3AI-S6-TA0tUElyOeF3uu3Xw/view]
 
 ## 1. Qué es y para quién
 
@@ -173,10 +173,9 @@ Se evalúa qué tan bien usamos la IA, no cuánto. Ninguna IA externa responde a
 | **Antigravity AI (Gemini 3.8 Flash)**, Hugo · 24 entradas en [docs/bitacora/hugo_frontend.md](docs/bitacora/hugo_frontend.md) | **Arquitectura y diseño:** análisis del reto, contratos de API, mapa de pantallas y sistema visual. **Frontend:** React 19 + TypeScript + Tailwind, vistas responsivas, tarjeta de ejercicio y ligas. **Autenticación:** login y registro separados, Google Sign-In y decodificación del JWT. **Despliegue:** Docker, nginx con Certbot en el VPS Debian, diagnóstico de gunicorn y `ALLOWED_HOSTS`/CORS. **Integración** frontend ↔ backend ↔ tutor, grupos por código y analítica docente. | *Mobile-first*; los prototipos como guía de estilo y no como pantallas fijas; la tarjeta de ejercicio nunca recibe la respuesta correcta; flujo de login real en lugar de usuarios de prueba precargados. |
 | **Google Stitch**, Hugo | Sistema de diseño inicial, tokens y prototipos. | Paleta y tipografías de identidad veracruzana. |
 | **Generador de imágenes** [completar herramienta], Hugo | Mascota "Jarol el Cangrejo Maestro". | — |
-| **Claude (chat)**, [confirmar quién] | Planificación, conversaciones de prueba contra el reto, diagnóstico de fallos, redacción de casos de uso y de prompts para el agente. | Se descartaron propuestas de código que no cumplían el reto. |
-| **Claude Code en VS Code (Opus 5.5, modo Manual)**, Aldair | Menú de diagnóstico, guías por pasos, anticopia y conectividad. Cada fase con plan previo, revisión humana y pruebas. | Pruebas automáticas que verifican que no se filtre el resultado; corrección de ejemplos fijos que coincidían con el banco de ejercicios. |
-| [completar], Ivan | [completar] | [completar] |
-| [completar], Sarahi e Ivan Rodrigues | [completar] | [completar] |
+| **Claude (chat)**, [Aldair] | Planificación, conversaciones de prueba contra el reto, diagnóstico de fallos, redacción de casos de uso y de prompts para el agente. | Se descartaron propuestas de código que no cumplían el reto. |
+| **Antigravity **, Ivan | Servicio de tutoría y clasificador de intención del chat. | Entrenar con datos sintéticos y validar además con 120 ejemplos escritos a mano; dejar documentado que las métricas no demuestran rendimiento con estudiantes reales. |
+| **[herramienta, o "Sin herramientas de IA"]**, Sarahi e Ivan Rodrigues | Documentación del proyecto: casos de uso, requisitos, diseño de interfaz y pruebas de aceptación. | |
 
 **Decisiones clave del equipo**
 
@@ -194,11 +193,11 @@ Se evalúa qué tan bien usamos la IA, no cuánto. Ninguna IA externa responde a
 
 | Integrante | Rol |
 |---|---|
-| Hugo Garcia Lara | [completar] |
-| Raul Aldair Osorio Contreras | [completar] |
-| Ivan | [completar] |
-| Sarahi | Documentación y diseño · [completar] |
-| Ivan Rodrigues | Documentación y diseño · [completar] |
+| Hugo Garcia Lara | [Front] |
+| Raul Aldair Osorio Contreras | [Back] |
+| Ivan | [IA] |
+| Sarahi | Documentación y diseño ·|
+| Ivan Rodrigues | Documentación y diseño · |
 
 ## 11. Documentación adicional
 
