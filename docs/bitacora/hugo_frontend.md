@@ -217,3 +217,24 @@ Para cada sesión o iteración se documenta:
   - `frontend/src/views/teacher/TeacherDashboardView.tsx`
   - `frontend/src/App.tsx`
   - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 10 · 11 de Noviembre de 2026 (19:50 - 19:55)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Configuración de infraestructura contenerizada para el Backend Django, PostgreSQL y preparación del manual técnico de despliegue para el VPS multi-tenant Debian.
+
+- **Para qué se usaron**:
+  - Creación de [`backend/Dockerfile`](backend/Dockerfile) con imagen ligera `python:3.11-slim`, incluyendo la inyección del módulo local de Machine Learning (`ml/`) y los tópicos curriculares (`content/`).
+  - Creación de [`backend/requirements.txt`](backend/requirements.txt) con dependencias completas (Django, DRF, Gunicorn, WhiteNoise, Psycopg2-binary, SymPy, Scikit-learn, Pandas, Joblib).
+  - Actualización del archivo de orquestación [`docker-compose.yml`](docker-compose.yml) configurando el servicio de base de datos PostgreSQL 15 alpine aislado en la red interna `gojarol_net` y el backend en WSGI con Gunicorn (`config.wsgi:application`).
+  - Síntesis y documentación técnica del backend, modelo de datos relacional y procedimiento de migración para el asistente de despliegue en el servidor de producción.
+
+- **Decisiones clave tomadas**:
+  - Aislamiento estricto de la base de datos y backend: solo el frontend expone al loopback (`127.0.0.1:3000`), protegiendo los puertos 8000 (ocupado por Tonalkab) y 80/443 (dueño Nginx nativo).
+  - Persistencia de datos en volumen Docker nombrado `postgres_data`.
+
+- **Archivos creados / modificados**:
+  - `backend/Dockerfile`
+  - `backend/requirements.txt`
+  - `docker-compose.yml`
+  - `docs/bitacora/hugo_frontend.md`
