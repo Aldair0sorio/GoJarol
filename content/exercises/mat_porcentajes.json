@@ -1,0 +1,122 @@
+{
+  "topic_id": "mat_porcentajes",
+  "exercises": [
+    {
+      "id": "pct_001",
+      "difficulty": 1,
+      "type": "numeric",
+      "competency": "porcentaje_de_cantidad",
+      "question": "Un grupo tiene 80 estudiantes. El 10% participa en ajedrez. ¿Cuántos estudiantes participan? Responde con la cantidad, sin %.",
+      "expected_answer": "8",
+      "hints": [
+        "Identifica el total al que se aplica el porcentaje.",
+        "Convierte la tasa en una fracción con denominador cien y multiplícala por el total."
+      ],
+      "answer_explanation": "80 × 10/100 = 8 estudiantes."
+    },
+    {
+      "id": "pct_002",
+      "difficulty": 1,
+      "type": "percentage",
+      "competency": "significado_porcentaje",
+      "question": "De cada 100 fichas, 25 son azules. ¿Qué porcentaje de fichas es azul? Responde con el porcentaje.",
+      "expected_answer": "25",
+      "hints": [
+        "Un porcentaje compara una parte con un total de cien.",
+        "Relaciona el número de fichas azules con el total indicado; no confundas la parte con las restantes."
+      ],
+      "answer_explanation": "25/100 × 100 = 25%."
+    },
+    {
+      "id": "pct_003",
+      "difficulty": 1,
+      "type": "percentage",
+      "competency": "fraccion_a_porcentaje",
+      "question": "Una cuarta parte de un mural está pintada. ¿Qué porcentaje está pintado?",
+      "expected_answer": "25",
+      "hints": [
+        "Escribe una cuarta parte como una fracción.",
+        "Busca una fracción equivalente cuyo denominador sea cien."
+      ],
+      "answer_explanation": "1/4 = 25/100, por tanto 25%."
+    },
+    {
+      "id": "pct_004",
+      "difficulty": 2,
+      "type": "numeric",
+      "competency": "descuento",
+      "question": "Una mochila cuesta 240 pesos y tiene 20% de descuento. ¿Cuántos pesos se pagan al final? Responde con la cantidad, sin %.",
+      "expected_answer": "192",
+      "hints": [
+        "Distingue el dinero descontado del precio que se paga.",
+        "Calcula el descuento sobre el precio original y réstalo de ese precio."
+      ],
+      "answer_explanation": "240 × 20/100 = 48; 240 - 48 = 192 pesos."
+    },
+    {
+      "id": "pct_005",
+      "difficulty": 2,
+      "type": "numeric",
+      "competency": "aumento",
+      "question": "Un abono cuesta 200 pesos. Su precio aumenta 15%. ¿Cuál es el precio nuevo en pesos? Responde con la cantidad, sin %.",
+      "expected_answer": "230",
+      "hints": [
+        "El aumento se calcula respecto del precio anterior.",
+        "Calcula la cantidad que aumenta y súmala al precio inicial."
+      ],
+      "answer_explanation": "200 × 15/100 = 30; 200 + 30 = 230 pesos."
+    },
+    {
+      "id": "pct_006",
+      "difficulty": 2,
+      "type": "percentage",
+      "competency": "parte_respecto_total",
+      "question": "En una escuela, 18 de los 60 estudiantes encuestados van caminando. ¿Qué porcentaje de los encuestados va caminando?",
+      "expected_answer": "30",
+      "hints": [
+        "Identifica cuál es la parte y cuál es el total encuestado.",
+        "Divide la parte entre el total y convierte esa razón a una comparación con cien."
+      ],
+      "answer_explanation": "18/60 × 100 = 30%."
+    },
+    {
+      "id": "pct_007",
+      "difficulty": 3,
+      "type": "numeric",
+      "competency": "descuentos_sucesivos",
+      "question": "Una chamarra cuesta 500 pesos. Se aplica un descuento del 20% y después otro del 10% sobre el precio ya rebajado. ¿Cuántos pesos se pagan al final? Responde sin %.",
+      "expected_answer": "360",
+      "hints": [
+        "Los dos descuentos no se calculan sobre la misma base.",
+        "Obtén primero el precio tras el primer descuento; calcula el segundo descuento sobre ese nuevo precio."
+      ],
+      "answer_explanation": "500 × 80/100 = 400; 400 × 90/100 = 360 pesos."
+    },
+    {
+      "id": "pct_008",
+      "difficulty": 3,
+      "type": "numeric",
+      "competency": "cambios_sucesivos",
+      "question": "Una bicicleta de 400 pesos sube 25% y luego recibe un descuento del 20% sobre el precio aumentado. ¿Cuál es el precio final en pesos? Responde sin %.",
+      "expected_answer": "400",
+      "hints": [
+        "Anota el precio antes y después de cada cambio.",
+        "Aplica primero el factor de aumento y después el factor de descuento sobre el resultado anterior."
+      ],
+      "answer_explanation": "400 × 125/100 = 500; 500 × 80/100 = 400 pesos."
+    },
+    {
+      "id": "pct_009",
+      "difficulty": 3,
+      "type": "numeric",
+      "competency": "recuperar_precio_original",
+      "question": "Después de un descuento del 10%, un paquete cuesta 360 pesos. ¿Cuál era el precio original en pesos? Responde sin %.",
+      "expected_answer": "400",
+      "hints": [
+        "El precio que conoces ya tiene aplicado el descuento.",
+        "Escribe qué fracción del precio original se conserva y divide el precio rebajado entre esa fracción."
+      ],
+      "answer_explanation": "Se conserva 90/100 del precio: 360 ÷ (90/100) = 400 pesos."
+    }
+  ]
+}

@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "competencies": [
+    {
+      "id": "mx.sep.f6.2024.esp.g1.ideas",
+      "program_id": "sep_f6_2024",
+      "grade": 1,
+      "semester": null,
+      "area": "Lenguajes",
+      "subject": "Español",
+      "official_content_summary": "Textos interculturales",
+      "learning_outcome_summary": "Distinguir ideas centrales y secundarias.",
+      "wording": "Resumen editorial del contenido oficial; no cita textual.",
+      "topic_id": "esp_comprension",
+      "subtopic": "ideas",
+      "aliases": [
+        "comprension lectora",
+        "idea principal",
+        "ideas secundarias"
+      ],
+      "prerequisites": [],
+      "reference": {
+        "source_id": "sep_f6_2024",
+        "page": 33,
+        "section": "Español, tabla de PDA, columna de grado 1"
+      },
+      "verification": "verified",
+      "bindings": [
+        {
+          "topic_id": "esp_comprension",
+          "exercise_competencies": [],
+          "relation": "prerequisite",
+          "note": "Entrena comprensión básica; faltan textos y actividades del contexto intercultural o literario del PDA."
+        }
+      ],
+      "pedagogical_validation": null,
+      "prerequisite_origin": "Propuesta interna de secuencia pedagógica, no seriación oficial."
+    },
+    {
+      "id": "mx.sep.f6.2024.esp.g1.noticias",
+      "program_id": "sep_f6_2024",
+      "grade": 1,
+      "semester": null,
+      "area": "Lenguajes",
+      "subject": "Español",
+      "official_content_summary": "Sucesos comunitarios",
+      "learning_outcome_summary": "Comunicar sucesos mediante periodismo informativo.",
+      "wording": "Resumen editorial del contenido oficial; no cita textual.",
+      "topic_id": "esp_periodismo",
+      "subtopic": "noticias",
+      "aliases": [
+        "generos periodisticos",
+        "noticias comunitarias"
+      ],
+      "prerequisites": [],
+      "reference": {
+        "source_id": "sep_f6_2024",
+        "page": 35,
+        "section": "Español, tabla de PDA, columna de grado 1"
+      },
+      "verification": "verified",
+      "bindings": [],
+      "pedagogical_validation": null,
+      "prerequisite_origin": "Propuesta interna de secuencia pedagógica, no seriación oficial."
+    },
+    {
+      "id": "mx.sep.f6.2024.esp.g2.narrativa",
+      "program_id": "sep_f6_2024",
+      "grade": 2,
+      "semester": null,
+      "area": "Lenguajes",
+      "subject": "Español",
+      "official_content_summary": "Recursos narrativos",
+      "learning_outcome_summary": "Interpretar cuentos y novelas.",
+      "wording": "Resumen editorial del contenido oficial; no cita textual.",
+      "topic_id": "esp_narrativa",
+      "subtopic": "narrativa",
+      "aliases": [
+        "interpretar cuentos",
+        "analisis de novelas"
+      ],
+      "prerequisites": [
+        "mx.sep.f6.2024.esp.g1.ideas"
+      ],
+      "reference": {
+        "source_id": "sep_f6_2024",
+        "page": 34,
+        "section": "Español, tabla de PDA, columna de grado 2"
+      },
+      "verification": "verified",
+      "bindings": [
+        {
+          "topic_id": "esp_comprension",
+          "exercise_competencies": [],
+          "relation": "prerequisite",
+          "note": "Entrena comprensión básica; faltan textos y actividades del contexto intercultural o literario del PDA."
+        }
+      ],
+      "pedagogical_validation": null,
+      "prerequisite_origin": "Propuesta interna de secuencia pedagógica, no seriación oficial."
+    },
+    {
+      "id": "mx.sep.f6.2024.esp.g2.ensayo",
+      "program_id": "sep_f6_2024",
+      "grade": 2,
+      "semester": null,
+      "area": "Lenguajes",
+      "subject": "Español",
+      "official_content_summary": "Necesidades comunitarias",
+      "learning_outcome_summary": "Argumentar críticamente mediante ensayos.",
+      "wording": "Resumen editorial del contenido oficial; no cita textual.",
+      "topic_id": "esp_ensayo",
+      "subtopic": "ensayo",
+      "aliases": [
+        "ensayo critico",
+        "ensayos comunitarios"
+      ],
+      "prerequisites": [],
+      "reference": {
+        "source_id": "sep_f6_2024",
+        "page": 34,
+        "section": "Español, tabla de PDA, columna de grado 2"
+      },
+      "verification": "verified",
+      "bindings": [],
+      "pedagogical_validation": null,
+      "prerequisite_origin": "Propuesta interna de secuencia pedagógica, no seriación oficial."
+    },
+    {
+      "id": "mx.sep.f6.2024.esp.g3.juicio",
+      "program_id": "sep_f6_2024",
+      "grade": 3,
+      "semester": null,
+      "area": "Lenguajes",
+      "subject": "Español",
+      "official_content_summary": "Literatura y temas",
+      "learning_outcome_summary": "Argumentar juicios literarios mediante ensayos.",
+      "wording": "Resumen editorial del contenido oficial; no cita textual.",
+      "topic_id": "esp_critica_literaria",
+      "subtopic": "juicio",
+      "aliases": [
+        "juicio estetico",
+        "ensayo literario"
+      ],
+      "prerequisites": [],
+      "reference": {
+        "source_id": "sep_f6_2024",
+        "page": 34,
+        "section": "Español, tabla de PDA, columna de grado 3"
+      },
+      "verification": "verified",
+      "bindings": [],
+      "pedagogical_validation": null,
+      "prerequisite_origin": "Propuesta interna de secuencia pedagógica, no seriación oficial."
+    },
+    {
+      "id": "mx.sep.f6.2024.esp.g3.creacion",
+      "program_id": "sep_f6_2024",
+      "grade": 3,
+      "semester": null,
+      "area": "Lenguajes",
+      "subject": "Español",
+      "official_content_summary": "Problemas comunitarios",
+      "learning_outcome_summary": "Crear propuestas literarias de solución.",
+      "wording": "Resumen editorial del contenido oficial; no cita textual.",
+      "topic_id": "esp_creacion_literaria",
+      "subtopic": "creacion",
+      "aliases": [
+        "creacion literaria",
+        "propuestas literarias"
+      ],
+      "prerequisites": [],
+      "reference": {
+        "source_id": "sep_f6_2024",
+        "page": 34,
+        "section": "Español, tabla de PDA, columna de grado 3"
+      },
+      "verification": "verified",
+      "bindings": [],
+      "pedagogical_validation": null,
+      "prerequisite_origin": "Propuesta interna de secuencia pedagógica, no seriación oficial."
+    }
+  ]
+}

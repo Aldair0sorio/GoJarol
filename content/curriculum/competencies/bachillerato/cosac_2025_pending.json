@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "competencies": [
+    {
+      "id": "mx.cosac.2025.pm.pf4",
+      "program_id": "cosac_2025",
+      "grade": null,
+      "semester": null,
+      "area": "Currículum fundamental",
+      "subject": "Pensamiento Matemático",
+      "official_content_summary": "Fracciones y porcentajes",
+      "learning_outcome_summary": "Relacionar unidad, enteros y fracciones para operar.",
+      "wording": "Resumen editorial del contenido oficial; no cita textual.",
+      "topic_id": "mat_fracciones",
+      "subtopic": "pf4",
+      "aliases": [
+        "operaciones con fracciones"
+      ],
+      "prerequisites": [],
+      "reference": {
+        "source_id": "cosac_pm_2025",
+        "page": null,
+        "section": "PF4, tabla indexada. Semestre pendiente de confirmar."
+      },
+      "verification": "pending",
+      "bindings": [],
+      "pedagogical_validation": null,
+      "prerequisite_origin": "Propuesta interna de secuencia pedagógica, no seriación oficial."
+    },
+    {
+      "id": "mx.cosac.2025.lyc.s1.pf1",
+      "program_id": "cosac_2025",
+      "grade": null,
+      "semester": 1,
+      "area": "Currículum fundamental",
+      "subject": "Lengua y Comunicación",
+      "official_content_summary": "Lectura y escritura",
+      "learning_outcome_summary": "Reflexionar sobre los vínculos entre lectura y escritura.",
+      "wording": "Resumen editorial del contenido oficial; no cita textual.",
+      "topic_id": "esp_redaccion",
+      "subtopic": "pf1",
+      "aliases": [
+        "vinculos entre lectura y escritura"
+      ],
+      "prerequisites": [],
+      "reference": {
+        "source_id": "cosac_lyc_2025",
+        "page": null,
+        "section": "Sección 2.1, tabla 1, PF1 (extracto indexado)."
+      },
+      "verification": "pending",
+      "bindings": [],
+      "pedagogical_validation": null,
+      "prerequisite_origin": "Propuesta interna de secuencia pedagógica, no seriación oficial."
+    }
+  ]
+}

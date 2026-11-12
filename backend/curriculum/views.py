@@ -1,3 +1,10 @@
-from django.shortcuts import render
+from rest_framework.generics import ListAPIView
 
-# Create your views here.
+from .models import Subject
+from .serializers import SubjectSerializer
+
+
+class SubjectListView(ListAPIView):
+    queryset = Subject.objects.prefetch_related("topics")
+    serializer_class = SubjectSerializer
+    pagination_class = None

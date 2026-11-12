@@ -1,0 +1,15 @@
+[
+  {"model": "curriculum.subject", "pk": 1, "fields": {"slug": "aritmetica", "nombre": "Aritmética", "disponible": true, "orden": 1}},
+  {"model": "curriculum.subject", "pk": 2, "fields": {"slug": "algebra", "nombre": "Álgebra", "disponible": false, "orden": 2}},
+  {"model": "curriculum.subject", "pk": 3, "fields": {"slug": "matematicas", "nombre": "Matemáticas", "disponible": false, "orden": 3}},
+  {"model": "curriculum.subject", "pk": 4, "fields": {"slug": "espanol", "nombre": "Español", "disponible": false, "orden": 4}},
+  {"model": "curriculum.subject", "pk": 5, "fields": {"slug": "historia", "nombre": "Historia", "disponible": false, "orden": 5}},
+  {"model": "curriculum.subject", "pk": 6, "fields": {"slug": "geografia", "nombre": "Geografía", "disponible": false, "orden": 6}},
+  {"model": "curriculum.subject", "pk": 7, "fields": {"slug": "fisica", "nombre": "Física", "disponible": false, "orden": 7}},
+  {"model": "curriculum.subject", "pk": 8, "fields": {"slug": "quimica", "nombre": "Química", "disponible": false, "orden": 8}},
+  {"model": "curriculum.subject", "pk": 9, "fields": {"slug": "biologia", "nombre": "Biología", "disponible": false, "orden": 9}},
+
+  {"model": "curriculum.topic", "pk": 1, "fields": {"subject": 1, "slug": "fracciones", "nombre": "Fracciones", "disponible": true, "orden": 1}},
+  {"model": "curriculum.topic", "pk": 2, "fields": {"subject": 2, "slug": "ecuaciones_lineales", "nombre": "Ecuaciones lineales", "disponible": false, "orden": 1}},
+  {"model": "curriculum.topic", "pk": 3, "fields": {"subject": 3, "slug": "teorema_de_pitagoras", "nombre": "Teorema de Pitágoras", "disponible": false, "orden": 1}}
+]

@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "competencies": [
+    {
+      "id": "mx.sep.f6.2024.mat.g1.operaciones",
+      "program_id": "sep_f6_2024",
+      "grade": 1,
+      "semester": null,
+      "area": "Saberes y Pensamiento Científico",
+      "subject": "Matemáticas",
+      "official_content_summary": "Operaciones e inversas",
+      "learning_outcome_summary": "Resolver operaciones con números con signo.",
+      "wording": "Resumen editorial del contenido oficial; no cita textual.",
+      "topic_id": "mat_fracciones",
+      "subtopic": "operaciones",
+      "aliases": [
+        "fracciones",
+        "sumar fracciones"
+      ],
+      "prerequisites": [],
+      "reference": {
+        "source_id": "sep_f6_2024",
+        "page": 58,
+        "section": "Matemáticas, tabla de PDA, columna de grado 1"
+      },
+      "verification": "verified",
+      "bindings": [
+        {
+          "topic_id": "mat_fracciones",
+          "exercise_competencies": [],
+          "relation": "partial",
+          "note": "Práctica de una parte del aprendizaje; no acredita el dominio de toda la competencia."
+        }
+      ],
+      "pedagogical_validation": null,
+      "prerequisite_origin": "Propuesta interna de secuencia pedagógica, no seriación oficial."
+    },
+    {
+      "id": "mx.sep.f6.2024.mat.g1.ecuaciones",
+      "program_id": "sep_f6_2024",
+      "grade": 1,
+      "semester": null,
+      "area": "Saberes y Pensamiento Científico",
+      "subject": "Matemáticas",
+      "official_content_summary": "Igualdades algebraicas",
+      "learning_outcome_summary": "Resolver ecuaciones lineales.",
+      "wording": "Resumen editorial del contenido oficial; no cita textual.",
+      "topic_id": "mat_ecuaciones",
+      "subtopic": "ecuaciones",
+      "aliases": [
+        "ecuaciones",
+        "ecuaciones lineales",
+        "ecuaciones de primer grado"
+      ],
+      "prerequisites": [
+        "mx.sep.f6.2024.mat.g1.operaciones"
+      ],
+      "reference": {
+        "source_id": "sep_f6_2024",
+        "page": 59,
+        "section": "Matemáticas, tabla de PDA, columna de grado 1"
+      },
+      "verification": "verified",
+      "bindings": [
+        {
+          "topic_id": "mat_ecuaciones",
+          "exercise_competencies": [],
+          "relation": "partial",
+          "note": "Práctica de una parte del aprendizaje; no acredita el dominio de toda la competencia."
+        }
+      ],
+      "pedagogical_validation": null,
+      "prerequisite_origin": "Propuesta interna de secuencia pedagógica, no seriación oficial."
+    },
+    {
+      "id": "mx.sep.f6.2024.mat.g1.porcentajes",
+      "program_id": "sep_f6_2024",
+      "grade": 1,
+      "semester": null,
+      "area": "Saberes y Pensamiento Científico",
+      "subject": "Matemáticas",
+      "official_content_summary": "Relaciones porcentuales",
+      "learning_outcome_summary": "Resolver situaciones porcentuales.",
+      "wording": "Resumen editorial del contenido oficial; no cita textual.",
+      "topic_id": "mat_porcentajes",
+      "subtopic": "porcentajes",
+      "aliases": [
+        "porcentajes",
+        "descuentos"
+      ],
+      "prerequisites": [
+        "mx.sep.f6.2024.mat.g1.operaciones"
+      ],
+      "reference": {
+        "source_id": "sep_f6_2024",
+        "page": 59,
+        "section": "Matemáticas, tabla de PDA, columna de grado 1"
+      },
+      "verification": "verified",
+      "bindings": [
+        {
+          "topic_id": "mat_porcentajes",
+          "exercise_competencies": [],
+          "relation": "partial",
+          "note": "Práctica de una parte del aprendizaje; no acredita el dominio de toda la competencia."
+        }
+      ],
+      "pedagogical_validation": null,
+      "prerequisite_origin": "Propuesta interna de secuencia pedagógica, no seriación oficial."
+    },
+    {
+      "id": "mx.sep.f6.2024.mat.g2.sistemas",
+      "program_id": "sep_f6_2024",
+      "grade": 2,
+      "semester": null,
+      "area": "Saberes y Pensamiento Científico",
+      "subject": "Matemáticas",
+      "official_content_summary": "Igualdades algebraicas",
+      "learning_outcome_summary": "Resolver sistemas lineales.",
+      "wording": "Resumen editorial del contenido oficial; no cita textual.",
+      "topic_id": "mat_sistemas",
+      "subtopic": "sistemas",
+      "aliases": [
+        "sistemas de ecuaciones",
+        "dos incognitas"
+      ],
+      "prerequisites": [
+        "mx.sep.f6.2024.mat.g1.ecuaciones"
+      ],
+      "reference": {
+        "source_id": "sep_f6_2024",
+        "page": 59,
+        "section": "Matemáticas, tabla de PDA, columna de grado 2"
+      },
+      "verification": "verified",
+      "bindings": [],
+      "pedagogical_validation": null,
+      "prerequisite_origin": "Propuesta interna de secuencia pedagógica, no seriación oficial."
+    },
+    {
+      "id": "mx.sep.f6.2024.mat.g2.potencias",
+      "program_id": "sep_f6_2024",
+      "grade": 2,
+      "semester": null,
+      "area": "Saberes y Pensamiento Científico",
+      "subject": "Matemáticas",
+      "official_content_summary": "Operaciones e inversas",
+      "learning_outcome_summary": "Calcular potencias y raíces.",
+      "wording": "Resumen editorial del contenido oficial; no cita textual.",
+      "topic_id": "mat_potencias",
+      "subtopic": "potencias",
+      "aliases": [
+        "potencias y raices",
+        "exponentes negativos"
+      ],
+      "prerequisites": [],
+      "reference": {
+        "source_id": "sep_f6_2024",
+        "page": 58,
+        "section": "Matemáticas, tabla de PDA, columna de grado 2"
+      },
+      "verification": "verified",
+      "bindings": [],
+      "pedagogical_validation": null,
+      "prerequisite_origin": "Propuesta interna de secuencia pedagógica, no seriación oficial."
+    },
+    {
+      "id": "mx.sep.f6.2024.mat.g3.cuadraticas",
+      "program_id": "sep_f6_2024",
+      "grade": 3,
+      "semester": null,
+      "area": "Saberes y Pensamiento Científico",
+      "subject": "Matemáticas",
+      "official_content_summary": "Igualdades algebraicas",
+      "learning_outcome_summary": "Resolver ecuaciones cuadráticas.",
+      "wording": "Resumen editorial del contenido oficial; no cita textual.",
+      "topic_id": "mat_cuadraticas",
+      "subtopic": "cuadraticas",
+      "aliases": [
+        "ecuaciones cuadraticas",
+        "ecuaciones de segundo grado"
+      ],
+      "prerequisites": [
+        "mx.sep.f6.2024.mat.g1.ecuaciones"
+      ],
+      "reference": {
+        "source_id": "sep_f6_2024",
+        "page": 59,
+        "section": "Matemáticas, tabla de PDA, columna de grado 3"
+      },
+      "verification": "verified",
+      "bindings": [],
+      "pedagogical_validation": null,
+      "prerequisite_origin": "Propuesta interna de secuencia pedagógica, no seriación oficial."
+    },
+    {
+      "id": "mx.sep.f6.2024.mat.g3.notacion",
+      "program_id": "sep_f6_2024",
+      "grade": 3,
+      "semester": null,
+      "area": "Saberes y Pensamiento Científico",
+      "subject": "Matemáticas",
+      "official_content_summary": "Operaciones e inversas",
+      "learning_outcome_summary": "Emplear notación científica.",
+      "wording": "Resumen editorial del contenido oficial; no cita textual.",
+      "topic_id": "mat_notacion_cientifica",
+      "subtopic": "notacion",
+      "aliases": [
+        "notacion cientifica"
+      ],
+      "prerequisites": [],
+      "reference": {
+        "source_id": "sep_f6_2024",
+        "page": 58,
+        "section": "Matemáticas, tabla de PDA, columna de grado 3"
+      },
+      "verification": "verified",
+      "bindings": [],
+      "pedagogical_validation": null,
+      "prerequisite_origin": "Propuesta interna de secuencia pedagógica, no seriación oficial."
+    }
+  ]
+}
