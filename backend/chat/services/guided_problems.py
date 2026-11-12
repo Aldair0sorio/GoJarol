@@ -37,10 +37,16 @@ ACKNOWLEDGEMENTS = {
 
 STEP_NAMES = ["Primer", "Segundo", "Tercer", "Cuarto"]
 WORDS = ["cero", "una", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez", "once", "doce"]
-NO_ANSWER = "No te voy a dar el resultado, pero sí te ayudo a dar el siguiente paso.\n\n"
+REFUSAL = "No te voy a dar el resultado, pero te acompaño."
+NO_ANSWER = f"{REFUSAL}\n\n"
 
 
 # --- Utilidades -----------------------------------------------------------------
+
+def emit_event(state, kind):
+    """Anota un evento para que la vista lo registre (sin texto del alumno)."""
+    state.setdefault("pending_events", []).append(kind)
+
 
 def _word(n):
     return WORDS[n] if 0 <= n < len(WORDS) else str(n)
@@ -395,6 +401,16 @@ def _help(p, answer_request=False):
     return prefix + _retry_with_example(p)
 
 
+def next_help(state):
+    """Siguiente ayuda del paso actual del problema pendiente (sin el resultado)."""
+    return _help(state["custom_problem"])  # Sin prefijo: quien llama pone el rechazo.
+
+
+def retry_with_example(state):
+    """Ejemplo completo con otros números y el paso actual para reintentar."""
+    return _retry_with_example(state["custom_problem"])
+
+
 def _retry_with_example(p):
     return (f"{_full_example(p)}\n\nAhora inténtalo tú con **{p['expr']}**:\n\n{_prompt(p)}\n\n"
             f"Recuerda que también puedes escribir «{_practice(p)}» para practicar con otros.")
@@ -413,6 +429,7 @@ def _is_final(p, token):
 
 def _finish(p, literal, state):
     state.pop("custom_problem", None)
+    state.pop("answer_request_counter", None)  # Problema resuelto: el contador vuelve a cero.
     exact = Rational(literal) == _final(p)
     head = (f"¡Exacto! 🎉 **{p['expr']}** da **{literal}**." if exact
             else f"¡Muy bien! 🎉 **{literal}** es correcto para **{p['expr']}** (el decimal sigue, pero así está bien).")
@@ -550,10 +567,15 @@ def handle_guided_message(message, state):
         return None
 
     if HELP_RE.search(normalized):
+        emit_event(state, "hint_used")
         return _help(p, answer_request=bool(ANSWER_REQUEST_RE.search(normalized)))
 
     if len(tokens) == 1:
-        return _evaluate(p, tokens[0], state)
+        step_before = p["step"]
+        reply = _evaluate(p, tokens[0], state)
+        if state.get("custom_problem") is not p or p["step"] != step_before:
+            emit_event(state, "step_solved")  # Paso (o problema) resuelto por el alumno.
+        return reply
 
     if pair or re.sub(r"[^\w\s]", "", normalized).strip() in ACKNOWLEDGEMENTS:
         return f"¡Sigamos!\n\n{_prompt(p)}"

@@ -233,3 +233,91 @@ class TeacherStudentClassroomFlowTests(TestCase):
         self.assertEqual(sw.status_code, 403)
         self.assertEqual(User.objects.get(pk=self.student_id).rol, 'estudiante')
         self.assertEqual(APIClient().post('/api/v1/auth/switch-role/', {'role':'teacher'}, format='json').status_code, 401)
+
+
+class CopySignalsEndpointTests(TestCase):
+    """Señales de copia: solo el docente dueño las ve; conteos sin texto ni correos."""
+
+    def setUp(self):
+        from classes.models import Classroom, Enrollment
+        from classes.views import _ensure_default_subject
+
+        subject = _ensure_default_subject("matematicas")
+        self.teacher = User.objects.create_user(username="profe_dueno", password="x", rol=User.Rol.DOCENTE,
+                                                email="dueno@docentes.example")
+        self.other_teacher = User.objects.create_user(username="profe_otro", password="x", rol=User.Rol.DOCENTE)
+        self.copier = User.objects.create_user(username="alu_pide", password="x", rol=User.Rol.ESTUDIANTE,
+                                               alias="Pide", email="pide@estudiantes.example")
+        self.learner = User.objects.create_user(username="alu_resuelve", password="x", rol=User.Rol.ESTUDIANTE)
+        self.outsider = User.objects.create_user(username="alu_otra_clase", password="x", rol=User.Rol.ESTUDIANTE)
+        self.classroom = Classroom.objects.create(docente=self.teacher, nombre="2° B", nivel="secundaria",
+                                                  grado=2, subject=subject)
+        other = Classroom.objects.create(docente=self.other_teacher, nombre="3° C", nivel="secundaria",
+                                         grado=3, subject=subject)
+        Enrollment.objects.create(classroom=self.classroom, student=self.copier)
+        Enrollment.objects.create(classroom=self.classroom, student=self.learner)
+        Enrollment.objects.create(classroom=other, student=self.outsider)
+        self.url = f"/api/v1/classes/{self.classroom.id}/copy-signals/"
+
+    def add_events(self, user, kind, n, days_ago=0):
+        from datetime import timedelta
+        from django.utils import timezone
+        from progress.models import TutorEvent
+
+        for _ in range(n):
+            event = TutorEvent.objects.create(user=user, kind=kind, topic_id="mat_fracciones")
+            if days_ago:
+                TutorEvent.objects.filter(pk=event.pk).update(created=timezone.now() - timedelta(days=days_ago))
+
+    def get_as(self, user):
+        client = APIClient()
+        client.force_authenticate(user=user)
+        return client.get(self.url)
+
+    def test_owner_sees_counts_signal_rule_and_recommendations(self):
+        self.add_events(self.copier, "answer_request", 2)
+        self.add_events(self.copier, "bypass_attempt", 1)
+        self.add_events(self.learner, "answer_request", 5)
+        self.add_events(self.learner, "step_solved", 3)
+        self.add_events(self.learner, "hint_used", 4)
+        self.add_events(self.outsider, "answer_request", 9)
+
+        response = self.get_as(self.teacher)
+
+        self.assertEqual(response.status_code, 200)
+        data = response.data
+        self.assertIn("al menos el doble", data["rule"])
+        self.assertEqual(data["windowDays"], 7)
+        self.assertTrue(data["recommendations"])
+        rows = {row["id"]: row for row in data["students"]}
+        self.assertEqual(set(rows), {str(self.copier.id), str(self.learner.id)})  # El de otra clase no aparece.
+        copier, learner = rows[str(self.copier.id)], rows[str(self.learner.id)]
+        self.assertEqual((copier["answerRequests"], copier["bypassAttempts"], copier["copySignal"]), (2, 1, "revisar"))
+        self.assertEqual(copier["name"], "Pide")  # alias or username, como el panel.
+        self.assertEqual(learner["name"], "alu_resuelve")
+        self.assertEqual((learner["stepsSolved"], learner["hintsUsed"], learner["copySignal"]), (3, 4, "ok"))
+        self.assertEqual(data["students"][0]["id"], str(self.copier.id))  # «revisar» primero.
+        self.assertEqual(data["totals"], {"students": 2, "studentsToReview": 1, "answerRequests": 7,
+                                          "bypassAttempts": 1, "stepsSolved": 3, "hintsUsed": 4})
+        self.assertNotIn("@", str(data))  # Nunca correos.
+
+    def test_rule_b_and_seven_day_window(self):
+        self.add_events(self.learner, "answer_request", 6)
+        self.add_events(self.learner, "step_solved", 3)
+        self.add_events(self.copier, "answer_request", 8, days_ago=8)  # Fuera de la ventana.
+
+        rows = {row["id"]: row for row in self.get_as(self.teacher).data["students"]}
+
+        self.assertEqual(rows[str(self.learner.id)]["copySignal"], "revisar")  # 6 >= 2 × 3.
+        self.assertEqual(rows[str(self.copier.id)]["answerRequests"], 0)
+        self.assertEqual(rows[str(self.copier.id)]["copySignal"], "ok")
+
+    def test_other_teacher_gets_403(self):
+        self.assertEqual(self.get_as(self.other_teacher).status_code, 403)
+
+    def test_students_get_403_even_if_enrolled(self):
+        self.assertEqual(self.get_as(self.copier).status_code, 403)
+        self.assertEqual(self.get_as(self.outsider).status_code, 403)
+
+    def test_anonymous_cannot_read(self):
+        self.assertIn(APIClient().get(self.url).status_code, {401, 403})

@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from chat.services.runtime import get_runtime
 from exercises.services.exercise_evaluator import evaluate_exercise_answer
 from progress.models import StudentProgress
+from progress.events import record_event
 from progress.views import record_exercise_attempt, resolve_progress_for_request
 
 
@@ -58,6 +59,7 @@ class ExerciseAnswerView(APIView):
         next_exercise_formatted = None
 
         if is_correct:
+            state.pop("answer_request_counter", None)  # Resuelto: el contador anticopia vuelve a cero.
             completed = state.setdefault("completed_exercises", [])
             if exercise_id not in completed:
                 completed.append(exercise_id)
@@ -106,6 +108,8 @@ class ExerciseAnswerView(APIView):
                 progress_obj.xp += xp_earned
             progress_obj.tutor_state = state
             progress_obj.save()
+            if is_correct:
+                record_event(request.user, "step_solved", topic_id)
 
             if evaluation.get("status") in {"correct", "incorrect"}:
                 record_exercise_attempt(
@@ -169,6 +173,7 @@ class ExerciseHintView(APIView):
         if progress_obj is not None:
             progress_obj.tutor_state = state
             progress_obj.save()
+        record_event(request.user, "hint_used", topic_id)
 
         return Response(
             {

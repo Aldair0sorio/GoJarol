@@ -211,6 +211,31 @@ def evaluate_percentage_answer(student_answer: str, expected_answer: str) -> dic
     }
 
 
+def canonical_answer(student_answer: str, exercise_type: str) -> str:
+    """Solo la respuesta (letra, fracción, número o "x = n"), nunca el resto del mensaje.
+
+    Se usa para guardar intentos sin conservar texto escrito por el alumno. Si no se
+    puede extraer una respuesta reconocible, devuelve "".
+    """
+    if not isinstance(student_answer, str):
+        return ""
+    text = " ".join(student_answer.strip().split())
+    if exercise_type == "multiple_choice":
+        return normalize_choice(text) or ""
+    if len(text) > 40:
+        return ""
+    if exercise_type == "numeric":
+        match = INTEGER_ANSWER_PATTERN.fullmatch(text)
+        if match:
+            return f"x = {match.group(1)}" if "x" in text.casefold() else match.group(1)
+        return ""
+    if exercise_type == "percentage":
+        match = PERCENTAGE_PATTERN.fullmatch(text)
+        return f"{match.group(1)}%" if match else ""
+    fraction = re.search(r"([+-]?\d+(?:\s*/\s*[+-]?\d+)?)\s*[.!]?\s*$", text)
+    return re.sub(r"\s+", "", fraction.group(1))[:255] if fraction else ""
+
+
 def evaluate_exercise_answer(
     student_answer: str,
     expected_answer: str,
