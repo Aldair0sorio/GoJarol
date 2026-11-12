@@ -48,8 +48,8 @@ class ChatMessageView(APIView):
         previous_type = state.get("last_response_type")
         hints_before = state.get("hints_used", 0)
 
-        # 1. Revisar si el alumno pregunta por una operación específica (dividir, multiplicar, restar, sumar, etc.)
-        specific = match_specific_operation_guide(message, state.get("active_exercise_id"))
+        # 1. Revisar si el alumno pregunta por una operación específica (ej. "y cuanto seria 5/2", dividir, multiplicar, restar, sumar)
+        specific = match_specific_operation_guide(message, state)
         if specific is not None:
             guide_text, mapped_topic = specific
             if mapped_topic:
@@ -94,13 +94,20 @@ class ChatMessageView(APIView):
             except Exception:
                 pass
 
-        # Si el modelo no detectó tema ("clarification"), orientar amigablemente sobre los temas disponibles
-        if response_type in {"clarification", "topic_required"}:
+        # Si el modelo no detectó tema ("clarification") o clasificó erróneamente como progreso sin que el usuario preguntara su avance
+        msg_lower = message.lower()
+        asked_progress = any(
+            w in msg_lower
+            for w in ("progreso", "avance", "nivel", "intento", "como voy", "cómo voy", "racha", "xp", "punto")
+        )
+        if response_type in {"clarification", "topic_required"} or (
+            response_type == "progress" and not asked_progress
+        ):
             reply_text = (
                 "¿Sobre qué tema te gustaría que trabajemos? Puedo explicarte paso a paso o ponerte retos interactivos de:\n\n"
                 "• **Matemáticas**: Fracciones, Ecuaciones de primer grado, Porcentajes, Suma, Resta, Multiplicación, División o Teorema de Pitágoras.\n"
                 "• **Español**: Comprensión lectora, Ortografía o Reglas de acentuación.\n\n"
-                "Por ejemplo, escríbeme: *«Explícame a dividir»*, *«Explícame las ecuaciones»* o *«Ponme un ejercicio de fracciones»*."
+                "Por ejemplo, escríbeme: *«Explícame a dividir»*, *«¿Cuánto sería 5/2?»* o *«Ponme un ejercicio de fracciones»*."
             )
 
         xp_earned = 0
