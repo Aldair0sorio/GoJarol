@@ -107,7 +107,7 @@ class ChatMessageView(APIView):
                 "¿Sobre qué tema te gustaría que trabajemos? Puedo explicarte paso a paso o ponerte retos interactivos de:\n\n"
                 "• **Matemáticas**: Fracciones, Ecuaciones de primer grado, Porcentajes, Suma, Resta, Multiplicación, División o Teorema de Pitágoras.\n"
                 "• **Español**: Comprensión lectora, Ortografía o Reglas de acentuación.\n\n"
-                "Por ejemplo, escríbeme: *«Explícame a dividir»*, *«¿Cuánto sería 5/2?»* o *«Ponme un ejercicio de fracciones»*."
+                "Por ejemplo, escríbeme: **«Explícame a dividir»**, **«¿Cuánto sería 5/2?»** o **«Ponme un ejercicio de fracciones»**."
             )
 
         xp_earned = 0

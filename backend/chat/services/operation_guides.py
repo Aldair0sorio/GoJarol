@@ -46,7 +46,19 @@ SPECIFIC_GUIDES = [
             "¿Quieres intentarlo? Escríbeme **«Ponme un ejercicio de fracciones»**."
         ),
     ),
-    # 2. Operaciones aritméticas generales
+    (
+        re.compile(r"\b(sum\w*|adicion)\b.*\b(fraccion\w*|quebrad\w*)\b|\b(fraccion\w*|quebrad\w*)\b.*\b(sum\w*|adicion)\b"),
+        "mat_fracciones",
+        (
+            "Para **sumar fracciones** revisa primero si los denominadores (los números de abajo) son iguales o distintos:\n\n"
+            "1. **Igual denominador**: Conserva el mismo denominador y suma los numeradores.\n"
+            "   • Ejemplo: 1/4 + 2/4 = (1 + 2)/4 = **3/4**.\n"
+            "2. **Distinto denominador**: Convierte a fracciones equivalentes con un denominador común (como el mínimo común múltiplo) y luego suma los numeradores.\n"
+            "   • Ejemplo: 1/2 + 1/4 → como 1/2 = 2/4, sumamos 2/4 + 1/4 = **3/4**.\n\n"
+            "¿Le entramos a un reto? Escríbeme **«Ponme un ejercicio de fracciones»**."
+        ),
+    ),
+    # 2. Operaciones aritméticas generales (cualquier forma de preguntar por dividir, multiplicar, restar o sumar)
     (
         re.compile(r"\b(divid\w*|division\w*|cociente|divisor|dividendo)\b"),
         None,
@@ -62,7 +74,7 @@ SPECIFIC_GUIDES = [
             "   • Busca qué número multiplicado por el divisor se acerca más sin pasarse.\n"
             "   • Resta ese producto y baja la siguiente cifra.\n"
             "3. **Comprobación**: (Cociente × Divisor) + Residuo = Dividendo.\n\n"
-            "💡 También puedo explicarte cómo **dividir fracciones** o despejar divisiones en **ecuaciones de primer grado**."
+            "💡 También puedes preguntarme una división concreta, por ejemplo: **«¿Cuánto sería 5/2?»**."
         ),
     ),
     (
@@ -81,7 +93,7 @@ SPECIFIC_GUIDES = [
         ),
     ),
     (
-        re.compile(r"^\s*(?:explicame\s+|ensename\s+|enseña\s+|como\s+|que\s+es\s+)*(?:a\s+|como\s+|la\s+|las\s+)*(?:restar|resta|restas|sustraccion)\s*\??\s*$"),
+        re.compile(r"\b(restar|resta|restas|restando|restamos|sustraccion)\b"),
         None,
         (
             "**La resta o sustracción** permite encontrar la diferencia entre dos cantidades (**minuendo** menos **sustraendo**):\n\n"
@@ -96,7 +108,7 @@ SPECIFIC_GUIDES = [
         ),
     ),
     (
-        re.compile(r"^\s*(?:explicame\s+|ensename\s+|enseña\s+|como\s+|que\s+es\s+)*(?:a\s+|como\s+|la\s+|las\s+)*(?:sumar|suma|sumas|adicion)\s*\??\s*$"),
+        re.compile(r"\b(sumar|suma|sumas|sumando|sumamos|adicion)\b"),
         None,
         (
             "**La suma o adición** reúne dos o más cantidades (**sumandos**) en un solo total:\n\n"
@@ -127,8 +139,6 @@ SPECIFIC_GUIDES = [
 ]
 
 
-# Patrones para detectar cuando el estudiante pregunta una operación numérica directa
-# Ej. "y cuanto seria 5/2", "cuanto es 15 entre 3", "cuanto es 1/4 + 2/4", "cuanto es 8 * 7"
 FRAC_OP_RE = re.compile(
     r"(\d+)\s*/\s*(\d+)\s*([+\-*/÷x×])\s*(\d+)\s*/\s*(\d+)"
 )
@@ -144,10 +154,6 @@ NUMERIC_REPLY_RE = re.compile(
 
 
 def evaluate_pending_custom_problem(message: str, state: dict) -> str | None:
-    """
-    Si el estudiante está respondiendo a la pregunta guiada que le hizo Jarol sobre su propia
-    operación (ej. escribió '2.5' después de preguntar 'y cuanto seria 5/2'), verifica con SymPy.
-    """
     custom = state.get("custom_problem")
     if not custom or state.get("active_exercise_id"):
         return None
@@ -177,11 +183,6 @@ def evaluate_pending_custom_problem(message: str, state: dict) -> str | None:
 
 
 def build_socratic_math_guide(message: str, state: dict) -> str | None:
-    """
-    Detecta cuando el usuario pregunta un cálculo concreto (como 'y cuanto seria 5/2',
-    'cuanto es 1/4 + 2/4' o 'cuanto es 8 * 7') y lo guía paso a paso con sus propios números
-    sin regalar la respuesta directa.
-    """
     if state.get("active_exercise_id"):
         return None
 
@@ -230,7 +231,7 @@ def build_socratic_math_guide(message: str, state: dict) -> str | None:
             "closing": "Si quieres ganar puntos XP resolviendo retos similares, escríbeme: **«Ponme un ejercicio de fracciones»**.",
         }
         return (
-            f"¡Vamos a resolver **{expr_str}** juntos paso a paso! (Recuerda que como tu tutor te doy la pista para que tú des el golpe final):\n\n"
+            f"¡Vamos a resolver **{expr_str}** juntos paso a paso! (Te doy la pista para que tú des el paso final):\n\n"
             f"1. **Observa las fracciones**: **{a}/{b}** y **{c}/{d}**.\n"
             f"2. **Procedimiento**: {hint}\n\n"
             f"¿Qué resultado obtienes al hacer ese paso? Escríbeme tu respuesta aquí:"
