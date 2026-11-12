@@ -122,6 +122,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleNivelChange = (newNivel: 'secundaria' | 'bachillerato') => {
+    setRegisterNivel(newNivel);
+    if (newNivel === 'secundaria' && registerGrado > 3) {
+      setRegisterGrado(3);
+    }
+  };
+
   // Manejo de respuesta de Google OAuth
   const handleGoogleCredentialResponse = async (response: any) => {
     if (!response?.credential) return;
@@ -134,6 +141,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       const googlePicture = decoded?.picture || '';
 
       const targetRole = mode === 'register' ? registerRole : 'student';
+      const gradeStr =
+        targetRole === 'student'
+          ? registerNivel === 'bachillerato'
+            ? `${registerGrado}° Semestre de Bachillerato`
+            : `${registerGrado}° de Secundaria`
+          : undefined;
 
       const result = await apiService.loginWithGoogle({
         credential: response.credential,
@@ -141,7 +154,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         name: googleName,
         picture: googlePicture,
         role: targetRole,
-        grade: targetRole === 'student' ? `${registerGrado}° de ${registerNivel}` : undefined,
+        grade: gradeStr,
         school: registerSchool,
       });
 
@@ -364,30 +377,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               </p>
             </div>
 
-            {/* BOTÓN OFICIAL DE GOOGLE */}
-            <div className="flex flex-col gap-1.5">
-              {googleLoading && (
-                <div className="p-2.5 bg-white rounded-xl border border-[#126B73] flex items-center justify-center gap-2 text-xs font-display font-bold text-[#126B73] animate-pulse">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Conectando con Google...</span>
-                </div>
-              )}
-              <div
-                id="google-official-btn-login"
-                ref={googleBtnRef}
-                className="w-full flex justify-center min-h-[44px] overflow-hidden rounded-xl"
-              />
-            </div>
-
-            {/* SEPARADOR */}
-            <div className="relative flex items-center justify-center my-0.5">
-              <div className="border-t border-[#E8E5DC] w-full"></div>
-              <span className="bg-[#F7F5EF] px-2.5 text-[10px] text-[#596B72] font-semibold uppercase tracking-wider shrink-0">
-                o con tu usuario escolar
-              </span>
-            </div>
-
-            {/* FORMULARIO DE LOGIN */}
+            {/* FORMULARIO DE LOGIN TRADICIONAL ARRIBA */}
             <form onSubmit={handleLoginSubmit} className="flex flex-col gap-2.5">
               {loginError && (
                 <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2 animate-shake">
@@ -423,7 +413,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     type="password"
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
-                    placeholder="Tu contraseña escolar"
+                    placeholder="Tu contraseña"
                     className="w-full text-xs pl-9 pr-3 py-2.5 rounded-xl bg-white border border-[#E8E5DC] focus:border-[#126B73] focus:outline-none"
                   />
                 </div>
@@ -447,6 +437,29 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 )}
               </button>
             </form>
+
+            {/* SEPARADOR: O CONTINUAR CON GOOGLE */}
+            <div className="relative flex items-center justify-center my-0.5">
+              <div className="border-t border-[#E8E5DC] w-full"></div>
+              <span className="bg-[#F7F5EF] px-2.5 text-[10px] text-[#596B72] font-semibold uppercase tracking-wider shrink-0">
+                o también puedes acceder con
+              </span>
+            </div>
+
+            {/* BOTÓN OFICIAL DE GOOGLE ABAJO */}
+            <div className="flex flex-col gap-1.5">
+              {googleLoading && (
+                <div className="p-2.5 bg-white rounded-xl border border-[#126B73] flex items-center justify-center gap-2 text-xs font-display font-bold text-[#126B73] animate-pulse">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Conectando con Google...</span>
+                </div>
+              )}
+              <div
+                id="google-official-btn-login"
+                ref={googleBtnRef}
+                className="w-full flex justify-center min-h-[44px] overflow-hidden rounded-xl"
+              />
+            </div>
 
             {/* SELECCIÓN RÁPIDA DE CUENTAS DEMO SEV */}
             <div className="pt-2 border-t border-[#E8E5DC]">
@@ -558,7 +571,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               </p>
             </div>
 
-            {/* SELECTOR DE ROL PARA REGISTRO */}
+            {/* SELECTOR DE ROL: ESTUDIANTE / DOCENTE */}
             <div className="flex gap-2 p-1 bg-white rounded-2xl border border-[#E8E5DC]">
               <button
                 type="button"
@@ -583,34 +596,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 }`}
               >
                 <GraduationCap className="w-3.5 h-3.5" />
-                <span>Soy Maestro/Docente</span>
+                <span>Soy Docente</span>
               </button>
             </div>
 
-            {/* BOTÓN OFICIAL DE GOOGLE PARA REGISTRO */}
-            <div className="flex flex-col gap-1.5">
-              {googleLoading && (
-                <div className="p-2.5 bg-white rounded-xl border border-[#126B73] flex items-center justify-center gap-2 text-xs font-display font-bold text-[#126B73] animate-pulse">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Creando cuenta con Google...</span>
-                </div>
-              )}
-              <div
-                id="google-official-btn-register"
-                ref={googleBtnRef}
-                className="w-full flex justify-center min-h-[44px] overflow-hidden rounded-xl"
-              />
-            </div>
-
-            {/* SEPARADOR */}
-            <div className="relative flex items-center justify-center my-0.5">
-              <div className="border-t border-[#E8E5DC] w-full"></div>
-              <span className="bg-[#F7F5EF] px-2.5 text-[10px] text-[#596B72] font-semibold uppercase tracking-wider shrink-0">
-                o completa tus datos escolares
-              </span>
-            </div>
-
-            {/* FORMULARIO DE REGISTRO COMPLETO */}
+            {/* FORMULARIO DE REGISTRO COMPLETO ARRIBA */}
             <form onSubmit={handleRegisterSubmit} className="flex flex-col gap-2.5">
               {registerError && (
                 <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2 animate-shake">
@@ -680,6 +670,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 </div>
               </div>
 
+              {/* SELECTOR DE NIVEL Y GRADOS/SEMESTRES (SECUNDARIA = 3 AÑOS, BACHILLERATO = 6 SEMESTRES) */}
               {registerRole === 'student' && (
                 <div className="grid grid-cols-2 gap-2">
                   <div>
@@ -688,27 +679,42 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     </label>
                     <select
                       value={registerNivel}
-                      onChange={(e) => setRegisterNivel(e.target.value as 'secundaria' | 'bachillerato')}
-                      className="w-full text-xs p-2.5 rounded-xl bg-white border border-[#E8E5DC] focus:border-[#126B73] focus:outline-none font-display"
+                      onChange={(e) => handleNivelChange(e.target.value as 'secundaria' | 'bachillerato')}
+                      className="w-full text-xs p-2.5 rounded-xl bg-white border border-[#E8E5DC] focus:border-[#126B73] focus:outline-none font-display font-medium"
                     >
-                      <option value="secundaria">Secundaria</option>
-                      <option value="bachillerato">Bachillerato</option>
+                      <option value="secundaria">Secundaria (3 años)</option>
+                      <option value="bachillerato">Bachillerato (6 semestres)</option>
                     </select>
                   </div>
 
                   <div>
                     <label className="text-[11px] font-display font-semibold text-[#596B72] block mb-1">
-                      Grado
+                      {registerNivel === 'secundaria' ? 'Año Escolar' : 'Semestre'}
                     </label>
-                    <select
-                      value={registerGrado}
-                      onChange={(e) => setRegisterGrado(Number(e.target.value))}
-                      className="w-full text-xs p-2.5 rounded-xl bg-white border border-[#E8E5DC] focus:border-[#126B73] focus:outline-none font-display"
-                    >
-                      <option value={1}>1° Grado</option>
-                      <option value={2}>2° Grado</option>
-                      <option value={3}>3° Grado</option>
-                    </select>
+                    {registerNivel === 'secundaria' ? (
+                      <select
+                        value={registerGrado}
+                        onChange={(e) => setRegisterGrado(Number(e.target.value))}
+                        className="w-full text-xs p-2.5 rounded-xl bg-white border border-[#E8E5DC] focus:border-[#126B73] focus:outline-none font-display"
+                      >
+                        <option value={1}>1° de Secundaria</option>
+                        <option value={2}>2° de Secundaria</option>
+                        <option value={3}>3° de Secundaria</option>
+                      </select>
+                    ) : (
+                      <select
+                        value={registerGrado}
+                        onChange={(e) => setRegisterGrado(Number(e.target.value))}
+                        className="w-full text-xs p-2.5 rounded-xl bg-white border border-[#E8E5DC] focus:border-[#126B73] focus:outline-none font-display"
+                      >
+                        <option value={1}>1er Semestre</option>
+                        <option value={2}>2do Semestre</option>
+                        <option value={3}>3er Semestre</option>
+                        <option value={4}>4to Semestre</option>
+                        <option value={5}>5to Semestre</option>
+                        <option value={6}>6to Semestre</option>
+                      </select>
+                    )}
                   </div>
                 </div>
               )}
@@ -747,12 +753,35 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     <span>
                       {registerRole === 'student'
                         ? 'Crear mi Cuenta de Estudiante'
-                        : 'Crear mi Cuenta de Maestro'}
+                        : 'Crear mi Cuenta de Docente'}
                     </span>
                   </>
                 )}
               </button>
             </form>
+
+            {/* SEPARADOR: O REGISTRARME CON GOOGLE */}
+            <div className="relative flex items-center justify-center my-0.5">
+              <div className="border-t border-[#E8E5DC] w-full"></div>
+              <span className="bg-[#F7F5EF] px-2.5 text-[10px] text-[#596B72] font-semibold uppercase tracking-wider shrink-0">
+                o también puedes registrarte con
+              </span>
+            </div>
+
+            {/* BOTÓN OFICIAL DE GOOGLE ABAJO */}
+            <div className="flex flex-col gap-1.5">
+              {googleLoading && (
+                <div className="p-2.5 bg-white rounded-xl border border-[#126B73] flex items-center justify-center gap-2 text-xs font-display font-bold text-[#126B73] animate-pulse">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Creando cuenta con Google...</span>
+                </div>
+              )}
+              <div
+                id="google-official-btn-register"
+                ref={googleBtnRef}
+                className="w-full flex justify-center min-h-[44px] overflow-hidden rounded-xl"
+              />
+            </div>
 
             {/* SWITCH A LOGIN */}
             <div className="text-center pt-1">
@@ -761,7 +790,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 type="button"
                 onClick={() => {
                   setMode('login');
-                  setRegisterError(null);
+                  setLoginError(null);
                 }}
                 className="text-[11px] text-[#126B73] font-display font-bold hover:underline cursor-pointer"
               >

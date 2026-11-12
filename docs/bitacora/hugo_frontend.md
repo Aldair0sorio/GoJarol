@@ -469,3 +469,24 @@ Para cada sesión o iteración se documenta:
   - `frontend/src/services/api.ts`
   - `backend/accounts/views.py`
   - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 22 · 11 de Noviembre de 2026 (22:28 - 22:32)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Ajustes de diseño y coherencia curricular en el flujo de autenticación (reubicación de Google OAuth abajo, normalización de etiqueta "Docente" y bifurcación dinámica de Secundaria a 3 años y Bachillerato a 6 semestres).
+
+- **Para qué se usaron**:
+  - Normalización de rol profesional en la interfaz: cambio de "Soy Maestro/Docente" a simplemente "Soy Docente".
+  - Reubicación visual de los accesos de Google Identity Services debajo de los formularios principales tanto en Inicio de Sesión como en Registro, priorizando la entrada de credenciales.
+  - Implementación de lógica curricular dinámica para estudiantes veracruzanos:
+    - **Secundaria**: Selección de 1° a 3° año escolar.
+    - **Bachillerato**: Selección de 1er a 6to semestre escolar.
+    - Reajuste automático de grado al alternar entre niveles para prevenir inconsistencias de rango.
+  - Verificación de compilación de frontend con TypeScript 7 y Vite 8 (599 ms).
+
+- **Decisiones clave tomadas**:
+  - Alinear la estructura de grados con el sistema educativo de Veracruz (secundaria técnica/general de 3 grados y bachillerato general/tecnológico de 6 semestres).
+
+- **Archivos creados / modificados**:
+  - `frontend/src/components/auth/AuthModal.tsx`
+  - `docs/bitacora/hugo_frontend.md`
