@@ -447,3 +447,25 @@ Para cada sesión o iteración se documenta:
   - `ml/artifacts/test_metrics.json`
   - `.gitignore`
   - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 21 · 11 de Noviembre de 2026 (22:21 - 22:26)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Rediseño completo de arquitectura de autenticación separando de forma estricta los flujos de "Iniciar Sesión" y "Crear Cuenta (Registro)", con soporte de login por email/username y registro estructurado.
+
+- **Para qué se usaron**:
+  - Corrección de la experiencia de usuario en [`AuthModal.tsx`](frontend/src/components/auth/AuthModal.tsx):
+    - **Pestaña Iniciar Sesión**: Formulario de credenciales directas (`usuario o correo` + `contraseña`), acceso nativo con Google Identity Services y selector de cuentas demo SEV.
+    - **Pestaña Crear Cuenta (Registro)**: Formulario de alta para nuevos estudiantes/docentes con campos formales (`nombre completo`, `nombre de usuario`, `contraseña`, `correo`, selector de rol alumno/maestro, `nivel escolar`, `grado` y `escuela en Veracruz`), o registro rápido con Google OAuth.
+  - Implementación de métodos `login()` y `register()` en [`apiService`](frontend/src/services/api.ts) conectando con los endpoints DRF `/api/v1/auth/login/` y `/api/v1/auth/register/`.
+  - Actualización de [`backend/accounts/views.py`](backend/accounts/views.py) en `LoginView` para permitir autenticación indistinta mediante nombre de usuario o dirección de correo electrónico (`email__iexact`).
+  - Validación de compilación de Vite y TypeScript sin advertencias.
+
+- **Decisiones clave tomadas**:
+  - Establecer una separación visual y funcional transparente entre el ingreso de usuarios existentes y la captura de datos pedagógicos de nuevos usuarios.
+
+- **Archivos creados / modificados**:
+  - `frontend/src/components/auth/AuthModal.tsx`
+  - `frontend/src/services/api.ts`
+  - `backend/accounts/views.py`
+  - `docs/bitacora/hugo_frontend.md`

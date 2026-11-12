@@ -29,10 +29,15 @@ class LoginView(APIView):
     authentication_classes = []
 
     def post(self, request):
-        user = authenticate(
-            username=request.data.get("username"),
-            password=request.data.get("password"),
-        )
+        raw_identifier = request.data.get("username", "")
+        password = request.data.get("password", "")
+
+        user = authenticate(username=raw_identifier, password=password)
+        if user is None and "@" in raw_identifier:
+            user_by_email = User.objects.filter(email__iexact=raw_identifier).first()
+            if user_by_email:
+                user = authenticate(username=user_by_email.username, password=password)
+
         if user is None:
             return Response(
                 {"error": {"code": "invalid_credentials", "message": "Usuario o contraseña incorrectos."}},

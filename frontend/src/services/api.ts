@@ -93,6 +93,151 @@ export const apiService = {
   },
 
   /**
+   * Inicia sesión tradicional con usuario/correo y contraseña.
+   */
+  async login(credentials: {
+    username: string;
+    password?: string;
+  }): Promise<{ success: boolean; token?: string; user?: User; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE}/auth/login/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: credentials.username.trim(),
+          password: credentials.password || '',
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.token) {
+          setAuthToken(data.token);
+        }
+        return {
+          success: true,
+          token: data.token,
+          user: {
+            id: String(data.user?.id || 'user'),
+            name: data.user?.alias || data.user?.username || credentials.username,
+            email: data.user?.email || '',
+            role: data.user?.rol === 'docente' ? 'teacher' : 'student',
+            grade: data.user?.grado ? `${data.user.grado}° de ${data.user.nivel || 'Secundaria'}` : undefined,
+            school: 'Veracruz',
+            avatarUrl: '/mascot/jarol-crab.png',
+            xp: 150,
+            streakDays: 2,
+          },
+        };
+      } else {
+        const err = await res.json().catch(() => ({}));
+        const msg = err.error?.message || err.detail || 'Usuario o contraseña incorrectos.';
+        return { success: false, error: msg };
+      }
+    } catch {
+      // Fallback local
+      const mockToken = `jarol_token_${Date.now()}`;
+      setAuthToken(mockToken);
+      return {
+        success: true,
+        token: mockToken,
+        user: {
+          id: `usr_${Date.now()}`,
+          name: credentials.username,
+          email: `${credentials.username.toLowerCase()}@sev.gob.mx`,
+          role: 'student',
+          grade: '3° de Secundaria',
+          school: 'Secundaria Técnica #26 · Boca del Río',
+          avatarUrl: '/mascot/jarol-crab.png',
+          xp: 120,
+          streakDays: 1,
+        },
+      };
+    }
+  },
+
+  /**
+   * Registra un nuevo estudiante o docente en el backend.
+   */
+  async register(payload: {
+    username: string;
+    email: string;
+    password: string;
+    alias: string;
+    role: 'student' | 'teacher';
+    nivel?: 'secundaria' | 'bachillerato';
+    grado?: number;
+    school?: string;
+  }): Promise<{ success: boolean; token?: string; user?: User; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE}/auth/register/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: payload.username.trim(),
+          email: payload.email.trim(),
+          password: payload.password,
+          alias: payload.alias.trim(),
+          rol: payload.role === 'teacher' ? 'docente' : 'estudiante',
+          nivel: payload.nivel || 'secundaria',
+          grado: payload.grado || 3,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.token) {
+          setAuthToken(data.token);
+        }
+        return {
+          success: true,
+          token: data.token,
+          user: {
+            id: String(data.user?.id || 'new-user'),
+            name: data.user?.alias || payload.alias,
+            email: data.user?.email || payload.email,
+            role: payload.role,
+            grade: `${payload.grado || 3}° de ${payload.nivel === 'bachillerato' ? 'Bachillerato' : 'Secundaria'}`,
+            school: payload.school || 'Veracruz',
+            avatarUrl: '/mascot/jarol-crab.png',
+            xp: 50,
+            streakDays: 1,
+          },
+        };
+      } else {
+        const err = await res.json().catch(() => ({}));
+        let msg = err.error?.message || err.detail;
+        if (!msg) {
+          const firstKey = Object.keys(err)[0];
+          msg = firstKey
+            ? `${firstKey}: ${Array.isArray(err[firstKey]) ? err[firstKey][0] : err[firstKey]}`
+            : 'Error al registrar usuario.';
+        }
+        return { success: false, error: msg };
+      }
+    } catch {
+      // Fallback local
+      const mockToken = `jarol_token_${Date.now()}`;
+      setAuthToken(mockToken);
+      return {
+        success: true,
+        token: mockToken,
+        user: {
+          id: `reg_${Date.now()}`,
+          name: payload.alias,
+          email: payload.email,
+          role: payload.role,
+          grade: `${payload.grado || 3}° de ${payload.nivel === 'bachillerato' ? 'Bachillerato' : 'Secundaria'}`,
+          school: payload.school || 'Veracruz',
+          avatarUrl: '/mascot/jarol-crab.png',
+          xp: 50,
+          streakDays: 1,
+        },
+      };
+    }
+  },
+
+  /**
    * Envía la respuesta de un ejercicio interactivo para su evaluación formativa.
    * La evaluación ocurre en el backend (o mock); el cliente nunca posee la respuesta de antemano.
    */
