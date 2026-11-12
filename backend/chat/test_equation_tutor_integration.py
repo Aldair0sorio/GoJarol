@@ -35,7 +35,7 @@ def start(tutor):
 
 def test_explanation_and_adaptation_through_all_levels_with_real_nlp(tutor):
     explanation = tutor.process_message("Explícame las ecuaciones de primer grado")
-    assert explanation["type"] == "explanation"
+    assert explanation["type"] == "explanation_menu"  # Jarol pregunta antes de explicar.
     assert explanation["state"]["current_topic"] == "mat_ecuaciones"
     result = start(tutor)
     for attempt, (exercise_id, level, answer) in enumerate([

@@ -14,6 +14,27 @@
     ],
     "correct_index": 1
   },
+  "explanation_menu": {
+    "question": "Antes de explicarte, cuéntame: ¿qué parte de las fracciones se te complica más?",
+    "practice_prompt": "Ponme un ejercicio de fracciones",
+    "options": [
+      {
+        "label": "A",
+        "text": "Qué significan el numerador y el denominador",
+        "explanation": "Piensa en una barra de chocolate partida en cuadritos iguales. El denominador (abajo) dice en cuántos cuadritos iguales se partió la barra y el numerador (arriba) dice cuántos tomas. Si la barra tiene 6 cuadritos y te comes 5, comiste 5/6 de la barra."
+      },
+      {
+        "label": "B",
+        "text": "Sumar o restar fracciones con el mismo denominador",
+        "explanation": "Imagina rebanadas de pizza del mismo tamaño: si tienes 2 rebanadas de una pizza cortada en 9 y te dan 5 más, solo cuentas rebanadas: 2/9 + 5/9 = 7/9. El denominador no cambia porque el tamaño de la rebanada no cambia; solo sumas o restas los numeradores. Para restar es igual: 8/9 - 3/9 = 5/9."
+      },
+      {
+        "label": "C",
+        "text": "Sumar o restar fracciones con distinto denominador",
+        "explanation": "Es como juntar monedas de distinto valor: antes de contarlas, conviene cambiarlas a monedas del mismo valor. Con fracciones buscas un denominador común: para 1/2 + 1/3 sirve el 6, porque 1/2 = 3/6 y 1/3 = 2/6. Ya con piezas del mismo tamaño sumas: 3/6 + 2/6 = 5/6."
+      }
+    ]
+  },
   "explanations": {
     "basic": "Una fracción representa partes de un todo dividido en partes iguales: el denominador (abajo) indica en cuántas partes iguales se divide el entero y el numerador (arriba) cuántas partes tomamos.\n1. Suma o resta con igual denominador: conserva el mismo denominador y suma o resta únicamente los numeradores. Ejemplo: 1/5 + 2/5 = 3/5; para restar: 4/5 - 1/5 = 3/5.\n2. Suma o resta con distinto denominador: busca un denominador común (como el mínimo común múltiplo), convierte cada fracción a su equivalente y luego suma o resta los numeradores. Ejemplo: 1/3 + 1/6 = 2/6 + 1/6 = 3/6 = 1/2; para restar: 5/6 - 1/2 = 5/6 - 3/6 = 2/6 = 1/3.\n3. Si el resultado se puede simplificar, divide numerador y denominador entre el mismo número.",
     "intermediate": "Una fracción tiene numerador y denominador. Cuando dos fracciones tienen distinto denominador, primero conviértelas a fracciones equivalentes con el mismo denominador multiplicando numerador y denominador por el mismo factor. Después suma o resta los numeradores y conserva el denominador común.",

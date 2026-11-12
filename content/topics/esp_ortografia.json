@@ -24,6 +24,27 @@
     ],
     "correct_index": 2
   },
+  "explanation_menu": {
+    "question": "Antes de explicarte, cuéntame: ¿qué parte de la ortografía se te complica más?",
+    "practice_prompt": "Ponme un ejercicio de ortografía",
+    "options": [
+      {
+        "label": "A",
+        "text": "Palabras que suenan igual pero se escriben distinto",
+        "explanation": "Es como dos compañeros con el mismo nombre: para saber de quién hablas, te fijas en el contexto. «Hola» es un saludo y «ola» es la del mar; «casa» es donde vives y «caza» viene del verbo cazar. Lee la oración completa y pregúntate qué significa la palabra ahí."
+      },
+      {
+        "label": "B",
+        "text": "Cuándo va m antes de b y p",
+        "explanation": "Fíjate en tus labios: la b y la p se pronuncian juntándolos, y la m también. Por eso se escribe m antes de b y p: campo, hombre, tiempo. En cambio, antes de v se escribe n: invitar, conversar."
+      },
+      {
+        "label": "C",
+        "text": "Cuándo se escribe la h",
+        "explanation": "La h es como un compañero callado: no se escucha, pero está en la lista. Para recordarla, piensa en la familia de la palabra: si «humo» lleva h, también «humear» y «ahumado». Y con el verbo haber seguido de participio siempre va h: «hemos comido», «han llegado»."
+      }
+    ]
+  },
   "explanations": {
     "basic": "La ortografía establece cómo escribimos las palabras. Algunas letras pueden sonar igual o no sonar: por eso no basta con escuchar. Revisa significado, familia de palabras y diccionario. Como regla, se escribe m antes de b y p, como en campo; antes de v suele aparecer n. En formas de haber seguidas de participio se conserva h: hemos leído. No todos los errores se resuelven con una sola regla.",
     "alternative": "Lee la oración completa y determina qué significa cada palabra. Luego comprueba por separado letras omitidas, sustituciones y separación de palabras. Ejemplo: hecho, del verbo hacer, lleva h; echo, del verbo echar, no. Ambas formas existen, pero no son intercambiables. En una corrección revisa todo el texto: una opción puede arreglar un error y conservar otro."

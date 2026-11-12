@@ -10,6 +10,27 @@
     "options": ["El asunto central", "Un detalle secundario", "Una palabra aislada"],
     "correct_index": 0
   },
+  "explanation_menu": {
+    "question": "Antes de explicarte, cuéntame: ¿qué parte de la comprensión lectora se te complica más?",
+    "practice_prompt": "Ponme un ejercicio de comprensión lectora",
+    "options": [
+      {
+        "label": "A",
+        "text": "Encontrar un dato que está escrito en el texto",
+        "explanation": "Es como buscar un ingrediente en una receta: no la vuelves a leer completa, buscas la palabra clave. Primero fíjate qué te preguntan (quién, qué, dónde o cuándo) y luego localiza esa parte del texto. En «Rosa compró pan en la tienda de la esquina», si te preguntan dónde compró, la respuesta está escrita: en la tienda de la esquina."
+      },
+      {
+        "label": "B",
+        "text": "Identificar la idea principal",
+        "explanation": "Piensa en el título que le pondrías a un video para que alguien sepa de qué trata sin verlo. La idea principal es eso: el asunto que reúne a todas las oraciones, no un detalle. Si un texto cuenta que una familia lavó, pintó y adornó su casa para la fiesta del pueblo, la idea principal es que la familia preparó su casa para la fiesta, no solo que la pintó."
+      },
+      {
+        "label": "C",
+        "text": "Hacer inferencias (deducir lo que no está escrito)",
+        "explanation": "Es como ser detective: si alguien llega con el paraguas escurriendo, deduces que está lloviendo aunque nadie lo diga. En un texto unes pistas para sacar una conclusión que el texto apoye. «Pedro bostezaba y se le cerraban los ojos en clase» permite inferir que tenía sueño; no permite inferir que estaba enojado, porque ninguna pista lo apoya."
+      }
+    ]
+  },
   "explanations": {
     "basic": "Comprender un texto implica identificar información explícita, reconocer la idea principal y relacionar pistas para inferir. La información explícita aparece escrita; la idea principal reúne el asunto central; una inferencia es una conclusión apoyada en el texto, aunque no esté escrita literalmente.",
     "alternative": "Primero revisa qué te preguntan. Para localizar un dato, busca la acción, persona, lugar o momento mencionado. Para encontrar la idea principal, relaciona todas las oraciones. Para inferir, conecta las pistas y descarta conclusiones que contradigan el texto o añadan información sin apoyo."

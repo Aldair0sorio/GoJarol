@@ -30,6 +30,27 @@
     ],
     "correct_index": 1
   },
+  "explanation_menu": {
+    "question": "Antes de explicarte, cuéntame: ¿qué parte de la acentuación se te complica más?",
+    "practice_prompt": "Ponme un ejercicio de acentuación",
+    "options": [
+      {
+        "label": "A",
+        "text": "Encontrar la sílaba tónica",
+        "explanation": "Es como el golpe más fuerte de un tambor dentro de un ritmo: al decir una palabra, una sílaba suena con más fuerza. Para encontrarla, di la palabra como si llamaras a alguien de lejos: «ca-MI-sa». La sílaba tónica de camisa es mi, aunque no lleve tilde."
+      },
+      {
+        "label": "B",
+        "text": "Clasificar palabras en agudas, graves y esdrújulas",
+        "explanation": "Piensa en una fila que cuentas desde el final. Si la sílaba fuerte es la última, la palabra es aguda (ca-fé, pa-red); si es la penúltima, es grave o llana (ár-bol, me-sa); si es la antepenúltima, es esdrújula (pá-ja-ro). Lo que cuenta es dónde suena la fuerza, no si hay tilde."
+      },
+      {
+        "label": "C",
+        "text": "Saber cuándo se escribe la tilde",
+        "explanation": "Es como las señales de tránsito: cada tipo de palabra tiene su regla. Las agudas llevan tilde si terminan en vocal, n o s (sofá, camión, compás); las graves, si terminan en otra consonante (fácil, césped); las esdrújulas, siempre (miércoles). Por eso pared no lleva tilde: es aguda y termina en d."
+      }
+    ]
+  },
   "explanations": {
     "basic": "La sílaba tónica recibe la mayor fuerza de voz. Una palabra aguda la tiene en la última sílaba; una grave o llana, en la penúltima; una esdrújula, en la antepenúltima. La clasificación depende de la pronunciación, no de que haya tilde. En los casos regulares, las agudas terminadas en vocal, n o s llevan tilde; las graves la llevan si terminan en otra consonante; las esdrújulas siempre. Hay reglas adicionales para hiatos y ciertas terminaciones. Ejemplos: papel es aguda sin tilde; fácil es grave con tilde.",
     "alternative": "Primero pronuncia y separa la palabra en sílabas. Después cuenta desde el final para clasificarla y revisa la terminación para decidir si necesita tilde. No todas las sílabas tónicas llevan una marca escrita. En oraciones, distingue funciones: dé del verbo dar lleva tilde; de como preposición no. Los interrogativos llevan tilde también en preguntas indirectas."

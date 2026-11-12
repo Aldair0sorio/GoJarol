@@ -56,7 +56,7 @@ def start_exercise(tutor):
 def test_explanation(tutor):
     result = tutor.process_message("Explícame las fracciones")
 
-    assert result["type"] == "explanation"
+    assert result["type"] == "explanation_menu"  # Jarol pregunta antes de explicar.
     assert result["state"]["current_topic"] == "mat_fracciones"
 
 

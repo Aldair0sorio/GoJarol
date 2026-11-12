@@ -17,6 +17,27 @@
     "options": ["Solo en el lado izquierdo", "En ambos lados", "Solo en el lado derecho"],
     "correct_index": 1
   },
+  "explanation_menu": {
+    "question": "Antes de explicarte, cuéntame: ¿qué parte de las ecuaciones se te complica más?",
+    "practice_prompt": "Ponme un ejercicio de ecuaciones",
+    "options": [
+      {
+        "label": "A",
+        "text": "Qué significa resolver una ecuación",
+        "explanation": "Una ecuación es como una balanza en equilibrio: de un lado hay una caja de peso desconocido (x) junto con algunas pesas, y del otro, más pesas. Resolverla es averiguar cuánto pesa la caja sin desequilibrar la balanza. En x + 3 = 13 buscamos el número que, sumado a 3, da 13: es 10, porque 10 + 3 = 13."
+      },
+      {
+        "label": "B",
+        "text": "Despejar x con una sola operación",
+        "explanation": "Es como deshacer un nudo: haces lo contrario de lo que lo apretó. Cada operación se deshace con su inversa, aplicada en ambos lados de la igualdad. En x - 2 = 10 sumas 2 en ambos lados y queda x = 12. En 5x = 40 divides ambos lados entre 5 y queda x = 8."
+      },
+      {
+        "label": "C",
+        "text": "Ecuaciones de dos pasos (una multiplicación y una suma o resta)",
+        "explanation": "Piensa en un regalo: primero lo metes en la caja y luego le pones el moño; para abrirlo, primero quitas el moño y después abres la caja. En 3x + 1 = 13 primero deshaces la suma: restas 1 en ambos lados y queda 3x = 12. Luego deshaces la multiplicación: divides entre 3 y queda x = 4. Compruébalo: 3 · 4 + 1 = 13."
+      }
+    ]
+  },
   "explanations": {
     "basic": "Una ecuación es una igualdad con un valor desconocido, como x. Resolverla es encontrar el valor que hace iguales ambos lados.\n1. Identifica qué operaciones acompañan a x.\n2. Deshazlas con operaciones inversas, aplicando la misma operación a ambos lados.\n3. Si hay dos operaciones, deshaz primero la suma o resta externa y después la multiplicación o división.\n4. Sustituye tu valor en la ecuación original para comprobarlo.\nEjemplos distintos de los ejercicios: x + 4 = 14 → resta 4 en ambos lados → x = 10; x - 6 = 2 → suma 6 en ambos lados → x = 8.",
     "intermediate": "Multiplicación: en 4x = 20, divide ambos lados entre 4; x = 5. División: en x/3 = 4, multiplica ambos lados por 3; x = 12. Dos operaciones: en 3x + 4 = 10, resta 4 en ambos lados para obtener 3x = 6; divide ambos lados entre 3 para obtener x = 2. Comprobación: 3·2 + 4 = 10. Estos son ejemplos de explicación, distintos de las actividades del banco.",

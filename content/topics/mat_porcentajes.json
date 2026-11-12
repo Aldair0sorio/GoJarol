@@ -23,6 +23,27 @@
     ],
     "correct_index": 0
   },
+  "explanation_menu": {
+    "question": "Antes de explicarte, cuéntame: ¿qué parte de los porcentajes se te complica más?",
+    "practice_prompt": "Ponme un ejercicio de porcentajes",
+    "options": [
+      {
+        "label": "A",
+        "text": "Qué significa un porcentaje",
+        "explanation": "Un porcentaje es una forma de decir «de cada 100». Imagina un camión con 100 asientos: si 35 van ocupados, está ocupado el 35%. Por eso el 50% es la mitad y el 100% es el total."
+      },
+      {
+        "label": "B",
+        "text": "Calcular el porcentaje de una cantidad",
+        "explanation": "Es como calcular la propina en una fonda: si la comida cuesta 60 pesos y dejas el 15%, haces 60 × 15/100 = 9 pesos. Un truco: el 10% se obtiene dividiendo entre 10 (el 10% de 60 es 6) y el 5% es la mitad de eso (3); juntos, 6 + 3 = 9."
+      },
+      {
+        "label": "C",
+        "text": "Descuentos y aumentos",
+        "explanation": "Piensa en una tienda en rebaja: unos tenis de 300 pesos tienen 40% de descuento. Primero calculas cuánto te descuentan: 300 × 40/100 = 120 pesos; luego lo restas: 300 - 120 = 180 pesos. En un aumento, en vez de restar, sumas: si un pasaje de 50 pesos sube 10%, aumenta 5 y queda en 55 pesos."
+      }
+    ]
+  },
   "explanations": {
     "basic": "Un porcentaje expresa una razón respecto de cien. Para calcular p% de una cantidad, multiplica el total por p/100. Ejemplo: el 50% de 30 es 30 × 50/100 = 15. Una fracción se convierte a porcentaje multiplicando por cien. Para saber qué porcentaje representa una parte, divide la parte entre el total y multiplica por cien.",
     "alternative": "Distingue la tasa de la cantidad: un porcentaje lleva como referencia un total. En un descuento resta del precio la cantidad descontada; en un aumento súmala. Ejemplo: con 10% de descuento en 70 pesos, descuentas 7 y pagas 63. En cambios sucesivos usa el resultado anterior como nueva base, sin sumar automáticamente las tasas. Si conoces el precio rebajado, divide entre la fracción del precio original que se conserva."
