@@ -106,7 +106,10 @@ services:
     container_name: gojarol_backend
     restart: always
     command: gunicorn core.wsgi:application --bind 0.0.0.0:8000 --workers 3
-    env_file: .env
+    env_file:
+      - .env
+    expose:
+      - "8000"
     depends_on:
       - db
     networks:
@@ -119,7 +122,8 @@ services:
     container_name: gojarol_frontend
     restart: always
     ports:
-      - "80:80"
+      # Mapeo a loopback local (puerto 3000) para no chocar con el puerto 80 del VPS
+      - "127.0.0.1:3000:80"
     depends_on:
       - backend
     networks:

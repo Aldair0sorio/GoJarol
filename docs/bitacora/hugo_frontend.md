@@ -149,3 +149,24 @@ Para cada sesión o iteración se documenta:
   - `frontend/src/components/layout/AppHeader.tsx`
   - `frontend/src/App.tsx`
   - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 7 · 11 de Noviembre de 2026 (18:05 - 18:08)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Ajuste de infraestructura y orquestación con la IA de administración del servidor Debian (Reverse Proxy nativo multi-sitio).
+
+- **Para qué se usaron**:
+  - Creación del archivo oficial `docker-compose.yml` en la raíz del proyecto.
+  - Ajuste de mapeo de puertos del contenedor frontend hacia `127.0.0.1:3000:80` para no colisionar con los puertos 80 y 443 del Nginx nativo del host.
+  - Aislamiento estricto del backend Django en la red interna de Docker (`expose: - "8000"` sin exponer puertos al host) para no chocar con el puerto 8000 ocupado por otro servicio del VPS.
+  - Actualización de `frontend/nginx.conf` con `proxy_pass http://backend:8000;` para que el proxy interno resuelva por DNS interno de Docker.
+
+- **Decisiones clave tomadas**:
+  1. **Seguridad por loopback (`127.0.0.1`)**: El frontend no se abre directamente a internet en el puerto 3000, sino únicamente al loopback local para que el Nginx nativo del servidor Debian gestione el dominio y los certificados SSL.
+  2. **Zero port collision**: Se garantizó que ningún puerto de GoJarol (80, 443, 8000) colisione con los servicios existentes del servidor de producción.
+
+- **Archivos creados / modificados**:
+  - `docker-compose.yml`
+  - `frontend/nginx.conf`
+  - `docs/DESPLIEGUE.md`
+  - `docs/bitacora/hugo_frontend.md`
