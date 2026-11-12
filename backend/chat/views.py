@@ -2,6 +2,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from chat.services.operation_guides import match_specific_operation_guide
 from chat.services.runtime import get_runtime
 from progress.models import StudentProgress
 
@@ -43,15 +44,64 @@ class ChatMessageView(APIView):
         base_state.update(state if isinstance(state, dict) else {})
         state = base_state
 
+        previous_topic = state.get("current_topic")
+        previous_type = state.get("last_response_type")
         hints_before = state.get("hints_used", 0)
 
-        # Ejecutar directamente el TutorService de Iván sin alterar su flujo
+        # 1. Revisar si el alumno pregunta por una operación específica (dividir, multiplicar, restar, sumar, etc.)
+        specific = match_specific_operation_guide(message, state.get("active_exercise_id"))
+        if specific is not None:
+            guide_text, mapped_topic = specific
+            if mapped_topic:
+                state["current_topic"] = mapped_topic
+            state["last_response_type"] = "explanation"
+            if progress_obj is not None:
+                progress_obj.tutor_state = state
+                progress_obj.save()
+            return Response(
+                {
+                    "reply": guide_text,
+                    "type": "explanation",
+                    "exercise": None,
+                    "evaluation": None,
+                    "nextAction": None,
+                    "xpEarned": 0,
+                    "totalXp": progress_obj.xp if progress_obj else 0,
+                    "streakDays": progress_obj.streak_days if progress_obj else 1,
+                    "currentTopic": state.get("current_topic"),
+                }
+            )
+
+        # 2. Ejecutar el TutorService de Iván (intent_classifier.joblib + CurriculumRetriever + SymPy)
         result = runtime.tutor.process_message(message, state)
         new_state = result["state"]
         response_type = result["type"]
         reply_text = result["message"]
         raw_exercise = result.get("exercise")
         topic_id = new_state.get("current_topic")
+
+        # Si pide otra explicación del mismo tema que acabamos de explicar, alternar con la explicación "alternative"
+        if (
+            response_type == "explanation"
+            and topic_id
+            and previous_topic == topic_id
+            and previous_type == "explanation"
+        ):
+            try:
+                alt_text = runtime.knowledge.get_explanation(topic_id, "alternative")
+                if alt_text and alt_text != reply_text:
+                    reply_text = alt_text
+            except Exception:
+                pass
+
+        # Si el modelo no detectó tema ("clarification"), orientar amigablemente sobre los temas disponibles
+        if response_type in {"clarification", "topic_required"}:
+            reply_text = (
+                "¿Sobre qué tema te gustaría que trabajemos? Puedo explicarte paso a paso o ponerte retos interactivos de:\n\n"
+                "• **Matemáticas**: Fracciones, Ecuaciones de primer grado, Porcentajes, Suma, Resta, Multiplicación, División o Teorema de Pitágoras.\n"
+                "• **Español**: Comprensión lectora, Ortografía o Reglas de acentuación.\n\n"
+                "Por ejemplo, escríbeme: *«Explícame a dividir»*, *«Explícame las ecuaciones»* o *«Ponme un ejercicio de fracciones»*."
+            )
 
         xp_earned = 0
         evaluation = result.get("evaluation")
