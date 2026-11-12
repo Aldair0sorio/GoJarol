@@ -1,6 +1,6 @@
 """Matriz anticopia: 8 maneras de pedir la respuesta × temas × flujos. Nunca aparece el resultado.
 
-Flujos: ejercicio activo (los 54 ejercicios del banco, incluida su última pista), problema
+Flujos: ejercicio activo (los 51 ejercicios del banco, incluida su última pista), problema
 guiado (solo existe para fracciones y división), menú pendiente y nada pendiente (6 temas).
 """
 import json
