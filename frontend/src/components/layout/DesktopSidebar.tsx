@@ -145,7 +145,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
 
       {/* Footer del Sidebar: Perfil y Ajustes */}
       <div className="pt-3 border-t border-[#E8E5DC] flex flex-col gap-2">
-        <AccountMenu onOpenProfile={onOpenProfile} />
+        <AccountMenu onOpenProfile={onOpenProfile} placement="up" />
       </div>
     </aside>
   );
