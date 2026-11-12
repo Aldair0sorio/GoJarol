@@ -22,10 +22,13 @@ urlpatterns = [path('auth/', include('accounts.urls')), path('chat/messages/', C
 
 
 @pytest.fixture(autouse=True)
-def environment(database):
+def environment(database, monkeypatch):
+    # Message-ID/EHLO must not perform reverse DNS in an offline mail test.
+    from django.core.mail.utils import DNS_NAME
+    monkeypatch.setattr(DNS_NAME, '_fqdn', 'testhost.invalid', raising=False)
     cache.clear()
     mail.outbox = []
-    with override_settings(ROOT_URLCONF=__name__, FRONTEND_URL='http://localhost:5173',
+    with override_settings(ROOT_URLCONF=__name__, FRONTEND_URL='http://localhost:5173', DEBUG=True,
             DEFAULT_FROM_EMAIL='Go Jarol <no.reply.trees.25@gmail.com>',
             MAILERS={'default': {'BACKEND': 'django.core.mail.backends.locmem.EmailBackend'}},
             AUTH_PASSWORD_VALIDATORS=[{'NAME':'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -305,3 +308,76 @@ def test_registration_send_race_reports_pending_account_without_server_error():
         request, response = register()
     assert response.status_code == 429 and response.data['account_created'] and not response.data['email_sent']
     assert User.objects.get(username=request['username']).email_status == 'pending'
+
+
+def test_public_auth_config_reports_contract_and_public_google_id_only():
+    with override_settings(GOOGLE_CLIENT_ID='configured.apps.googleusercontent.com', MAIL_PASSWORD='secret-canary'):
+        response = APIClient().get('/auth/config/')
+    assert response.status_code == 200 and response['Cache-Control'] == 'no-store'
+    assert response.data == {'auth_contract_version': 2, 'registration_mode': 'email_verification',
+                             'google_client_id': 'configured.apps.googleusercontent.com'}
+    assert 'secret-canary' not in response.content.decode()
+
+
+@pytest.mark.parametrize('origin', ['http://localhost:5173', 'https://127.0.0.1', 'http://app.example.test', 'https://app.example.test:bad'])
+def test_production_rejects_nonpublic_or_insecure_verification_origins(origin):
+    with override_settings(DEBUG=False, FRONTEND_URL=origin):
+        _, response = register()
+    assert response.status_code == 503 and response.data['email_sent'] is False and not mail.outbox
+
+
+@pytest.mark.parametrize('failure,code', [(smtplib.SMTPAuthenticationError(535, b'Secret-Canary-Auth'), 'smtp_authentication_failed'),
+                                        (smtplib.SMTPSenderRefused(550, b'Secret-Canary-Sender', 'private@example.test'), 'smtp_sender_refused')])
+def test_delivery_logs_classification_without_credentials_or_replies(caplog, failure, code):
+    with patch('accounts.email_verification.EmailMessage.send', side_effect=failure):
+        _, response = register()
+    assert response.status_code == 503
+    assert code in caplog.text and 'Secret-Canary' not in caplog.text and 'private@example.test' not in caplog.text
+
+
+def test_auth_diagnostic_only_reports_presence_and_migration_status():
+    from io import StringIO
+    from django.core.management import call_command
+    output = StringIO()
+    with override_settings(MAILERS=smtp_settings(), GOOGLE_CLIENT_ID='test.apps.googleusercontent.com'), patch('smtplib.SMTP') as smtp:
+        call_command('diagnose_auth', stdout=output)
+    result = output.getvalue()
+    assert 'MAIL_PASSWORD: present' in result and '0003_registration_verification: applied' in result
+    assert 'test-password' not in result and 'smtp.example.test' not in result
+    smtp.assert_not_called()
+
+
+@pytest.mark.parametrize('send', [False, True])
+def test_auth_diagnostic_smtp_connection_and_explicit_send(send):
+    from io import StringIO
+    from django.core.management import call_command
+    output = StringIO()
+    with override_settings(MAILERS=smtp_settings()), patch('smtplib.SMTP') as smtp:
+        call_command('diagnose_auth', smtp_check=not send, send_to='controlled@example.test' if send else None, stdout=output)
+    smtp.return_value.starttls.assert_called_once()
+    smtp.return_value.login.assert_called_once_with('test-user', 'test-password')
+    assert ('SMTP_MESSAGE: accepted' in output.getvalue()) is send
+    assert smtp.return_value.sendmail.called is send
+    assert 'test-password' not in output.getvalue()
+
+
+def test_auth_diagnostic_redacts_smtp_failures():
+    from io import StringIO
+    from django.core.management import call_command, CommandError
+    output = StringIO()
+    with override_settings(MAILERS=smtp_settings()), patch('smtplib.SMTP') as smtp:
+        smtp.return_value.login.side_effect = smtplib.SMTPAuthenticationError(535, b'Password-secret-canary')
+        with pytest.raises(CommandError) as error:
+            call_command('diagnose_auth', smtp_check=True, stdout=output)
+    assert 'smtp_authentication_failed' in str(error.value)
+    assert 'Password-secret-canary' not in str(error.value) + output.getvalue()
+
+
+def test_registration_login_also_works_with_production_pbkdf2_hasher():
+    with override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.PBKDF2PasswordHasher']):
+        request, result = register()
+        assert result.status_code == 201
+        user = User.objects.get(username=request['username'])
+        assert user.password.startswith('pbkdf2_sha256$') and user.check_password(request['password'])
+        assert APIClient().post('/auth/verify-email/', link(), format='json').status_code == 200
+        assert APIClient().post('/auth/login/', {'username': request['username'], 'password': request['password']}, format='json').status_code == 200

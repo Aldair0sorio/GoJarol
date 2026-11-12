@@ -7,6 +7,8 @@ if not settings.configured:
         DATABASES={'default': {'ENGINE':'django.db.backends.sqlite3','NAME':':memory:'}},
         INSTALLED_APPS=['django.contrib.auth','django.contrib.contenttypes','django.contrib.sessions','rest_framework.authtoken','accounts','progress'],
         AUTH_USER_MODEL='accounts.User', MIDDLEWARE=['django.contrib.sessions.middleware.SessionMiddleware'],
+        # Fast hashing only in this isolated in-memory test configuration.
+        PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'],
         REST_FRAMEWORK={'DEFAULT_AUTHENTICATION_CLASSES':['accounts.authentication.VerifiedTokenAuthentication'],
                         'DEFAULT_PERMISSION_CLASSES':['rest_framework.permissions.IsAuthenticated']})
 import django

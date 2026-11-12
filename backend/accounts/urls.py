@@ -2,8 +2,10 @@ from django.urls import path
 
 from .views import GoogleLoginView, LoginView, MeView, RegisterView, LogoutView
 from .views import VerifyEmailView, ResendVerificationView
+from .views import AuthConfigView
 
 urlpatterns = [
+    path('config/', AuthConfigView.as_view(), name='auth-config'),
     path('verify-email/', VerifyEmailView.as_view(), name='verify-email'),
     path('resend-verification/', ResendVerificationView.as_view(), name='resend-verification'),
     path("register/", RegisterView.as_view(), name="register"),

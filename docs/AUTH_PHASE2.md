@@ -1,5 +1,15 @@
 # Autenticación y verificación de correo — fase 2
 
+> Corrección posterior de despliegue: consultar [AUTH_DEPLOYMENT_REPAIR.md](AUTH_DEPLOYMENT_REPAIR.md)
+> para el contrato /auth/config/, Google en ejecución, errores sin secretos, diagnóstico
+> SMTP y actualización coordinada. Sus instrucciones sustituyen las observaciones
+> anteriores sobre la configuración exclusivamente por compilación.
+
+> Corrección posterior de despliegue: consultar [AUTH_DEPLOYMENT_REPAIR.md](AUTH_DEPLOYMENT_REPAIR.md)
+> para el contrato /auth/config/, Google en ejecución, errores sin secretos, diagnóstico
+> SMTP y actualización coordinada. Sus instrucciones sustituyen las observaciones
+> anteriores sobre la configuración exclusivamente por compilación.
+
 ## Flujo y compatibilidad
 
 La SPA utiliza BrowserRouter, ya incluido en las dependencias. Las rutas públicas

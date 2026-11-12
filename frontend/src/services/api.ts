@@ -144,6 +144,7 @@ export const apiService = {
     grado?: number;
   }): Promise<{ success: boolean; token?: string; user?: User; error?: string }> {
     try {
+      await getAuthConfig();
       const res = await fetch(`${API_BASE}/auth/google/`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ credential: payload.credential,
@@ -151,7 +152,7 @@ export const apiService = {
       });
       const data = await res.json();
       if (!res.ok || !isBackendToken(data.token) || !data.user?.id || !['estudiante', 'docente', 'admin'].includes(data.user.rol)) {
-        return { success: false, error: data.error?.message || 'Google no pudo verificar tu cuenta. Usa tu contraseña o intenta de nuevo.' };
+        return { success: false, error: authError(data, 'Google no pudo verificar tu cuenta. Usa tu contraseña o intenta de nuevo.') };
       }
       return { success: true, token: data.token, user: profileToUser(data.user) };
     } catch {
@@ -185,7 +186,7 @@ export const apiService = {
         return { success: true, token: data.token, user: profileToUser(data.user) };
       } else {
         const err = await res.json().catch(() => ({}));
-        const msg = err.error?.message || err.detail || 'Usuario o contraseña incorrectos.';
+        const msg = authError(err, 'Usuario o contraseña incorrectos.');
         return { success: false, verificationRequired: err.verification_required === true, error: msg };
       }
     } catch {
@@ -205,6 +206,7 @@ export const apiService = {
     grado?: number; estado: string;
   }): Promise<{ success: boolean; verificationRequired?: boolean; emailSent?: boolean; error?: string }> {
     try {
+      await getAuthConfig(); // Never create an unverified legacy account on an outdated backend.
       const response = await fetch(`${API_BASE}/auth/register/`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: payload.username.trim(), email: payload.email.trim(),
@@ -213,12 +215,16 @@ export const apiService = {
           grado: payload.grado, estado: payload.estado }),
       });
       const data = await response.json();
+      if (!isObject(data) || ['token', 'access', 'refresh', 'access_token', 'refresh_token', 'user'].some(key => key in data)) {
+        return { success: false, error: AUTH_CONTRACT_ERROR };
+      }
       if (response.ok && data.verification_required === true && data.email_sent === true) {
         return { success: true, verificationRequired: true, emailSent: true };
       }
       return { success: false, verificationRequired: data.account_created === true,
-        emailSent: false, error: authError(data, 'No se pudo crear la cuenta.') };
-    } catch {
+        emailSent: false, error: authError(data, data.account_created === true ? 'Tu cuenta se creó, pero no pudimos enviar el correo. Solicita un reenvío más tarde.' : 'No se pudo crear la cuenta.') };
+    } catch (error) {
+      if (error instanceof AuthConfigurationError) return { success: false, error: AUTH_CONTRACT_ERROR };
       return { success: false, error: 'No pudimos confirmar el registro. Comprueba tu conexión; antes de repetirlo puedes solicitar un reenvío.' };
     }
   },
@@ -608,7 +614,7 @@ async function profileRequest(path: string, method = 'GET', body?: ProfileChange
   });
   if (!response.ok) {
     const data = await response.json().catch(() => ({}));
-    const message = Object.values(data).flat().filter(v => typeof v === 'string').join(' ');
+    const message = authError(data, 'No se pudo completar la solicitud. Intenta de nuevo.');
     throw new ProfileApiError(response.status, message || 'No se pudo completar la solicitud. Intenta de nuevo.');
   }
   return response;
@@ -631,11 +637,57 @@ export function isBackendToken(token: unknown): token is string {
   return typeof token === 'string' && /^[a-f0-9]{40}$/.test(token);
 }
 
-function authError(data: Record<string, unknown>, fallback: string): string {
-  const error = data.error as { message?: string } | undefined;
-  if (error?.message) return error.message;
-  return Object.entries(data).filter(([, value]) => Array.isArray(value) || typeof value === 'string')
-    .map(([field, value]) => `${field}: ${Array.isArray(value) ? value.join(' ') : value}`).join(' ') || fallback;
+const AUTH_CONTRACT_ERROR = 'El registro no está disponible porque el servidor necesita actualizarse. No se inició ninguna sesión. Intenta más tarde.';
+function isObject(data: unknown): data is Record<string, unknown> {
+  return typeof data === 'object' && data !== null && !Array.isArray(data);
+}
+
+// Never echo arbitrary server fields or messages. Even error.message can contain
+// tokens, passwords or SMTP credentials from a legacy/debug server.
+export function authError(data: unknown, fallback: string): string {
+  if (!isObject(data)) return fallback;
+  const codes: Record<string, string> = {
+    invalid_credentials: 'Usuario o contraseña incorrectos.',
+    invalid_google_token: 'La identidad de Google no pudo verificarse.',
+    google_unavailable: 'Google no está disponible ahora. Usa tu contraseña o intenta más tarde.',
+    account_link_required: 'Usa el acceso original de tu cuenta. No se vinculan cuentas automáticamente por correo.',
+    identity_changed: 'Se requiere revisar la vinculación de tu cuenta. Usa tu acceso original.',
+    inactive_account: 'Esta cuenta no está disponible.',
+  };
+  if (isObject(data.error) && typeof data.error.code === 'string' && Object.hasOwn(codes, data.error.code)) return codes[data.error.code];
+  const fields: Record<string, string> = {
+    full_name: 'Nombre completo: escribe tu nombre (máximo 150 caracteres).',
+    email: 'Correo: revisa la dirección. Si ya tienes cuenta, inicia sesión o solicita verificarla.',
+    username: 'Usuario: revisa el formato o elige otro nombre disponible.',
+    nivel: 'Nivel escolar: selecciona secundaria o bachillerato.',
+    grado: 'Selecciona un año (1–3) o semestre (1–6) válido.',
+    estado: 'Estado de residencia: selecciona una opción de la lista.',
+    password: 'Contraseña: usa al menos 8 caracteres; evita solo números, datos personales y contraseñas comunes.',
+    password_confirm: 'Las contraseñas deben coincidir.',
+  };
+  return Object.keys(fields).filter(field => Object.hasOwn(data, field)).map(field => fields[field]).join(' ') || fallback;
+}
+
+export interface PublicAuthConfig {
+  auth_contract_version: 2;
+  registration_mode: 'email_verification';
+  google_client_id: string | null;
+}
+export class AuthConfigurationError extends Error {}
+export async function getAuthConfig(): Promise<PublicAuthConfig> {
+  const response = await fetch(`${API_BASE}/auth/config/`, { cache: 'no-store', credentials: 'same-origin', signal: AbortSignal.timeout(10000) });
+  const data: unknown = await response.json().catch(() => null);
+  if (!response.ok || !isObject(data) || data.auth_contract_version !== 2 || data.registration_mode !== 'email_verification'
+      || !(data.google_client_id === null || typeof data.google_client_id === 'string')) {
+    throw new AuthConfigurationError(AUTH_CONTRACT_ERROR);
+  }
+  return { auth_contract_version: 2, registration_mode: 'email_verification', google_client_id: data.google_client_id as string | null };
+}
+export function resolveGoogleClientId(config: PublicAuthConfig, buildId?: string): string | null {
+  const serverId = config.google_client_id?.trim();
+  if (!serverId || !/^[a-zA-Z0-9_-]+\.apps\.googleusercontent\.com$/.test(serverId)) return null;
+  if (buildId?.trim() && buildId.trim() !== serverId) return null;
+  return serverId;
 }
 export async function verifyEmail(uid: string, token: string): Promise<void> {
   await verificationRequest('verify-email', { uid, token });
@@ -652,5 +704,8 @@ async function verificationRequest(path: string, body: Record<string, string>): 
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
   });
   const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new VerificationApiError(response.status, authError(data, 'No se pudo completar la solicitud.'));
+  if (!response.ok) throw new VerificationApiError(response.status, authError(data, response.status === 429 ? 'Espera un minuto entre envíos. El máximo es de cinco por hora.' : 'No se pudo completar la solicitud. Intenta de nuevo o solicita otro enlace.'));
+  if (!isObject(data) || (path === 'verify-email' ? data.email_verified !== true : response.status !== 202 || typeof data.message !== 'string')) {
+    throw new VerificationApiError(502, 'El servidor no pudo confirmar la operación. Intenta más tarde.');
+  }
 }

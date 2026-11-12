@@ -51,6 +51,15 @@ test('Login has real navigation and no demonstration accounts', () => {
   for (const path of ['/registro','/recuperar-contrasena']) assert.ok(html.includes(`href="${path}"`));
   assert.ok(html.includes('autoComplete="current-password"'));assert.ok(!html.includes('jarol_demo'));
 });
+
+test('Login and registration always render the Google section, even without build configuration', () => {
+  for (const page of ['login','register']) {
+    const html=renderPage(page);
+    assert.ok(html.includes('Continuar con Google'));
+    assert.ok(html.includes('Consultando disponibilidad de Google'));
+    assert.ok(!html.includes('onclick="fake'));
+  }
+});
 test('Verification states render meaningful headings and actions', () => {
   for (const page of ['pending','verify','invalid','success']) {
     const html=renderPage(page); assert.ok(html.includes('<h1')); assert.ok(!html.includes('role="dialog"'));

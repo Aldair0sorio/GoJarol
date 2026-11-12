@@ -1,5 +1,6 @@
 import uuid
 from collections.abc import Mapping
+from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
@@ -29,6 +30,15 @@ class PublicAuthView(APIView):
 class RegistrationThrottle(AnonRateThrottle):
     scope = 'registration'
     rate = '10/hour'
+
+
+class AuthConfigView(PublicAuthView):
+    """Public contract and Google audience; never SMTP settings or credentials."""
+    def get(self, request):
+        response = Response({'auth_contract_version': 2, 'registration_mode': 'email_verification',
+                             'google_client_id': getattr(settings, 'GOOGLE_CLIENT_ID', '') or None})
+        response['Cache-Control'] = 'no-store'
+        return response
 
 
 class RegisterView(PublicAuthView):

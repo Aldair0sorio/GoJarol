@@ -2,6 +2,8 @@
 import hashlib
 import secrets
 import smtplib
+import logging
+import ssl
 from datetime import timedelta
 from urllib.parse import urlsplit
 
@@ -13,6 +15,40 @@ from django.utils import timezone
 
 from .models import EmailVerification, User
 
+logger = logging.getLogger(__name__)
+
+
+def delivery_error_code(error):
+    """Safe diagnostic categories; never log SMTP replies or exception text."""
+    if isinstance(error, smtplib.SMTPAuthenticationError):
+        return 'smtp_authentication_failed'
+    if isinstance(error, smtplib.SMTPSenderRefused):
+        return 'smtp_sender_refused'
+    if isinstance(error, smtplib.SMTPRecipientsRefused):
+        return 'smtp_recipient_refused'
+    if isinstance(error, ssl.SSLError):
+        return 'smtp_tls_failed'
+    if isinstance(error, (ImproperlyConfigured, ValueError)):
+        return 'smtp_configuration_invalid'
+    if isinstance(error, OSError):
+        return 'smtp_connection_failed'
+    return 'smtp_delivery_failed'
+
+
+def verification_origin():
+    origin = getattr(settings, 'FRONTEND_URL', '')
+    try:
+        parsed = urlsplit(origin)
+        parsed.port  # Validate malformed/non-numeric ports as configuration errors.
+    except (ValueError, TypeError):
+        raise VerificationDeliveryFailed() from None
+    if (parsed.scheme not in ('http', 'https') or not parsed.netloc or parsed.username
+            or parsed.password or parsed.path not in ('', '/') or parsed.query or parsed.fragment):
+        raise VerificationDeliveryFailed()
+    if not settings.DEBUG and (parsed.scheme != 'https' or parsed.hostname in {'localhost', '127.0.0.1', '::1'}):
+        raise VerificationDeliveryFailed()
+    return origin.rstrip('/')
+
 
 class VerificationRateLimited(Exception):
     pass
@@ -23,14 +59,11 @@ class VerificationDeliveryFailed(Exception):
 
 
 def send_verification(user):
-    origin = getattr(settings, 'FRONTEND_URL', '')
     try:
-        parsed = urlsplit(origin)
-    except (ValueError, TypeError):
-        raise VerificationDeliveryFailed('Invalid frontend origin configuration.') from None
-    if (parsed.scheme not in ('http', 'https') or not parsed.netloc or parsed.username
-            or parsed.password or parsed.path not in ('', '/') or parsed.query or parsed.fragment):
-        raise VerificationDeliveryFailed('Invalid frontend origin configuration.')
+        origin = verification_origin()
+    except VerificationDeliveryFailed:
+        logger.warning('verification_delivery_failed code=frontend_origin_invalid')
+        raise
     # Lock in the same order as consume_verification. Limits survive worker restarts.
     failed = False
     with transaction.atomic():
@@ -59,8 +92,10 @@ def send_verification(user):
         try:
             if message.send(using='default') != 1:
                 failed = True
-        except (smtplib.SMTPException, OSError, ImproperlyConfigured, ValueError):
+                logger.warning('verification_delivery_failed code=smtp_not_accepted')
+        except (smtplib.SMTPException, OSError, ImproperlyConfigured, ValueError) as error:
             failed = True
+            logger.warning('verification_delivery_failed code=%s', delivery_error_code(error))
         if not failed:
             verification.token_hash = hashlib.sha256(token.encode()).hexdigest()
             verification.expires_at = now + timedelta(hours=24)
