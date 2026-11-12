@@ -170,3 +170,21 @@ Para cada sesión o iteración se documenta:
   - `frontend/nginx.conf`
   - `docs/DESPLIEGUE.md`
   - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 8 · 11 de Noviembre de 2026 (18:18 - 18:22)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Formalización del Contexto Maestro de Infraestructura del Host Debian VPS e integración con Nginx multi-dominio con Certbot.
+
+- **Para qué se usaron**:
+  - Creación del documento normativo [`docs/INFRAESTRUCTURA_HOST.md`](docs/INFRAESTRUCTURA_HOST.md).
+  - Validación minuciosa de las 4 reglas maestras del servidor (Zero puertos públicos en Docker, binding loopback en 3000, aislamiento estricto de backend/db sin `ports`, Nginx nativo como terminador SSL, rutas relativas y credenciales protegidas en `.env`).
+  - Elaboración de la configuración de Virtual Host Nginx para el host VPS para facilitar la labor de la IA de despliegue.
+
+- **Decisiones clave tomadas**:
+  1. **Alineación total con Tonalkab y proyectos existentes**: El contenedor de Go Jarol respeta íntegramente los puertos 8000 (API Tonalkab) y 8080 (Admin Tonalkab), operando exclusivamente en `127.0.0.1:3000:80`.
+  2. **Persistencia y documentación permanente**: Se dejó constancia técnica en `docs/` para que cualquier compañero o agente que trabaje en el repo no altere accidentalmente la configuración de red del servidor de producción.
+
+- **Archivos creados / modificados**:
+  - `docs/INFRAESTRUCTURA_HOST.md`
+  - `docs/bitacora/hugo_frontend.md`
