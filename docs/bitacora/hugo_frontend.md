@@ -426,3 +426,24 @@ Para cada sesión o iteración se documenta:
   - `frontend/src/components/layout/AppHeader.tsx`
   - `frontend/src/components/profile/ProfileModal.tsx`
   - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 20 · 11 de Noviembre de 2026 (22:18 - 22:21)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Fusión de PR #21 desde `origin/main` incorporando el modelo de IA clasificador de intenciones entrenado y validado (`intent_classifier.joblib`).
+
+- **Para qué se usaron**:
+  - Integración del artefacto entrenado de machine learning de Iván (`ml/artifacts/intent_classifier.joblib`, 765 KB) entrenado con 50,000 registros sintéticos.
+  - Sincronización de metadatos de validación y métricas de desempeño (`ml/artifacts/intent_classifier_metadata.json` y `ml/artifacts/test_metrics.json`), alcanzando un **83.33% de exactitud (accuracy)** y **0.8358 de Macro F1** en pruebas realistas con 12 intenciones pedagógicas.
+  - Actualización de reglas de `.gitignore` para permitir el rastreo del modelo compilado dentro del repositorio.
+  - Verificación del árbol de trabajo sin conflictos y validación de compilación del frontend.
+
+- **Decisiones clave tomadas**:
+  - Incorporar el artefacto de NLP directamente en la rama activa `hugo-dev` para que el backend en producción pueda cargar el modelo serializado en el contenedor sin requerir fases de reentrenamiento en el servidor.
+
+- **Archivos creados / modificados**:
+  - `ml/artifacts/intent_classifier.joblib`
+  - `ml/artifacts/intent_classifier_metadata.json`
+  - `ml/artifacts/test_metrics.json`
+  - `.gitignore`
+  - `docs/bitacora/hugo_frontend.md`
