@@ -66,7 +66,10 @@ const MainShell: React.FC = () => {
               {currentTab === 'progreso' && <ProgressView onPracticeTopic={handleStartTopic} />}
             </>
           ) : (
-            <><div hidden={currentTab !== 'chat'} className="flex-1"><ChatView key={user.id} initialPrompt={pendingPrompt} onPromptConsumed={() => setPendingPrompt(null)}/></div><div hidden={['profile', 'chat'].includes(currentTab)}><TeacherDashboardView /></div></>
+            <><div hidden={currentTab !== 'chat'} className="flex-1"><ChatView key={user.id} initialPrompt={pendingPrompt} onPromptConsumed={() => setPendingPrompt(null)}/></div><div hidden={['profile', 'chat'].includes(currentTab)}><TeacherDashboardView
+                activeTab={currentTab === 'clases' || currentTab === 'alumnos' ? currentTab : 'panel'}
+                onTabChange={setCurrentTab}
+              /></div></>
           )}
         </main>
 

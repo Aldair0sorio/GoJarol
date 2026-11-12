@@ -18,7 +18,8 @@ from django.utils import timezone
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
-urlpatterns = [path('auth/', include('accounts.urls')), path('chat/messages/', ChatMessageView.as_view())]
+urlpatterns = [path('auth/', include('accounts.urls')), path('chat/messages/', ChatMessageView.as_view()),
+               path('', include('progress.urls'))]
 
 
 @pytest.fixture(autouse=True)
@@ -381,3 +382,35 @@ def test_registration_login_also_works_with_production_pbkdf2_hasher():
         assert user.password.startswith('pbkdf2_sha256$') and user.check_password(request['password'])
         assert APIClient().post('/auth/verify-email/', link(), format='json').status_code == 200
         assert APIClient().post('/auth/login/', {'username': request['username'], 'password': request['password']}, format='json').status_code == 200
+
+
+def test_merged_chat_history_stays_private_and_does_not_duplicate_completed_attempts():
+    from chat.services.runtime import get_runtime
+    from progress.models import ExerciseAttempt, StudentProgress
+    request, registration = register()
+    assert registration.status_code == 201
+    c = APIClient()
+    assert c.post('/auth/verify-email/', link(), format='json').status_code == 200
+    login = c.post('/auth/login/', {'username': request['username'], 'password': request['password']}, format='json')
+    user = User.objects.get(username=request['username'])
+    c.credentials(HTTP_AUTHORIZATION='Token '+login.data['token'])
+    exercise = c.post('/chat/messages/', {'message':'Ponme un ejercicio de ecuaciones'}, format='json')
+    assert exercise.status_code == 200 and exercise.data['exercise']
+    exercise_id = exercise.data['exercise']['id']
+    runtime = get_runtime()
+    expected = runtime.selector.get_expected_answer('mat_ecuaciones', exercise_id)
+    wrong = c.post('/chat/messages/', {'message':'x = 1234567'}, format='json')
+    assert wrong.data['evaluation']['correct'] is False
+    correct = c.post('/chat/messages/', {'message':f'x = {expected}'}, format='json')
+    assert correct.data['evaluation']['correct'] is True
+    assert ExerciseAttempt.objects.filter(user=user, exercise_id=exercise_id).count() == 2
+    progress = StudentProgress.objects.get(user=user)
+    xp = progress.xp
+    c.post('/chat/messages/', {'message':f'x = {expected}'}, format='json')
+    progress.refresh_from_db()
+    assert progress.xp == xp and ExerciseAttempt.objects.filter(user=user, exercise_id=exercise_id).count() == 2
+    own = c.get('/progress/me/')
+    assert len(own.data['recentAttempts']) == 2
+    assert 'expected_answer' not in str(own.data)
+    guest = APIClient().get('/progress/me/', HTTP_X_JAROL_USER_ID=str(user.pk), HTTP_X_JAROL_USER_EMAIL=user.email)
+    assert guest.data['xp'] == 0 and guest.data['recentAttempts'] == []

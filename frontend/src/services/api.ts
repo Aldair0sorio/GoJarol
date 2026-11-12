@@ -2,11 +2,10 @@ import {
   MOCK_FEEDBACK_DB,
   MOCK_EXERCISE_FRACTIONS_1,
   MOCK_EXERCISE_FRACTIONS_2,
-  MOCK_SUBJECTS,
-  MOCK_CLASSES,
 } from './mockData';
 import type { AnswerFeedback, ChatMessage, ExerciseCardData } from '../types/chat';
-import type { Subject, ClassGroup, StudentMastery } from '../types/curriculum';
+import type { Subject, ClassGroup, StudentMastery, GroupTopicAnalytics, ClassChallengeItem, ClassAnnouncementItem, StudentTopicMetric } from '../types/curriculum';
+import type { DetailedStudent, StudentExerciseAttempt } from '../types/leagues';
 import type { User, BackendProfile, ProfileChanges } from '../types/auth';
 
 const API_BASE = '/api/v1';
@@ -25,18 +24,6 @@ function getAuthHeaders(includeJson = true): Record<string, string> {
   if (isBackendToken(token)) headers['Authorization'] = `Token ${token}`;
   return headers;
 }
-
-const SUBJECT_META: Record<string, { iconName: string; color: string }> = {
-  aritmetica: { iconName: 'Calculator', color: 'teal' },
-  algebra: { iconName: 'Variable', color: 'indigo' },
-  espanol: { iconName: 'BookOpen', color: 'amber' },
-  matematicas: { iconName: 'Compass', color: 'blue' },
-  historia: { iconName: 'Landmark', color: 'rose' },
-  geografia: { iconName: 'Globe', color: 'emerald' },
-  fisica: { iconName: 'Atom', color: 'purple' },
-  quimica: { iconName: 'FlaskConical', color: 'cyan' },
-  biologia: { iconName: 'Dna', color: 'green' },
-};
 
 const TOPIC_DESCRIPTIONS: Record<string, { description: string; prompt: string }> = {
   mat_fracciones: {
@@ -105,13 +92,30 @@ function mapBackendClassToGroup(item: Record<string, unknown>): ClassGroup {
   const studentsDetail: StudentMastery[] = rawStudents.map((st: Record<string, unknown>) => ({
     studentId: String(st.id || ''),
     studentName: String(st.name || st.username || 'Estudiante'),
+    email: st.email ? String(st.email) : undefined,
+    gradeLabel: st.gradeLabel ? String(st.gradeLabel) : undefined,
+    joinedAt: st.joinedAt ? String(st.joinedAt) : undefined,
     completedExercises: Number(st.completedExercises || 0),
+    totalAttempts: Number(st.totalAttempts || 0),
     accuracy: Number(st.accuracy || 0),
     needsHelpWith: Array.isArray(st.needsHelpWith)
       ? st.needsHelpWith.map(String)
-      : ['Sin alertas activas'],
-    lastActive: String(st.lastActive || 'Reciente'),
+      : [],
+    masteredTopics: Array.isArray(st.masteredTopics)
+      ? st.masteredTopics.map(String)
+      : [],
+    lastActive: String(st.lastActive || 'Sin actividad'),
     xp: Number(st.xp || 0),
+    streakDays: Number(st.streakDays ?? 1),
+    hintsUsedTotal: Number(st.hintsUsedTotal || 0),
+    statusLabel: (st.statusLabel as StudentMastery['statusLabel']) || 'Sin actividad',
+    topics: Array.isArray(st.topics) ? (st.topics as StudentTopicMetric[]) : [],
+    recentAttempts: Array.isArray(st.recentAttempts)
+      ? (st.recentAttempts as StudentExerciseAttempt[])
+      : [],
+    recommendations: Array.isArray(st.recommendations)
+      ? st.recommendations.map(String)
+      : [],
   }));
 
   const avgMastery =
@@ -126,10 +130,31 @@ function mapBackendClassToGroup(item: Record<string, unknown>): ClassGroup {
     name: String(item.nombre || item.name || 'Grupo Escolar'),
     teacherName: String(item.docente || item.teacherName || 'Docente'),
     code: String(item.codigo || item.code || ''),
+    codeActive: item.codigo_activo !== undefined ? Boolean(item.codigo_activo) : true,
+    nivel: item.nivel === 'bachillerato' ? 'bachillerato' : 'secundaria',
+    grado: item.grado !== undefined ? Number(item.grado) : 1,
+    subjectSlug: item.subject === 'espanol' ? 'espanol' : 'matematicas',
     studentCount: Number(item.estudiantes ?? item.studentCount ?? studentsDetail.length),
-    subject: String(item.subject_nombre || item.subject || 'Matemáticas y Español'),
+    subject:
+      item.subject === 'espanol'
+        ? 'Español'
+        : item.subject === 'matematicas' || item.subject === 'aritmetica' || item.subject === 'algebra'
+          ? 'Matemáticas'
+          : String(item.subject_nombre || item.subject || 'Matemáticas'),
     averageMastery: Number(item.averageMastery ?? avgMastery),
+    totalCompletedExercises: Number(item.totalCompletedExercises ?? 0),
+    studentsAtRisk: Number(item.studentsAtRisk ?? 0),
+    topicAnalytics: Array.isArray(item.topic_analytics)
+      ? (item.topic_analytics as GroupTopicAnalytics[])
+      : [],
     studentsDetail,
+    challenges: Array.isArray(item.challenges)
+      ? (item.challenges as ClassChallengeItem[])
+      : [],
+    announcements: Array.isArray(item.announcements)
+      ? (item.announcements as ClassAnnouncementItem[])
+      : [],
+    createdAt: item.creada ? String(item.creada) : undefined,
   };
 }
 
@@ -405,39 +430,78 @@ export const apiService = {
       if (subjRes.ok) {
         const data = await subjRes.json();
         if (Array.isArray(data) && data.length > 0) {
-          return data.map((s: Record<string, unknown>) => {
-            const slug = String(s.slug || s.id || 'materia');
-            const meta = SUBJECT_META[slug] || { iconName: 'BookOpen', color: 'teal' };
+          const mathTopics: Subject['topics'] = [];
+          const spanTopics: Subject['topics'] = [];
+          const seenIds = new Set<string>();
+
+          for (const s of data as Record<string, unknown>[]) {
+            const slug = String(s.slug || s.id || '');
             const rawTopics = Array.isArray(s.topics) ? s.topics : [];
-            return {
-              id: slug,
-              name: String(s.nombre || s.name || slug),
-              iconName: meta.iconName,
-              color: meta.color,
-              isAvailable: Boolean(s.disponible ?? s.isAvailable),
-              topics: rawTopics.map((t: Record<string, unknown>) => {
-                const tSlug = String(t.slug || t.id || '');
-                const tInfo = TOPIC_DESCRIPTIONS[tSlug] || {
-                  description: 'Contenido curricular en preparación para próximas versiones.',
-                  prompt: `Explícame el tema de ${String(t.nombre || t.name || tSlug)}`,
-                };
-                return {
-                  id: tSlug,
-                  name: String(t.nombre || t.name || tSlug),
-                  description: tInfo.description,
-                  isAvailable: Boolean(t.disponible ?? t.isAvailable),
-                  progressPercent: progressMap[tSlug] ?? 0,
-                  prompt: tInfo.prompt,
-                };
-              }),
-            };
-          });
+            for (const t of rawTopics as Record<string, unknown>[]) {
+              const tSlug = String(t.slug || t.id || '');
+              const tAvailable = Boolean(t.disponible ?? t.isAvailable);
+              if (!tSlug || !tAvailable || seenIds.has(tSlug)) continue;
+              seenIds.add(tSlug);
+
+              const tInfo = TOPIC_DESCRIPTIONS[tSlug] || {
+                description: 'Práctica interactiva guiada con pistas paso a paso.',
+                prompt: `Explícame el tema de ${String(t.nombre || t.name || tSlug)}`,
+              };
+              const topicItem = {
+                id: tSlug,
+                name: String(t.nombre || t.name || tSlug),
+                description: tInfo.description,
+                isAvailable: true,
+                progressPercent: progressMap[tSlug] ?? 0,
+                prompt: tInfo.prompt,
+              };
+
+              if (
+                tSlug.startsWith('esp_') ||
+                slug === 'espanol'
+              ) {
+                spanTopics.push(topicItem);
+              } else if (
+                tSlug.startsWith('mat_') ||
+                slug === 'aritmetica' ||
+                slug === 'algebra' ||
+                slug === 'matematicas'
+              ) {
+                mathTopics.push(topicItem);
+              }
+            }
+          }
+
+          const consolidated: Subject[] = [];
+          if (mathTopics.length > 0) {
+            consolidated.push({
+              id: 'matematicas',
+              name: 'Matemáticas',
+              iconName: 'Calculator',
+              color: 'teal',
+              isAvailable: true,
+              topics: mathTopics,
+            });
+          }
+          if (spanTopics.length > 0) {
+            consolidated.push({
+              id: 'espanol',
+              name: 'Español',
+              iconName: 'BookOpen',
+              color: 'amber',
+              isAvailable: true,
+              topics: spanTopics,
+            });
+          }
+          if (consolidated.length > 0) {
+            return consolidated;
+          }
         }
       }
     } catch {
       // fallback
     }
-    return MOCK_SUBJECTS;
+    return [];
   },
 
   /**
@@ -512,9 +576,9 @@ export const apiService = {
         }
       }
     } catch {
-      // fallback
+      // ignore network error
     }
-    return MOCK_CLASSES;
+    return [];
   },
 
   /**
@@ -532,7 +596,7 @@ export const apiService = {
         headers: getAuthHeaders(true),
         body: JSON.stringify({
           nombre: payload.nombre.trim(),
-          subject: payload.subject || 'aritmetica',
+          subject: payload.subject || 'matematicas',
           nivel: payload.nivel || 'secundaria',
           grado: payload.grado || 3,
         }),
@@ -545,9 +609,20 @@ export const apiService = {
         };
       } else {
         const err = await res.json().catch(() => ({}));
+        const firstFieldErr =
+          err && typeof err === 'object'
+            ? Object.values(err).find((v) => Array.isArray(v) && v.length > 0)
+            : null;
+        const msg =
+          err.detail ||
+          err.error?.message ||
+          (Array.isArray(firstFieldErr) ? String(firstFieldErr[0]) : null) ||
+          (res.status >= 500
+            ? 'Error interno del servidor (posibles migraciones pendientes en PostgreSQL).'
+            : `No se pudo crear la clase (HTTP ${res.status}).`);
         return {
           success: false,
-          error: err.detail || err.error?.message || 'No se pudo crear la clase.',
+          error: msg,
         };
       }
     } catch {
@@ -559,11 +634,263 @@ export const apiService = {
   },
 
   /**
+   * Edita datos de una clase, pausa/activa su código o regenera uno nuevo.
+   */
+  async updateClass(
+    classId: string,
+    payload: {
+      nombre?: string;
+      subject?: string;
+      nivel?: 'secundaria' | 'bachillerato';
+      grado?: number;
+      codigo_activo?: boolean;
+      regenerate_code?: boolean;
+    }
+  ): Promise<{ success: boolean; classGroup?: ClassGroup; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE}/classes/${classId}/`, {
+        method: 'PATCH',
+        headers: getAuthHeaders(true),
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return {
+          success: true,
+          classGroup: mapBackendClassToGroup(data),
+        };
+      } else {
+        const err = await res.json().catch(() => ({}));
+        return {
+          success: false,
+          error: err.detail || err.error?.message || 'No se pudo actualizar el grupo.',
+        };
+      }
+    } catch {
+      return { success: false, error: 'Error de conexión al actualizar la clase.' };
+    }
+  },
+
+  /**
+   * Elimina una clase del docente.
+   */
+  async deleteClass(classId: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE}/classes/${classId}/`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(false),
+      });
+      if (res.ok) {
+        return { success: true };
+      }
+      const err = await res.json().catch(() => ({}));
+      return { success: false, error: err.detail || err.error?.message || 'No se pudo eliminar.' };
+    } catch {
+      return { success: false, error: 'Error de conexión al eliminar la clase.' };
+    }
+  },
+
+  /**
+   * Permite al estudiante salir de una clase inscrita.
+   */
+  async leaveClass(classId: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE}/classes/${classId}/leave/`, {
+        method: 'POST',
+        headers: getAuthHeaders(true),
+        body: JSON.stringify({}),
+      });
+      if (res.ok) {
+        return { success: true };
+      }
+      const err = await res.json().catch(() => ({}));
+      return { success: false, error: err.error?.message || 'No se pudo salir de la clase.' };
+    } catch {
+      return { success: false, error: 'Error de conexión al salir de la clase.' };
+    }
+  },
+
+  /**
+   * Permite al docente dar de baja a un alumno de su grupo.
+   */
+  async removeStudentFromClass(
+    classId: string,
+    studentId: string
+  ): Promise<{ success: boolean; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE}/classes/${classId}/students/${studentId}/`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(false),
+      });
+      if (res.ok) {
+        return { success: true };
+      }
+      const err = await res.json().catch(() => ({}));
+      return { success: false, error: err.error?.message || 'No se pudo remover al estudiante.' };
+    } catch {
+      return { success: false, error: 'Error de red al remover estudiante.' };
+    }
+  },
+
+  /**
+   * Obtiene el análisis completo en vivo de un estudiante inscrito en un grupo.
+   */
+  async getStudentAnalysis(classId: string, studentId: string): Promise<DetailedStudent | null> {
+    try {
+      const res = await fetch(`${API_BASE}/classes/${classId}/students/${studentId}/analysis/`, {
+        headers: getAuthHeaders(false),
+      });
+      if (res.ok) {
+        const d = await res.json();
+        return {
+          id: String(d.id),
+          classId,
+          name: String(d.name || 'Estudiante'),
+          email: d.email ? String(d.email) : undefined,
+          grade: String(d.grade || 'Estudiante'),
+          school: String(d.className || 'Veracruz'),
+          avatarUrl: '/mascot/jarol-crab.png',
+          joinedAt: d.joinedAt ? String(d.joinedAt) : undefined,
+          lastActive: d.lastActive ? String(d.lastActive) : undefined,
+          totalXP: Number(d.totalXP ?? 0),
+          accuracy: Number(d.accuracy ?? 0),
+          streakDays: Number(d.streakDays ?? 1),
+          completedExercises: Number(d.completedExercises ?? 0),
+          totalAttempts: Number(d.totalAttempts ?? 0),
+          hintsUsedTotal: Number(d.hintsUsedTotal ?? 0),
+          statusLabel: d.statusLabel ? String(d.statusLabel) : undefined,
+          weakTopics: Array.isArray(d.weakTopics) ? d.weakTopics.map(String) : [],
+          masteredTopics: Array.isArray(d.masteredTopics) ? d.masteredTopics.map(String) : [],
+          topics: Array.isArray(d.topics) ? (d.topics as StudentTopicMetric[]) : [],
+          recommendations: Array.isArray(d.recommendations)
+            ? d.recommendations.map(String)
+            : [],
+          recentAttempts: Array.isArray(d.recentAttempts)
+            ? (d.recentAttempts as StudentExerciseAttempt[])
+            : [],
+          assignedChallenges: Array.isArray(d.assignedChallenges)
+            ? (d.assignedChallenges as ClassChallengeItem[])
+            : [],
+        };
+      }
+    } catch {
+      // ignore
+    }
+    return null;
+  },
+
+  /**
+   * Asigna un reto de refuerzo (para todo el grupo o un estudiante específico).
+   */
+  async assignClassChallenge(
+    classId: string,
+    payload: {
+      topic_id: string;
+      student_id?: string;
+      title?: string;
+      instructions?: string;
+      target_exercises?: number;
+    }
+  ): Promise<{ success: boolean; classGroup?: ClassGroup; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE}/classes/${classId}/challenges/`, {
+        method: 'POST',
+        headers: getAuthHeaders(true),
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return { success: true, classGroup: mapBackendClassToGroup(data) };
+      }
+      const err = await res.json().catch(() => ({}));
+      return {
+        success: false,
+        error: err.error?.message || err.detail || 'No se pudo asignar el reto.',
+      };
+    } catch {
+      return { success: false, error: 'Error de conexión al asignar el reto.' };
+    }
+  },
+
+  /**
+   * Elimina un reto asignado en la clase.
+   */
+  async deleteClassChallenge(
+    classId: string,
+    challengeId: string
+  ): Promise<{ success: boolean; classGroup?: ClassGroup; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE}/classes/${classId}/challenges/${challengeId}/`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(false),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return { success: true, classGroup: mapBackendClassToGroup(data) };
+      }
+      const err = await res.json().catch(() => ({}));
+      return { success: false, error: err.error?.message || 'No se pudo eliminar el reto.' };
+    } catch {
+      return { success: false, error: 'Error de conexión al eliminar el reto.' };
+    }
+  },
+
+  /**
+   * Publica un aviso real del docente en la clase.
+   */
+  async createClassAnnouncement(
+    classId: string,
+    payload: { title: string; message: string }
+  ): Promise<{ success: boolean; classGroup?: ClassGroup; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE}/classes/${classId}/announcements/`, {
+        method: 'POST',
+        headers: getAuthHeaders(true),
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return { success: true, classGroup: mapBackendClassToGroup(data) };
+      }
+      const err = await res.json().catch(() => ({}));
+      return {
+        success: false,
+        error: err.error?.message || err.detail || 'No se pudo publicar el aviso.',
+      };
+    } catch {
+      return { success: false, error: 'Error de conexión al publicar el aviso.' };
+    }
+  },
+
+  /**
+   * Elimina un aviso publicado en la clase.
+   */
+  async deleteClassAnnouncement(
+    classId: string,
+    announcementId: string
+  ): Promise<{ success: boolean; classGroup?: ClassGroup; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE}/classes/${classId}/announcements/${announcementId}/`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(false),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return { success: true, classGroup: mapBackendClassToGroup(data) };
+      }
+      const err = await res.json().catch(() => ({}));
+      return { success: false, error: err.error?.message || 'No se pudo eliminar el aviso.' };
+    } catch {
+      return { success: false, error: 'Error de conexión al eliminar el aviso.' };
+    }
+  },
+
+  /**
    * Unirse a una clase con código JAROL-XXXXX.
    */
   async joinClassWithCode(
     code: string
-  ): Promise<{ success: boolean; message: string; classGroup?: ClassGroup }> {
+  ): Promise<{ success: boolean; alreadyEnrolled?: boolean; message: string; classGroup?: ClassGroup }> {
     const cleanCode = code.trim().toUpperCase();
     try {
       const res = await fetch(`${API_BASE}/classes/join/`, {
@@ -573,9 +900,13 @@ export const apiService = {
       });
       if (res.ok) {
         const data = await res.json();
+        const already = Boolean(data.alreadyEnrolled);
         return {
           success: true,
-          message: `¡Te uniste con éxito a la clase "${data.nombre || cleanCode}"!`,
+          alreadyEnrolled: already,
+          message: already
+            ? `Ya estabas inscrito en la clase "${data.nombre || cleanCode}".`
+            : `¡Te uniste con éxito a la clase "${data.nombre || cleanCode}"!`,
           classGroup: mapBackendClassToGroup(data),
         };
       } else {

@@ -196,3 +196,17 @@ class ResendVerificationView(PublicAuthView):
             except VerificationDeliveryFailed:
                 return Response({'email_sent': False, 'error': {'message': 'No pudimos enviar el correo. Inténtalo más tarde.'}}, status=503)
         return Response({'message': 'Si hay una cuenta pendiente con ese correo, enviamos un enlace de verificación.'}, status=202)
+
+
+class DemoLoginView(PublicAuthView):
+    """Compatibility route: public passwordless demo access is retired."""
+    def post(self, request):
+        return Response({'error': {'code': 'legacy_auth_disabled',
+            'message': 'El acceso de demostración ya no está disponible. Inicia sesión con tu cuenta.'}}, status=410)
+
+
+class SwitchRoleView(APIView):
+    """Account roles cannot be changed by a student or teacher request."""
+    def post(self, request):
+        return Response({'error': {'code': 'role_change_not_allowed',
+            'message': 'No puedes cambiar el rol de tu cuenta desde esta aplicación.'}}, status=403)

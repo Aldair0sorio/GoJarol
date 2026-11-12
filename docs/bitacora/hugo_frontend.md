@@ -537,3 +537,30 @@ Para cada sesión o iteración se documenta:
   - `frontend/src/views/student/ClassDetailModal.tsx`
   - `frontend/src/views/teacher/TeacherDashboardView.tsx`
   - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 24 · 12 de Noviembre de 2026
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI**: Auditoría e implementación completa del ecosistema Docente ↔ Alumno ↔ Grupos por Código (`JAROL-XXXXX`), analítica diagnóstica real por alumno y grupo, y autenticación real unificada para sesiones demo y Google OAuth.
+
+- **Para qué se usaron**:
+  - Creación del modelo `ExerciseAttempt` (migración `0002_exerciseattempt`) y corrección del cálculo de `correct_attempts` / precisión en `AdaptiveLearningService` y `progress/views.py`, registrando cronológicamente intentos y pistas usadas desde `exercises/views.py` y `chat/views.py` sin exponer `expected_answer`.
+  - Creación de los modelos `ClassChallenge` y `ClassAnnouncement` (migración `0002_classannouncement_classchallenge`), junto con `Classroom.regenerate_code()`, gestión de códigos activos/pausados y validaciones al unirse o salir de una clase.
+  - Implementación de endpoints docentes y estudiantiles en `backend/classes/`: creación/edición/eliminación de grupos, copia/pausa/regeneración de código `JAROL-XXXXX`, asignación y eliminación de retos grupales o individuales, publicación/eliminación de avisos, baja de alumnos, y diagnóstico profundo por alumno (`/api/v1/classes/<id>/students/<student_id>/analysis/`).
+  - Implementación de autenticación real para perfiles demo (`POST /api/v1/auth/demo/`), cambio de rol persistido (`POST /api/v1/auth/switch-role/`) y propagación del rol elegido en `GoogleLoginView` (`POST /api/v1/auth/google/`), eliminando el fallback silencioso a `MOCK_CLASSES`.
+  - Conexión de las 3 pestañas docentes (`panel`, `clases`, `alumnos`) en `App.tsx` y `TeacherDashboardView.tsx`, rediseño de `StudentDetailModal.tsx` con historial de intentos, radar por tema, temas débiles y asignación de reto personal, y sincronización de `ClassesView.tsx` y `ClassDetailModal.tsx` para alumnos.
+
+- **Decisiones clave tomadas**:
+  - Mantener la precisión (`accuracy`) calculada exclusivamente en el backend a partir de `correct_attempts / total_attempts` y registrar cada intento en `ExerciseAttempt` para alimentar tanto los diagnósticos docentes como el seguimiento automático de retos asignados sin revelar soluciones al frontend.
+  - Garantizar que los perfiles demo y los cambios de rol obtengan un token DRF válido para poder crear grupos, unirse con código `JAROL-XXXXX`, asignar retos y publicar avisos contra PostgreSQL sin errores `401 Unauthorized`.
+
+- **Archivos creados / modificados**:
+  - `backend/accounts/views.py`, `backend/accounts/urls.py`
+  - `backend/classes/models.py`, `backend/classes/migrations/0002_classannouncement_classchallenge.py`, `backend/classes/admin.py`, `backend/classes/serializers.py`, `backend/classes/views.py`, `backend/classes/urls.py`, `backend/classes/tests.py`
+  - `backend/progress/models.py`, `backend/progress/migrations/0002_exerciseattempt.py`, `backend/progress/services/adaptive_learning_service.py`, `backend/progress/views.py`
+  - `backend/exercises/views.py`, `backend/chat/views.py`, `content/topics/mat_fracciones.json`
+  - `frontend/src/App.tsx`, `frontend/src/services/api.ts`, `frontend/src/context/AuthContext.tsx`, `frontend/src/components/auth/AuthModal.tsx`
+  - `frontend/src/types/curriculum.ts`, `frontend/src/types/leagues.ts`
+  - `frontend/src/views/teacher/TeacherDashboardView.tsx`, `frontend/src/views/teacher/StudentDetailModal.tsx`
+  - `frontend/src/views/student/ClassesView.tsx`, `frontend/src/views/student/ClassDetailModal.tsx`
+  - `docs/bitacora/hugo_frontend.md`

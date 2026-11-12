@@ -180,3 +180,32 @@ test('Verification and resend reject arbitrary successful responses', async () =
   mockFetch(async () => new Response(JSON.stringify({message:'Accepted'}),{status:202}));
   await resendVerification('ana@example.test');
 });
+
+test('Merged classes keep announcements, challenges and analytics without trusting identity headers', async () => {
+  storage.clear();storage.set('jarol_token','a'.repeat(40));
+  storage.set('jarol_current_user',JSON.stringify({id:'forged',email:'forged@example.test'}));
+  const challenge={id:'3',topicId:'mat_fracciones',targetExercises:1};
+  const announcement={id:'4',title:'Repaso'};
+  mockFetch(async (url,options) => {
+    assert.equal(url,'/api/v1/classes/');assert.equal(options.headers.Authorization,'Token '+'a'.repeat(40));
+    assert.equal(options.headers['X-Jarol-User-Id'],undefined);assert.equal(options.headers['X-Jarol-User-Email'],undefined);
+    return new Response(JSON.stringify([{id:1,nombre:'Grupo',subject:'matematicas',challenges:[challenge],
+      announcements:[announcement],topic_analytics:[{topicId:'mat_fracciones',averageAccuracy:50}],
+      students_detail:[{id:7,name:'Ana',totalAttempts:2,recentAttempts:[{id:'attempt-1'}]}]}]));
+  });
+  const [group]=await apiService.getClasses();
+  assert.equal(group.challenges[0].id,'3');assert.equal(group.announcements[0].id,'4');
+  assert.equal(group.topicAnalytics[0].averageAccuracy,50);
+  assert.equal(group.studentsDetail[0].totalAttempts,2);assert.equal(group.studentsDetail[0].recentAttempts[0].id,'attempt-1');
+});
+
+test('Merged teacher student analysis retains the real attempt history', async () => {
+  mockFetch(async url => {
+    assert.equal(url,'/api/v1/classes/1/students/7/analysis/');
+    return new Response(JSON.stringify({id:7,name:'Ana',accuracy:50,totalAttempts:2,
+      recentAttempts:[{id:'attempt-1',isCorrect:false}],assignedChallenges:[{id:'challenge-1'}]}));
+  });
+  const detail=await apiService.getStudentAnalysis('1','7');
+  assert.equal(detail.classId,'1');assert.equal(detail.totalAttempts,2);assert.equal(detail.recentAttempts[0].isCorrect,false);
+  assert.equal(detail.assignedChallenges[0].id,'challenge-1');
+});
