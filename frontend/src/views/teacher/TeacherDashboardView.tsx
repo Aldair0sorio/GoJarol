@@ -373,7 +373,7 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({
     return filtered;
   }, [classes, activeClass, scopeAllClasses, studentSearch, statusFilter, studentSort]);
 
-  const tabMeta = {
+  const tabMap = {
     panel: {
       title: 'Panel General Docente',
       subtitle: 'Diagnóstico grupal en tiempo real y alertas tempranas con Jarol + SymPy.',
@@ -386,7 +386,10 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({
       title: 'Diagnóstico de Alumnos',
       subtitle: 'Analiza el desempeño individual, historial de errores y asigna refuerzos.',
     },
-  }[activeTab];
+  };
+  const resolvedTab: 'panel' | 'clases' | 'alumnos' =
+    activeTab === 'clases' || activeTab === 'alumnos' ? activeTab : 'panel';
+  const tabMeta = tabMap[resolvedTab];
 
   return (
     <div className="flex flex-col flex-1 px-4 md:px-8 py-4 pb-24 md:pb-8 max-w-md md:max-w-4xl lg:max-w-5xl mx-auto w-full">

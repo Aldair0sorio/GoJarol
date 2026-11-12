@@ -40,7 +40,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const savedUser = localStorage.getItem('jarol_current_user');
     if (savedUser) {
       try {
-        return JSON.parse(savedUser);
+        const parsed = JSON.parse(savedUser);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          const rawRole = String(parsed.role || parsed.rol || '').toLowerCase();
+          return {
+            ...GUEST_USER,
+            ...parsed,
+            name: String(parsed.name || parsed.alias || parsed.username || 'Usuario'),
+            role: rawRole === 'teacher' || rawRole === 'docente' ? 'teacher' : 'student',
+            avatarUrl: parsed.avatarUrl || '/mascot/jarol-crab.png',
+          };
+        }
       } catch {
         // fallback a guest
       }
