@@ -1,0 +1,55 @@
+{
+  "id": "esp_acentuacion",
+  "subject": "espanol",
+  "name": "Acentuación",
+  "competency": "aplicar_reglas_acentuacion",
+  "levels": [
+    "secundaria"
+  ],
+  "curriculum": {
+    "source": "SEP - Aprende en Casa, recursos de revisión ortográfica de secundaria",
+    "urls": [
+      "https://aprendeencasa.sep.gob.mx/secundaria/en-el-resumen-lupa-con-la-ortografia/",
+      "https://aprendeencasa.sep.gob.mx/secundaria/la-ortografia-de-mis-experimentos/"
+    ],
+    "scope": "Referencia de apoyo a la revisión y escritura de textos; no se atribuye un PDA literal a este banco. Práctica de apoyo para secundaria, sin equivalencia oficial entre dificultad y grado ni validación específica para bachillerato. Redacción original; no reproduce textos de libros."
+  },
+  "references": [
+    {
+      "source": "RAE y ASALE - Diccionario panhispánico de dudas, tilde",
+      "url": "https://www.rae.es/dpd/tilde"
+    }
+  ],
+  "diagnostic": {
+    "id": "diag_acent_001",
+    "question": "¿Qué es la sílaba tónica?",
+    "options": [
+      "La que siempre se escribe con tilde",
+      "La que recibe la mayor fuerza al pronunciar una palabra",
+      "La última sílaba en todas las palabras"
+    ],
+    "correct_index": 1
+  },
+  "explanations": {
+    "basic": "La sílaba tónica recibe la mayor fuerza de voz. Una palabra aguda la tiene en la última sílaba; una grave o llana, en la penúltima; una esdrújula, en la antepenúltima. La clasificación depende de la pronunciación, no de que haya tilde. En los casos regulares, las agudas terminadas en vocal, n o s llevan tilde; las graves la llevan si terminan en otra consonante; las esdrújulas siempre. Hay reglas adicionales para hiatos y ciertas terminaciones. Ejemplos: papel es aguda sin tilde; fácil es grave con tilde.",
+    "alternative": "Primero pronuncia y separa la palabra en sílabas. Después cuenta desde el final para clasificarla y revisa la terminación para decidir si necesita tilde. No todas las sílabas tónicas llevan una marca escrita. En oraciones, distingue funciones: dé del verbo dar lleva tilde; de como preposición no. Los interrogativos llevan tilde también en preguntas indirectas."
+  },
+  "exercise": {
+    "id": "acent_001",
+    "difficulty": 1,
+    "type": "multiple_choice",
+    "competency": "silaba_tonica",
+    "question": "En la palabra ventana, dividida ven-ta-na, ¿cuál es la sílaba tónica?",
+    "options": {
+      "A": "ven",
+      "B": "ta",
+      "C": "na"
+    },
+    "expected_answer": "B",
+    "hints": [
+      "Pronuncia la palabra de forma natural y escucha dónde recae la mayor fuerza.",
+      "Distingue la posición del acento al hablar de la presencia de una tilde escrita."
+    ],
+    "answer_explanation": "Ventana es llana: la fuerza recae en ta. Ven y na son átonas."
+  }
+}

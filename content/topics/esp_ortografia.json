@@ -1,0 +1,49 @@
+{
+  "id": "esp_ortografia",
+  "subject": "espanol",
+  "name": "Ortografía",
+  "competency": "revisar_ortografia_contextual",
+  "levels": [
+    "secundaria"
+  ],
+  "curriculum": {
+    "source": "SEP - Aprende en Casa, recursos de revisión ortográfica de secundaria",
+    "urls": [
+      "https://aprendeencasa.sep.gob.mx/secundaria/en-el-resumen-lupa-con-la-ortografia/",
+      "https://aprendeencasa.sep.gob.mx/secundaria/la-ortografia-de-mis-experimentos/"
+    ],
+    "scope": "Referencia de apoyo a revisión de textos, no equivalencia literal con un aprendizaje o grado específico. Práctica de apoyo para secundaria, sin equivalencia oficial entre dificultad y grado ni validación específica para bachillerato. Redacción original; no reproduce textos de libros."
+  },
+  "diagnostic": {
+    "id": "diag_orto_001",
+    "question": "Si dos palabras suenan igual, ¿cómo eliges su escritura en una oración?",
+    "options": [
+      "Por la longitud de la palabra",
+      "Siempre con la letra más frecuente",
+      "Por el significado, la función y la escritura convencional"
+    ],
+    "correct_index": 2
+  },
+  "explanations": {
+    "basic": "La ortografía establece cómo escribimos las palabras. Algunas letras pueden sonar igual o no sonar: por eso no basta con escuchar. Revisa significado, familia de palabras y diccionario. Como regla, se escribe m antes de b y p, como en campo; antes de v suele aparecer n. En formas de haber seguidas de participio se conserva h: hemos leído. No todos los errores se resuelven con una sola regla.",
+    "alternative": "Lee la oración completa y determina qué significa cada palabra. Luego comprueba por separado letras omitidas, sustituciones y separación de palabras. Ejemplo: hecho, del verbo hacer, lleva h; echo, del verbo echar, no. Ambas formas existen, pero no son intercambiables. En una corrección revisa todo el texto: una opción puede arreglar un error y conservar otro."
+  },
+  "exercise": {
+    "id": "orto_001",
+    "difficulty": 1,
+    "type": "multiple_choice",
+    "competency": "escritura_convencional",
+    "question": "¿Cuál palabra está correctamente escrita para nombrar el lugar donde se consultan y prestan libros?",
+    "options": {
+      "A": "biblioteca",
+      "B": "bibloteca",
+      "C": "vivlioteca"
+    },
+    "expected_answer": "A",
+    "hints": [
+      "Pronuncia despacio y revisa todas las sílabas, no solo la primera letra.",
+      "Comprueba que no falten vocales y revisa la escritura convencional con b."
+    ],
+    "answer_explanation": "Biblioteca conserva todas las sílabas y las dos b. Bibloteca omite una i y vivlioteca cambia letras."
+  }
+}

@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: gojarol_db
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-gojarol_db}
+      POSTGRES_USER: ${POSTGRES_USER:-jarol_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-jarol_secret_pass}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - gojarol_net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: gojarol_backend
+    restart: always
+    command: gunicorn core.wsgi:application --bind 0.0.0.0:8000 --workers 3
+    env_file:
+      - .env
+    expose:
+      - "8000"
+    depends_on:
+      - db
+    networks:
+      - gojarol_net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: gojarol_frontend
+    restart: always
+    ports:
+      # Mapeo seguro exclusivo para loopback local (puerto 3000)
+      # El Nginx nativo del host Debian hace reverse proxy hacia 127.0.0.1:3000
+      - "127.0.0.1:3000:80"
+    depends_on:
+      - backend
+    networks:
+      - gojarol_net
+
+volumes:
+  postgres_data:
+
+networks:
+  gojarol_net:
+    driver: bridge

@@ -1,0 +1,96 @@
+{
+  "topic_id": "mat_ecuaciones",
+  "competencies": ["despejar_suma_resta", "despejar_producto_cociente", "despejar_dos_operaciones"],
+  "exercises": [
+    {
+      "id": "ecu_001",
+      "difficulty": 1,
+      "type": "numeric",
+      "competency": "despejar_suma_resta",
+      "question": "Resuelve x + 5 = 12. ¿Cuál es el valor de x?",
+      "expected_answer": "7",
+      "solution_steps": ["Resta 5 en ambos lados: x = 12 - 5.", "Calcula: x = 7.", "Comprueba: 7 + 5 = 12."],
+      "hints": ["Identifica qué cantidad se suma a la incógnita.", "Para deshacer una suma, resta esa misma cantidad en ambos lados de la igualdad.", "Realiza la resta del lado derecho y comprueba el valor obtenido en la ecuación inicial."]
+    },
+    {
+      "id": "ecu_002",
+      "difficulty": 1,
+      "type": "numeric",
+      "competency": "despejar_suma_resta",
+      "question": "Resuelve x - 4 = -7. ¿Cuál es el valor de x?",
+      "expected_answer": "-3",
+      "solution_steps": ["Suma 4 en ambos lados: x = -7 + 4.", "Calcula: x = -3.", "Comprueba: -3 - 4 = -7."],
+      "hints": ["Observa que se está restando una cantidad a x.", "Deshaz la resta sumando la misma cantidad en ambos lados.", "Al sumar a un número negativo, revisa los signos y luego verifica por sustitución."]
+    },
+    {
+      "id": "ecu_003",
+      "difficulty": 1,
+      "type": "numeric",
+      "competency": "despejar_suma_resta",
+      "question": "Resuelve x + 6 = 6. ¿Cuál es el valor de x?",
+      "expected_answer": "0",
+      "solution_steps": ["Resta 6 en ambos lados: x = 6 - 6.", "Calcula: x = 0.", "Comprueba: 0 + 6 = 6."],
+      "hints": ["Localiza la cantidad que acompaña a x mediante una suma.", "Resta esa cantidad en ambos miembros para dejar sola la incógnita.", "Calcula la diferencia y sustituye el resultado en la igualdad inicial."]
+    },
+    {
+      "id": "ecu_004",
+      "difficulty": 2,
+      "type": "numeric",
+      "competency": "despejar_producto_cociente",
+      "question": "Resuelve 3x = 18. ¿Cuál es el valor de x?",
+      "expected_answer": "6",
+      "solution_steps": ["Divide ambos lados entre 3: x = 18/3.", "Calcula: x = 6.", "Comprueba: 3·6 = 18."],
+      "hints": ["3x significa tres veces el valor de x.", "Deshaz el producto dividiendo ambos lados entre el coeficiente de x.", "Calcula el cociente y verifica multiplicando tu valor por el coeficiente original."]
+    },
+    {
+      "id": "ecu_005",
+      "difficulty": 2,
+      "type": "numeric",
+      "competency": "despejar_producto_cociente",
+      "question": "Resuelve x/4 = -2. ¿Cuál es el valor de x?",
+      "expected_answer": "-8",
+      "solution_steps": ["Multiplica ambos lados por 4: x = -2·4.", "Calcula: x = -8.", "Comprueba: -8/4 = -2."],
+      "hints": ["La incógnita está dividida entre una cantidad conocida.", "Deshaz esa división multiplicando ambos lados por el divisor.", "Revisa el signo del producto y comprueba dividiendo tu valor entre el divisor original."]
+    },
+    {
+      "id": "ecu_006",
+      "difficulty": 2,
+      "type": "numeric",
+      "competency": "despejar_producto_cociente",
+      "question": "Resuelve -5x = 20. ¿Cuál es el valor de x?",
+      "expected_answer": "-4",
+      "solution_steps": ["Divide ambos lados entre -5: x = 20/(-5).", "Calcula: x = -4.", "Comprueba: (-5)·(-4) = 20."],
+      "hints": ["El coeficiente de la incógnita incluye el signo negativo.", "Divide los dos miembros entre el coeficiente completo, incluido su signo.", "Aplica la regla de los signos del cociente y comprueba el producto original."]
+    },
+    {
+      "id": "ecu_007",
+      "difficulty": 3,
+      "type": "numeric",
+      "competency": "despejar_dos_operaciones",
+      "question": "Resuelve 2x + 5 = 17. ¿Cuál es el valor de x?",
+      "expected_answer": "6",
+      "solution_steps": ["Resta 5 en ambos lados: 2x = 12.", "Divide ambos lados entre 2: x = 6.", "Comprueba: 2·6 + 5 = 17."],
+      "hints": ["Hay un producto y una suma externa; deshaz primero la suma.", "Resta la cantidad independiente en ambos lados para aislar el término con x.", "Divide ambos miembros de la nueva igualdad entre el coeficiente de x y comprueba en la ecuación inicial."]
+    },
+    {
+      "id": "ecu_008",
+      "difficulty": 3,
+      "type": "numeric",
+      "competency": "despejar_dos_operaciones",
+      "question": "Resuelve 4x - 3 = -23. ¿Cuál es el valor de x?",
+      "expected_answer": "-5",
+      "solution_steps": ["Suma 3 en ambos lados: 4x = -20.", "Divide ambos lados entre 4: x = -5.", "Comprueba: 4·(-5) - 3 = -23."],
+      "hints": ["Primero necesitas deshacer la resta externa al término con x.", "Suma la cantidad independiente en ambos lados, cuidando los signos del lado derecho.", "Después de aislar el producto, divide ambos lados entre el coeficiente y verifica por sustitución."]
+    },
+    {
+      "id": "ecu_009",
+      "difficulty": 3,
+      "type": "numeric",
+      "competency": "despejar_dos_operaciones",
+      "question": "Resuelve x/3 + 2 = 5. ¿Cuál es el valor de x?",
+      "expected_answer": "9",
+      "solution_steps": ["Resta 2 en ambos lados: x/3 = 3.", "Multiplica ambos lados por 3: x = 9.", "Comprueba: 9/3 + 2 = 5."],
+      "hints": ["La suma se aplica después de dividir la incógnita; deshaz primero esa suma.", "Resta la cantidad independiente en los dos miembros para aislar el cociente.", "Multiplica ambos lados por el divisor original y comprueba tu resultado en la ecuación inicial."]
+    }
+  ]
+}
