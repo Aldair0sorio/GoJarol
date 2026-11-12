@@ -50,7 +50,7 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingClass, setEditingClass] = useState<ClassGroup | null>(null);
   const [newClassName, setNewClassName] = useState('');
-  const [newSubject, setNewSubject] = useState('aritmetica');
+  const [newSubject, setNewSubject] = useState('matematicas');
   const [newNivel, setNewNivel] = useState<'secundaria' | 'bachillerato'>('secundaria');
   const [newGrado, setNewGrado] = useState(3);
   const [createError, setCreateError] = useState<string | null>(null);
@@ -136,7 +136,7 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({
   const openCreateModal = () => {
     setEditingClass(null);
     setNewClassName('');
-    setNewSubject('aritmetica');
+    setNewSubject('matematicas');
     setNewNivel('secundaria');
     setNewGrado(3);
     setCreatedCode(null);
@@ -147,7 +147,7 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({
   const openEditModal = (cls: ClassGroup) => {
     setEditingClass(cls);
     setNewClassName(cls.name);
-    setNewSubject(cls.subjectSlug || 'aritmetica');
+    setNewSubject(cls.subjectSlug === 'espanol' ? 'espanol' : 'matematicas');
     setNewNivel(cls.nivel || 'secundaria');
     setNewGrado(cls.grado || 3);
     setCreatedCode(null);
@@ -1197,10 +1197,8 @@ export const TeacherDashboardView: React.FC<TeacherDashboardViewProps> = ({
                     onChange={(e) => setNewSubject(e.target.value)}
                     className="w-full text-sm p-2.5 rounded-xl border border-[#E8E5DC] focus:border-[#126B73] focus:outline-none bg-white"
                   >
-                    <option value="aritmetica">Aritmética</option>
-                    <option value="algebra">Álgebra</option>
-                    <option value="espanol">Español y Lenguajes</option>
-                    <option value="matematicas">Geometría y Trigonometría</option>
+                    <option value="matematicas">Matemáticas</option>
+                    <option value="espanol">Español</option>
                   </select>
                 </div>
 

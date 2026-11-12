@@ -173,9 +173,14 @@ function mapBackendClassToGroup(item: Record<string, unknown>): ClassGroup {
     codeActive: item.codigo_activo !== undefined ? Boolean(item.codigo_activo) : true,
     nivel: item.nivel === 'bachillerato' ? 'bachillerato' : 'secundaria',
     grado: item.grado !== undefined ? Number(item.grado) : 1,
-    subjectSlug: item.subject ? String(item.subject) : 'aritmetica',
+    subjectSlug: item.subject === 'espanol' ? 'espanol' : 'matematicas',
     studentCount: Number(item.estudiantes ?? item.studentCount ?? studentsDetail.length),
-    subject: String(item.subject_nombre || item.subject || 'Matemáticas y Español'),
+    subject:
+      item.subject === 'espanol'
+        ? 'Español'
+        : item.subject === 'matematicas' || item.subject === 'aritmetica' || item.subject === 'algebra'
+          ? 'Matemáticas'
+          : String(item.subject_nombre || item.subject || 'Matemáticas'),
     averageMastery: Number(item.averageMastery ?? avgMastery),
     totalCompletedExercises: Number(item.totalCompletedExercises ?? 0),
     studentsAtRisk: Number(item.studentsAtRisk ?? 0),
@@ -771,7 +776,7 @@ export const apiService = {
         headers: getAuthHeaders(true),
         body: JSON.stringify({
           nombre: payload.nombre.trim(),
-          subject: payload.subject || 'aritmetica',
+          subject: payload.subject || 'matematicas',
           nivel: payload.nivel || 'secundaria',
           grado: payload.grado || 3,
         }),

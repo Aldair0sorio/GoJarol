@@ -97,7 +97,7 @@ class ClassroomSerializer(serializers.ModelSerializer):
         queryset=Subject.objects.all(),
         required=False,
     )
-    subject_nombre = serializers.CharField(source="subject.nombre", read_only=True)
+    subject_nombre = serializers.SerializerMethodField()
     docente = serializers.SerializerMethodField()
     estudiantes = serializers.SerializerMethodField()
     averageMastery = serializers.SerializerMethodField()
@@ -168,6 +168,14 @@ class ClassroomSerializer(serializers.ModelSerializer):
             )
         cache[obj.id] = bundle
         return bundle
+
+    def get_subject_nombre(self, obj):
+        slug = (obj.subject.slug if obj.subject else "").lower()
+        if slug == "espanol":
+            return "Español"
+        if slug in {"matematicas", "aritmetica", "algebra"}:
+            return "Matemáticas"
+        return obj.subject.nombre if obj.subject else "Matemáticas"
 
     def get_docente(self, obj):
         return obj.docente.alias or obj.docente.username

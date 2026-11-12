@@ -22,16 +22,27 @@ from .serializers import (
 
 def _ensure_default_subject(slug_or_name: str | None) -> Subject:
     _ensure_catalog_seeded()
-    slug = (slug_or_name or "aritmetica").strip().lower()
+    raw = (slug_or_name or "matematicas").strip().lower()
+    alias_map = {
+        "matemáticas": "matematicas",
+        "matematicas": "matematicas",
+        "español": "espanol",
+        "espanol": "espanol",
+        "aritmetica": "aritmetica",
+        "aritmética": "aritmetica",
+        "algebra": "algebra",
+        "álgebra": "algebra",
+    }
+    slug = alias_map.get(raw, raw)
     subj = Subject.objects.filter(slug=slug).first()
     if subj:
         return subj
-    subj = Subject.objects.first()
+    subj = Subject.objects.filter(slug="matematicas").first() or Subject.objects.first()
     if subj:
         return subj
     return Subject.objects.create(
-        slug="aritmetica",
-        nombre="Aritmética",
+        slug="matematicas",
+        nombre="Matemáticas",
         disponible=True,
         orden=1,
     )
