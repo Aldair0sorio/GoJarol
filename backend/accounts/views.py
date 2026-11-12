@@ -63,11 +63,12 @@ class GoogleLoginView(APIView):
             try:
                 parts = credential.split(".")
                 if len(parts) >= 2:
-                    padding = 4 - len(parts[1]) % 4
-                    payload_raw = base64.urlsafe_b64decode(parts[1] + ("=" * padding))
+                    rem = len(parts[1]) % 4
+                    padded = parts[1] + ("=" * ((4 - rem) % 4))
+                    payload_raw = base64.urlsafe_b64decode(padded)
                     payload = json.loads(payload_raw.decode("utf-8"))
                     email = payload.get("email")
-                    name = payload.get("name", name)
+                    name = payload.get("name") or payload.get("given_name") or name
                     picture = payload.get("picture", picture)
             except Exception:
                 pass

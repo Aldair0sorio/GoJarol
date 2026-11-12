@@ -77,24 +77,52 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
+  const parseGoogleJwt = (token: string) => {
+    try {
+      const base64Url = token.split('.')[1];
+      if (!base64Url) return null;
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+      return JSON.parse(jsonPayload);
+    } catch {
+      return null;
+    }
+  };
+
   // Manejador del JWT oficial de Google Identity Services
   const handleGoogleCredentialResponse = async (response: any) => {
     if (!response?.credential) return;
     setGoogleLoading(true);
 
     try {
+      const decoded = parseGoogleJwt(response.credential);
+      const googleEmail = decoded?.email || '';
+      const googleName = decoded?.name || decoded?.given_name || 'Usuario Google';
+      const googlePicture = decoded?.picture || '';
+
       const result = await apiService.loginWithGoogle({
         credential: response.credential,
-        email: '',
-        name: '',
+        email: googleEmail,
+        name: googleName,
+        picture: googlePicture,
         role: selectedRole,
         grade: selectedRole === 'student' ? grade : undefined,
         school: school,
       });
 
       if (result.success && result.user) {
-        setGoogleSuccessName(result.user.name);
-        loginWithGoogle(result.user);
+        setGoogleSuccessName(result.user.name || googleName);
+        loginWithGoogle({
+          ...result.user,
+          name: result.user.name || googleName,
+          email: result.user.email || googleEmail,
+          avatarUrl: result.user.avatarUrl || googlePicture,
+        });
         setGoogleLoading(false);
         setSubmitted(true);
 

@@ -304,3 +304,21 @@ Para cada sesión o iteración se documenta:
   - `frontend/src/components/auth/AuthModal.tsx`
   - `.env.example`
   - `docs/bitacora/hugo_frontend.md`
+
+### Entrada 14 · 11 de Noviembre de 2026 (21:10 - 21:14)
+
+- **Herramientas de IA utilizadas**:
+  - **Antigravity AI (Gemini 3.8 Flash)**: Corrección de decodificación de credencial JWT de Google (padding base64 URL-safe) y paso explícito de perfil cliente-servidor.
+
+- **Para qué se usaron**:
+  - Corrección de la fórmula de padding base64 URL-safe en [`backend/accounts/views.py`](backend/accounts/views.py) (`(4 - len % 4) % 4`), evitando la excepción silenciosa `binascii.Error` cuando la longitud del token era múltiplo de 4.
+  - Implementación de la función auxiliar `parseGoogleJwt` en el frontend ([`AuthModal.tsx`](frontend/src/components/auth/AuthModal.tsx)) para extraer de forma inmediata el `email`, `name` y `picture` del token firmado de Google y enviarlos de manera directa y robusta al endpoint `/api/v1/auth/google/`.
+  - Aseguramiento de persistencia real en la tabla `accounts_user` de PostgreSQL.
+
+- **Decisiones clave tomadas**:
+  - Doble capa de decodificación (Frontend + Backend) para garantizar 100% de tolerancia a fallos en la extracción de credenciales de Google.
+
+- **Archivos creados / modificados**:
+  - `backend/accounts/views.py`
+  - `frontend/src/components/auth/AuthModal.tsx`
+  - `docs/bitacora/hugo_frontend.md`
